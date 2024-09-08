@@ -48,7 +48,7 @@
             flex-direction: column;
             gap: 10px;
             color: white;
-            background-color: #000000; /* Changed to black background */
+            background-color: #000000;
             padding: 10px;
             border-radius: 15px;
             border: 1px solid #ddd;
@@ -219,12 +219,22 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // Debugging function to check if inputs are read
+        function logInputValues() {
+            console.log("Coding task:", codingTaskInput.value);
+            console.log("Adjustments:", adjustmentsInput.value);
+        }
+
         // Send message function triggered by the button
-        sendButton.addEventListener('click', submitCodingTask);
+        sendButton.addEventListener('click', () => {
+            logInputValues();
+            submitCodingTask();
+        });
 
         // Handle Enter key for main coding task input
         codingTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                logInputValues();
                 submitCodingTask();
             }
         });
@@ -232,6 +242,7 @@
         // Handle Enter key for adjustments input
         adjustmentsInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
+                logInputValues();
                 submitAdjustments();
             }
         });
@@ -261,19 +272,7 @@
                 .then(response => response.json())
                 .then(data => {
                     // Append the AI's response to the chat
-                    appendMessage('AI', data.response);  // Assuming your backend returns { response: "AI's response" }
+                    appendMessage('AI', data.response);
 
                     // Store chat history and update dropdown
-                    previousChats.push({ task: message, response: data.response });
-                    updateChatHistoryDropdown();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    appendMessage('AI', 'We are conducting maintenance on our chat service, this feature is unavailable right now. Check back in later and learn what Thirdeye can do for you.');
-                });
-            }
-        }
-
-        // Function to submit adjustments
-        function submitAdjustments() {
-           
+                    previousChats.push({ task: message, response
