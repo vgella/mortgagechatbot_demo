@@ -1,356 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Litcode by thirdeye</title>
-    <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
-    <!-- Include highlight.js for syntax highlighting -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
-
-    <style>
-        body {
-            margin: 0;  
-            padding: 0; 
-            font-family: 'Roboto', sans-serif;
-            background-color: #ffffff; /* White background */
-            color: #000000;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            overflow-y: scroll; 
+    function setActiveTab(tab, pageName) {
+        // Mark previous tab as inactive
+        const activeTab = document.querySelector('.tab.active');
+        if (activeTab) {
+            activeTab.classList.remove('active');
         }
 
-        /* Tab Container */
-        #tab-container {
-            display: flex;
-            width: 100%;
-            background-color: #ffffff; /* White background matching the body */
-            padding: 0;
-            box-sizing: border-box;
-        }
+        // Mark current tab as active
+        tab.classList.add('active');
 
-        /* Tabs */
-        .tab {
-            padding: 10px 15px;
-            background-color: #d3d3d3; /* Grey for non-selected tabs */
-            border: 1px solid #888;
-            border-radius: 15px 15px 0 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            color: black;
-            transition: background-color 0.3s;
-            margin-right: -1px;
-        }
+        // Update current page
+        currentPage = pageName;
 
-        .tab.active {
-            background-color: #ffffff; /* White for the selected tab */
-            color: #000;
-        }
+        // Load chat history for the selected page
+        loadChatHistory(pageName);
+    }
 
-        .tab input {
-            border: none;
-            background: none;
-            outline: none;
-            width: 100px;
-            text-align: center;
-            color: black;
-        }
+    function loadChatHistory(pageName) {
+        // Clear the chat box
+        chatBox.innerHTML = ''; 
 
-        .tab input:disabled {
-            color: black;
-            cursor: default;
-        }
+        // Get the chat history for the selected page
+        const history = chatHistories[pageName] || [];
 
-        /* Chat Container */
-        #chat-container {
-            width: 100%; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0;
-            box-sizing: border-box;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
+        // Append each message from history into the chat box
+        history.forEach(msg => {
+            appendMessage(msg.sender, msg.text, msg.isCode);  // Append the messages
+        });
 
-        #chat-box {
-            flex-grow: 1;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            color: white;
-            background-color: #000000;
-            padding: 20px;
-            border-radius: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            word-wrap: break-word;
-        }
+        // Reapply syntax highlighting for all code blocks
+        reapplySyntaxHighlighting();
+    }
 
-        /* Bubble styling for user/AI messages */
-        .message {
-            padding: 10px;
-            background-color: #f0f0f0;
-            color: #000;
-            word-wrap: break-word;
-            max-width: 60%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            margin-bottom: 10px;
-        }
+    // Function to handle submission of the coding task
+    function submitCodingTask() {
+        const codingTask = codingTaskInput.value;
 
-        .message.user {
-            align-self: flex-end;
-            background-color: #e0e0e0;
-        }
+        if (codingTask) {
+            appendMessage('User', codingTask);
+            codingTaskInput.value = '';  // Clear the input field
 
-        .message.ai {
-            align-self: flex-start;
-            background-color: #ffffff;
-        }
+            // Save the message to the current page's chat history
+            chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-        /* Input Field */
-        #input-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: black;
-            padding: 10px;
-            background-color: transparent;
-        }
-
-        .main-input-field {
-            flex-grow: 1;
-            padding: 15px;
-            border: none;
-            font-size: 16px;
-            outline: none;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-input-field::placeholder {
-            color: #000000;
-        }
-
-        /* Send Button (Upside Down Triangle) */
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid black;
-            position: relative;
-            left: -5px;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            outline: 3px solid white;
-            cursor: pointer;
-        }
-
-        /* Logo Section */
-        #logo-container {
-            position: relative; /* Relative to chat container */
-            margin-top: 20px;
-            right: 20px;
-            align-self: flex-end;
-        }
-
-        #logo-container img {
-            width: 225px;
-            height: auto;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Tab Container -->
-    <div id="tab-container">
-        <!-- Tabs will be added here dynamically -->
-        <div class="tab active" id="new-page-1">
-            <input type="text" value="New Page 1" class="tab-title" disabled />
-        </div>
-        <button id="add-page-button">+</button>
-    </div>
-
-    <!-- Chat Interface Container -->
-    <div id="chat-container">
-
-        <!-- Chat History / Chat Box -->
-        <div id="chat-box">
-            <!-- Chat messages will appear here -->
-        </div>
-
-        <!-- Input Fields -->
-        <div id="input-container">
-            <!-- Describe the coding task field -->
-            <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
-            <!-- Send button (triangle) -->
-            <div class="send-button-container" id="send-button">
-                <div class="triangle"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
-    <div id="logo-container">
-        <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
-        </a>
-    </div>
-
-    <script>
-        const chatBox = document.getElementById('chat-box');
-        const codingTaskInput = document.getElementById('coding-task-input');
-        const sendButton = document.getElementById('send-button');
-        const addPageButton = document.getElementById('add-page-button');
-        let userIp = '';
-        let currentPage = 'New Page 1';
-        let pageCount = 1;
-
-        // Store chat histories in an object with page names as keys
-        const chatHistories = {
-            'New Page 1': []
-        };
-
-        // Fetch the user's IP address
-        fetch('https://api.ipify.org?format=json')
+            // Send the coding task to the backend
+            fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ip_address: userIp,
+                    page: currentPage,  // Pass current page to the backend
+                    message: codingTask  
+                }),
+            })
             .then(response => response.json())
             .then(data => {
-                userIp = data.ip;
+                appendMessage('AI', data.response, true);  // Display AI response with syntax highlighting
+                chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
             })
             .catch(error => {
-                console.error('Error fetching IP address:', error);
+                console.error('Error:', error);
+                appendMessage('AI', 'An error occurred while processing your request.');
             });
-
-        // Helper function to append messages to the chatbox
-        function appendMessage(sender, text, isCode = false) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-
-            if (isCode) {
-                const preElement = document.createElement('pre');
-                const codeElement = document.createElement('code');
-                codeElement.textContent = text;
-                preElement.appendChild(codeElement);
-                messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);  // Syntax highlighting for code
-            } else {
-                messageElement.textContent = text;
-            }
-
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; 
         }
+    }
 
-        // Function to reapply syntax highlighting to all code blocks
-        function reapplySyntaxHighlighting() {
-            setTimeout(() => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            }, 100); // Timeout allows DOM to update before reapplying
-        }
-
-        // Function to handle submission of the coding task
-        function submitCodingTask() {
-            const codingTask = codingTaskInput.value;
-
-            if (codingTask) {
-                appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
-
-                chatHistories[currentPage].push({ sender: 'User', text: codingTask });
-
-                fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ip_address: userIp,
-                        page: currentPage,  // Pass current page to the backend
-                        message: codingTask  
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    appendMessage('AI', data.response, true);  
-                    chatHistories[currentPage].push({ sender: 'AI', text: data.response });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    appendMessage('AI', 'An error occurred while processing your request.');
-                });
-            }
-        }
-
-        // Attach event listeners for sending messages
-        sendButton.addEventListener('click', submitCodingTask);
-        codingTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                submitCodingTask();
-            }
-        });
-
-        // Tab Functionality: Create New Tab and Switch Between Tabs
-        addPageButton.addEventListener('click', () => {
-            pageCount++;
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
-            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-            chatHistories[`New Page ${pageCount}`] = [];
-
-            // Switch to new tab on click
-            newTab.addEventListener('click', () => {
-                setActiveTab(newTab, `New Page ${pageCount}`);
+    // Function to reapply syntax highlighting
+    function reapplySyntaxHighlighting() {
+        setTimeout(() => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
             });
-        });
-
-        function setActiveTab(tab, pageName) {
-            // Mark previous tab as inactive
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) {
-                activeTab.classList.remove('active');
-            }
-
-            // Mark current tab as active
-            tab.classList.add('active');
-
-            // Update current page
-            currentPage = pageName;
-
-            // Load chat history for the selected page
-            loadChatHistory(pageName);
-        }
-
-        function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; // Clear the chat box
-            const history = chatHistories[pageName] || [];
-            history.forEach(msg => {
-                appendMessage(msg.sender, msg.text);
-            });
-
-            // Reapply syntax highlighting to all loaded code blocks
-            reapplySyntaxHighlighting();
-        }
-
-        // Fix for selecting first page initially
-        const firstTab = document.getElementById('new-page-1');
-        firstTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-        });
-    </script>
-</body>
-</html>
+        }, 10);  // Delay for DOM update
+    }
