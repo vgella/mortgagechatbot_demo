@@ -94,16 +94,29 @@
             word-wrap: break-word;
         }
 
+        /* Bubble styling for user/AI messages */
         .message {
             padding: 10px;
             background-color: #f0f0f0;
             color: #000;
             word-wrap: break-word;
-            max-width: 100%;
+            max-width: 60%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #000; 
+            border-radius: 15px;
+            margin-bottom: 10px;
         }
 
+        .message.user {
+            align-self: flex-end;
+            background-color: #e0e0e0;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: #ffffff;
+        }
+
+        /* Input Field */
         #input-container {
             width: 100%;
             display: flex;
@@ -130,6 +143,7 @@
             color: #000000;
         }
 
+        /* Send Button (Upside Down Triangle) */
         .triangle {
             width: 0;
             height: 0;
@@ -143,16 +157,12 @@
             cursor: pointer;
         }
 
-        .send-button-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        /* Logo Section */
         #logo-container {
-            position: absolute;
-            bottom: -250px; 
+            position: relative; /* Relative to chat container */
+            margin-top: 20px;
             right: 20px;
+            align-self: flex-end;
         }
 
         #logo-container img {
@@ -183,7 +193,9 @@
 
         <!-- Input Fields -->
         <div id="input-container">
+            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
+            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
@@ -221,7 +233,7 @@
                 console.error('Error fetching IP address:', error);
             });
 
-        // Function to append messages to the chatbox
+        // Helper function to append messages to the chatbox
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -281,6 +293,43 @@
                 submitCodingTask();
             }
         });
+
+        // Tab Functionality: Create New Tab and Switch Between Tabs
+        addPageButton.addEventListener('click', () => {
+            pageCount++;
+            const newTab = document.createElement('div');
+            newTab.classList.add('tab');
+            newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
+            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
+            chatHistories[`New Page ${pageCount}`] = [];
+
+            // Switch to new tab on click
+            newTab.addEventListener('click', () => {
+                setActiveTab(newTab, `New Page ${pageCount}`);
+            });
+        });
+
+        function setActiveTab(tab, pageName) {
+            // Mark previous tab as inactive
+            document.querySelector('.tab.active').classList.remove('active');
+
+            // Mark current tab as active
+            tab.classList.add('active');
+
+            // Update current page
+            currentPage = pageName;
+
+            // Load chat history for the selected page
+            loadChatHistory(pageName);
+        }
+
+        function loadChatHistory(pageName) {
+            chatBox.innerHTML = ''; // Clear the chat box
+            const history = chatHistories[pageName] || [];
+            history.forEach(msg => {
+                appendMessage(msg.sender, msg.text);
+            });
+        }
     </script>
 </body>
 </html>
