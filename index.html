@@ -25,8 +25,7 @@
 
         /* Chat Container */
         #chat-container {
-            width: 100%;
-            max-width: 900px;
+            width: 100%; /* Full width of the window */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -87,7 +86,7 @@
             gap: 10px;
             color: black;
             padding: 10px;
-            background-color: transparent; /* Remove white background from input */
+            background-color: transparent;
         }
 
         /* Main input field */
@@ -99,6 +98,7 @@
             outline: none;
             background-color: #ffffff;
             color: #000000;
+            border-radius: 15px; /* Rounded edges for the input field */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -115,6 +115,7 @@
             border-top: 40px solid black;
             position: relative;
             left: -5px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* Shape the outline like a triangle */
             outline: 3px solid white;
             cursor: pointer;
         }
@@ -220,7 +221,7 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask
+                        message: codingTask  /* Changed to "message" */
                     }),
                 })
                 .then(response => response.json())
