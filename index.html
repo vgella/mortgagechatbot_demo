@@ -14,7 +14,7 @@
             margin: 0;  
             padding: 0; 
             font-family: 'Roboto', sans-serif;
-            background-color: #ff1493; 
+            background-color: #ff1493; /* Hot pink background */
             color: #000000;
             min-height: 100vh;
             display: flex;
@@ -28,8 +28,8 @@
         #tab-container {
             display: flex;
             width: 100%;
-            background-color: #e0e0e0;
-            padding: 10px;
+            background-color: #ff1493; /* Hot pink matching the background */
+            padding: 0; /* Remove padding */
             box-sizing: border-box;
         }
 
@@ -37,12 +37,14 @@
         .tab {
             padding: 10px 15px;
             margin-right: 5px;
-            background-color: #ccc;
+            background-color: #ffffff;
             border: 1px solid #888;
-            border-radius: 5px;
+            border-radius: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
+            color: black;
+            transition: background-color 0.3s;
         }
 
         .tab.active {
@@ -55,6 +57,13 @@
             background: none;
             outline: none;
             width: 100px;
+            text-align: center;
+            color: black;
+        }
+
+        .tab input:disabled {
+            color: black;
+            cursor: default;
         }
 
         /* Chat Container */
@@ -64,7 +73,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 25px 0px 20px; 
+            padding: 0; /* Removed padding from chat container */
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -159,7 +168,7 @@
     <div id="tab-container">
         <!-- Tabs will be added here dynamically -->
         <div class="tab active">
-            <input type="text" value="New Page 1" class="tab-title" />
+            <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
         <button id="add-page-button">+</button>
     </div>
@@ -265,4 +274,13 @@
             }
         }
 
-       
+        // Attach event listeners for sending messages
+        sendButton.addEventListener('click', submitCodingTask);
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
+        });
+    </script>
+</body>
+</html>
