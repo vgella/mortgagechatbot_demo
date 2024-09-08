@@ -253,6 +253,13 @@
             chatBox.scrollTop = chatBox.scrollHeight; 
         }
 
+        // Function to reapply syntax highlighting to all code blocks
+        function reapplySyntaxHighlighting() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
+
         // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
@@ -332,6 +339,9 @@
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text);
             });
+
+            // Reapply syntax highlighting to all loaded code blocks
+            reapplySyntaxHighlighting();
         }
 
         // Fix for selecting first page initially
