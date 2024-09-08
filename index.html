@@ -107,7 +107,7 @@
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-top: 20px solid black; /* Black triangle */
+            border-top: 20px solid black;
             cursor: pointer;
         }
 
@@ -137,7 +137,7 @@
         }
 
         #logo-container img {
-            width: 100px; /* Increased the size */
+            width: 100px;
             height: auto;
             cursor: pointer;
         }
@@ -195,22 +195,19 @@
         const adjustmentsInput = document.getElementById('adjustments-input');
         const chatHistorySelect = document.getElementById('chat-history-select');
         const sendButton = document.getElementById('send-button');
-        let businessUrl = '';
         let userIp = '';
 
-        let previousChats = []; // To store all chats dynamically
-
-        // Fetch the user's IP address using the ipify service
+        // Fetch the user's IP address
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 userIp = data.ip;
-                console.log("User's IP Address: ", userIp);
             })
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
 
+        // Helper function to append messages to the chatbox
         function appendMessage(sender, text) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -219,60 +216,45 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Debugging function to check if inputs are read
-        function logInputValues() {
-            console.log("Coding task:", codingTaskInput.value);
-            console.log("Adjustments:", adjustmentsInput.value);
-        }
-
-        // Send message function triggered by the button
-        sendButton.addEventListener('click', () => {
-            logInputValues();
-            submitCodingTask();
-        });
-
-        // Handle Enter key for main coding task input
-        codingTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                logInputValues();
-                submitCodingTask();
-            }
-        });
-
-        // Handle Enter key for adjustments input
-        adjustmentsInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                logInputValues();
-                submitAdjustments();
-            }
-        });
-
-        // Function to submit the main coding task
+        // Function to handle submission of the coding task
         function submitCodingTask() {
-            const message = codingTaskInput.value;
+            const codingTask = codingTaskInput.value;
+            const adjustments = adjustmentsInput.value;
 
-            if (message) {
-                appendMessage('User', message);
-                codingTaskInput.value = '';
+            if (codingTask) {
+                appendMessage('User', codingTask);
+                codingTaskInput.value = '';  // Clear the input field
 
-                const separator = "§¶∆≈¥";
-                const combinedMessage = `${message}${separator}${businessUrl}`;
-
-                // Send the message to the backend
-                fetch('https://1db9-34-126-156-247.ngrok-free.app/chat', {  // Updated Ngrok tunnel URL
+                // Send the coding task and adjustments to the backend
+                fetch('https://e3b3-35-201-243-177.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: combinedMessage,
-                        ip_address: userIp
+                        ip_address: userIp,
+                        coding_task: codingTask,
+                        adjustments: adjustments
                     }),
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Append the AI's response to the chat
-                    appendMessage('AI', data.response);
+                    appendMessage('AI', data.response);  // Append AI response to chat
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    appendMessage('AI', 'An error occurred while processing your request.');
+                });
+            }
+        }
 
-                    // Store chat history and update dropdown
-                    previousChats.push({ task: message, response
+        // Attach event listeners for sending messages
+        sendButton.addEventListener('click', submitCodingTask);
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
+        });
+    </script>
+</body>
+</html>
