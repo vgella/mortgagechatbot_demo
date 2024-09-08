@@ -11,27 +11,60 @@
 
     <style>
         body {
-            margin: 0;  /* Remove body margin */
-            padding: 0; /* Remove body padding */
+            margin: 0;  
+            padding: 0; 
             font-family: 'Roboto', sans-serif;
-            background-color: #ff1493; /* Hot pink background */
+            background-color: #ff1493; 
             color: #000000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-y: scroll; /* Allow scrolling */
+            overflow-y: scroll; 
+        }
+
+        /* Tab Container */
+        #tab-container {
+            display: flex;
+            width: 100%;
+            background-color: #e0e0e0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Tabs */
+        .tab {
+            padding: 10px 15px;
+            margin-right: 5px;
+            background-color: #ccc;
+            border: 1px solid #888;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .tab.active {
+            background-color: #ff1493;
+            color: #fff;
+        }
+
+        .tab input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100px;
         }
 
         /* Chat Container */
         #chat-container {
-            width: 100%; /* Full width of the window */
+            width: 100%; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 25px 0px 20px; /* Added 25px space above */
+            padding: 25px 0px 20px; 
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -42,11 +75,11 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Add spacing between chat entries */
+            gap: 15px; 
             color: white;
             background-color: #000000;
             padding: 20px;
-            border-radius: 0; /* Removed rounded corners */
+            border-radius: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
@@ -59,25 +92,7 @@
             word-wrap: break-word;
             max-width: 100%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #000; /* Hard corners for messages */
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background-color: #e0e0e0;
-        }
-
-        .message.ai {
-            align-self: flex-start;
-        }
-
-        .message pre {
-            background-color: #272822;
-            color: #f8f8f2;
-            padding: 10px;
-            font-size: 14px;
-            overflow-x: auto;
-            white-space: pre-wrap;
+            border: 1px solid #000; 
         }
 
         #input-container {
@@ -90,7 +105,6 @@
             background-color: transparent;
         }
 
-        /* Main input field */
         .main-input-field {
             flex-grow: 1;
             padding: 15px;
@@ -99,7 +113,7 @@
             outline: none;
             background-color: #ffffff;
             color: #000000;
-            border-radius: 15px; /* Rounded edges for the input field */
+            border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -107,7 +121,6 @@
             color: #000000;
         }
 
-        /* Send Button (Upside Down Triangle) */
         .triangle {
             width: 0;
             height: 0;
@@ -116,22 +129,20 @@
             border-top: 40px solid black;
             position: relative;
             left: -5px;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* Shape the outline like a triangle */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             outline: 3px solid white;
             cursor: pointer;
         }
 
-        /* Send button container */
         .send-button-container {
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Logo Positioned Far Below */
         #logo-container {
             position: absolute;
-            bottom: -250px; /* Moves the logo far below the visible window */
+            bottom: -250px; 
             right: 20px;
         }
 
@@ -144,6 +155,15 @@
 </head>
 <body>
 
+    <!-- Tab Container -->
+    <div id="tab-container">
+        <!-- Tabs will be added here dynamically -->
+        <div class="tab active">
+            <input type="text" value="New Page 1" class="tab-title" />
+        </div>
+        <button id="add-page-button">+</button>
+    </div>
+
     <!-- Chat Interface Container -->
     <div id="chat-container">
 
@@ -154,9 +174,7 @@
 
         <!-- Input Fields -->
         <div id="input-container">
-            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
-            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
@@ -174,7 +192,15 @@
         const chatBox = document.getElementById('chat-box');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
+        const addPageButton = document.getElementById('add-page-button');
         let userIp = '';
+        let currentPage = 'New Page 1';
+        let pageCount = 1;
+
+        // Store chat histories in an object with page names as keys
+        const chatHistories = {
+            'New Page 1': []
+        };
 
         // Fetch the user's IP address
         fetch('https://api.ipify.org?format=json')
@@ -186,7 +212,7 @@
                 console.error('Error fetching IP address:', error);
             });
 
-        // Helper function to append messages to the chatbox
+        // Function to append messages to the chatbox
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -197,13 +223,13 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement); // Apply syntax highlighting
+                hljs.highlightElement(codeElement);
             } else {
                 messageElement.textContent = text;
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+            chatBox.scrollTop = chatBox.scrollHeight; 
         }
 
         // Function to handle submission of the coding task
@@ -212,9 +238,10 @@
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = '';  // Clear the input field
+                codingTaskInput.value = ''; 
 
-                // Send the coding task to the backend
+                chatHistories[currentPage].push({ sender: 'User', text: codingTask });
+
                 fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
@@ -222,12 +249,14 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  /* Changed to "message" */
+                        page: currentPage,  // Pass current page to the backend
+                        message: codingTask  
                     }),
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessage('AI', data.response, true);  // Append AI response as code with syntax highlighting
+                    appendMessage('AI', data.response, true);  
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -236,13 +265,4 @@
             }
         }
 
-        // Attach event listeners for sending messages
-        sendButton.addEventListener('click', submitCodingTask);
-        codingTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                submitCodingTask();
-            }
-        });
-    </script>
-</body>
-</html>
+       
