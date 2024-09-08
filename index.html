@@ -25,7 +25,6 @@
         /* Chat Container to take up the full screen */
         #chat-container {
             width: 100%;
-            height: 100%;
             max-width: 600px;
             display: flex;
             flex-direction: column;
@@ -34,6 +33,7 @@
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
+            height: calc(100vh - 100px); /* Adjusts height to fill most of the viewport */
         }
 
         #chat-box {
@@ -41,7 +41,7 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px; /* Add spacing between chat entries */
             color: white;
             background-color: #000000;
             padding: 10px;
@@ -50,7 +50,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
-            max-height: 400px;
         }
 
         .message {
@@ -81,6 +80,8 @@
             position: fixed;
             bottom: 20px;
             max-width: 600px;
+            padding: 10px;
+            background-color: white;
         }
 
         /* Main input field for "Describe the coding task..." */
@@ -122,16 +123,16 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Logo Positioned Lower and Scaled Down to 75% */
+        /* Logo Positioned Significantly Lower for Scroll Visibility */
         #logo-container {
-            position: fixed;
-            bottom: -40px; /* Move it significantly lower than the send button */
+            position: absolute;
+            bottom: -200px; /* Moves logo down to require scrolling to see it */
             right: 20px;
             z-index: 10;
         }
 
         #logo-container img {
-            width: 225px; /* 75% of the current 300px */
+            width: 225px; /* 75% of original size */
             height: auto;
             cursor: pointer;
         }
