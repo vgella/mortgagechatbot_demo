@@ -36,13 +36,6 @@
             overflow-y: auto;
         }
 
-        /* Dropdown for selecting previous chats */
-        #chat-history-select {
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-
         #chat-box {
             flex-grow: 1;
             width: 100%;
@@ -92,7 +85,7 @@
 
         /* Main input field for "Describe the coding task..." */
         .main-input-field {
-            width: 100%;
+            flex-grow: 1;
             padding: 15px;
             border: none;
             font-size: 16px;
@@ -117,21 +110,16 @@
             cursor: pointer;
         }
 
-        /* Adjustments input field for "Adjustments" */
-        .adjustments-field {
-            flex-grow: 1;
-            padding: 15px;
-            border: none;
-            font-size: 16px;
-            outline: none;
-            background-color: #ffffff;
-            color: #000000;
-            border-radius: 15px;
+        /* Send button container */
+        .send-button-container {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .adjustments-field::placeholder {
-            color: #000000;
         }
 
         /* Logo Positioned at the Bottom Right and Scaled Up */
@@ -147,27 +135,12 @@
             height: auto;
             cursor: pointer;
         }
-
-        /* Dropdown style */
-        #chat-history-select {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-        }
     </style>
 </head>
 <body>
 
     <!-- Chat Interface Container -->
     <div id="chat-container">
-
-        <!-- Dropdown to select previous chats -->
-        <select id="chat-history-select">
-            <option value="recent">Most Recent Chat</option>
-            <!-- Additional chat history options will be dynamically populated here -->
-        </select>
 
         <!-- Chat History / Chat Box -->
         <div id="chat-box">
@@ -176,15 +149,12 @@
 
         <!-- Input Fields -->
         <div id="input-container">
-            <!-- Send button (triangle) -->
-            <div class="triangle" id="send-button"></div>
             <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
-        </div>
-
-        <!-- Adjustments input field -->
-        <div id="input-container">
-            <input type="text" id="adjustments-input" class="adjustments-field" placeholder="Adjustments..." />
+            <!-- Send button (triangle) -->
+            <div class="send-button-container" id="send-button">
+                <div class="triangle"></div>
+            </div>
         </div>
     </div>
 
@@ -198,8 +168,6 @@
     <script>
         const chatBox = document.getElementById('chat-box');
         const codingTaskInput = document.getElementById('coding-task-input');
-        const adjustmentsInput = document.getElementById('adjustments-input');
-        const chatHistorySelect = document.getElementById('chat-history-select');
         const sendButton = document.getElementById('send-button');
         let userIp = '';
 
@@ -225,16 +193,12 @@
         // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
-            const adjustments = adjustmentsInput.value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
                 codingTaskInput.value = '';  // Clear the input field
 
-                // Change placeholder to 'Enter follow up query'
-                codingTaskInput.placeholder = 'Enter follow-up query';
-
-                // Send the coding task and adjustments to the backend
+                // Send the coding task to the backend
                 fetch('https://de74-34-126-156-247.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
@@ -242,8 +206,7 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        coding_task: codingTask,
-                        adjustments: adjustments
+                        coding_task: codingTask
                     }),
                 })
                 .then(response => response.json())
