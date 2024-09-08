@@ -47,8 +47,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            color: black;
-            background-color: #ffffff;
+            color: white;
+            background-color: #000000; /* Changed to black background */
             padding: 10px;
             border-radius: 15px;
             border: 1px solid #ddd;
@@ -95,11 +95,20 @@
             color: #000000;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
         }
 
         .main-input-field::placeholder {
             color: #000000;
+        }
+
+        /* Send Button (Upside Down Triangle) */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 20px solid black; /* Black triangle */
+            cursor: pointer;
         }
 
         /* Adjustments input field for "Adjustments" */
@@ -119,7 +128,7 @@
             color: #000000;
         }
 
-        /* Logo Positioned at the Bottom Right and Scaled Down */
+        /* Logo Positioned at the Bottom Right and Scaled Up */
         #logo-container {
             position: fixed;
             bottom: 20px;
@@ -128,8 +137,9 @@
         }
 
         #logo-container img {
-            width: 50px;
+            width: 100px; /* Increased the size */
             height: auto;
+            cursor: pointer;
         }
 
         /* Dropdown style */
@@ -160,6 +170,8 @@
 
         <!-- Input Fields -->
         <div id="input-container">
+            <!-- Send button (triangle) -->
+            <div class="triangle" id="send-button"></div>
             <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
         </div>
@@ -170,9 +182,11 @@
         </div>
     </div>
 
-    <!-- Logo Section -->
+    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
-        <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+        <a href="https://thirdeyeai.org" target="_blank">
+            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+        </a>
     </div>
 
     <script>
@@ -180,6 +194,7 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const adjustmentsInput = document.getElementById('adjustments-input');
         const chatHistorySelect = document.getElementById('chat-history-select');
+        const sendButton = document.getElementById('send-button');
         let businessUrl = '';
         let userIp = '';
 
@@ -203,6 +218,9 @@
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
+
+        // Send message function triggered by the button
+        sendButton.addEventListener('click', submitCodingTask);
 
         // Handle Enter key for main coding task input
         codingTaskInput.addEventListener('keypress', (e) => {
@@ -230,7 +248,7 @@
                 const combinedMessage = `${message}${separator}${businessUrl}`;
 
                 // Send the message to the backend
-                fetch('https://1db9-34-126-156-247.ngrok-free.app/chat', {  // Replace with your backend URL
+                fetch('https://1db9-34-126-156-247.ngrok-free.app/chat', {  // Updated Ngrok tunnel URL
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -258,26 +276,4 @@
 
         // Function to submit adjustments
         function submitAdjustments() {
-            const adjustment = adjustmentsInput.value;
-
-            if (adjustment) {
-                businessUrl = adjustment;
-                appendMessage('AI', `Adjustments entered: ${adjustment}`);
-                adjustmentsInput.value = '';
-            }
-        }
-
-        // Function to dynamically update the chat history dropdown
-        function updateChatHistoryDropdown() {
-            // Clear the previous options
-            chatHistorySelect.innerHTML = `<option value="recent">Most Recent Chat</option>`;
-
-            previousChats.forEach((chat, index) => {
-                const option = document.createElement('option');
-                option.value = `chat${index}`;
-                option.textContent = `Task: ${chat.task}`;
-                chatHistorySelect.appendChild(option);
-            });
-        }
-
-        // Event listener to handle selection of previous
+           
