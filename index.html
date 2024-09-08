@@ -19,6 +19,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow: hidden; /* Prevent page overflow */
         }
 
         /* Chat Container to take up the full screen */
@@ -29,9 +30,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start; /* Align at the top */
             padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto; /* Allow scrolling */
         }
 
         /* Dropdown for selecting previous chats */
@@ -55,6 +57,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
+            max-height: 400px; /* Max height for the chat box to scroll */
         }
 
         .message {
@@ -82,6 +85,9 @@
             align-items: center;
             gap: 10px;
             color: black;
+            position: fixed;
+            bottom: 20px; /* Fixed at the bottom */
+            max-width: 600px;
         }
 
         /* Main input field for "Describe the coding task..." */
@@ -137,7 +143,7 @@
         }
 
         #logo-container img {
-            width: 100px;
+            width: 300px; /* Increased size (3x) */
             height: auto;
             cursor: pointer;
         }
@@ -213,7 +219,7 @@
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
             messageElement.textContent = text;
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
         }
 
         // Function to handle submission of the coding task
@@ -225,8 +231,11 @@
                 appendMessage('User', codingTask);
                 codingTaskInput.value = '';  // Clear the input field
 
+                // Change placeholder to 'Enter follow up query'
+                codingTaskInput.placeholder = 'Enter follow-up query';
+
                 // Send the coding task and adjustments to the backend
-                fetch('https://aa9e-34-126-156-247.ngrok-free.app/chat', {
+                fetch('https://de74-34-126-156-247.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -257,4 +266,4 @@
         });
     </script>
 </body>
-</html>
+</html
