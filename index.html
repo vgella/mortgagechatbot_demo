@@ -5,9 +5,279 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litcode by thirdeye</title>
     <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
+    <!-- Import Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Chat Container to take up the full screen */
+        #chat-container {
+            width: 100%;
+            height: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Dropdown for selecting previous chats */
+        #chat-history-select {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: black;
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 15px;
+            background-color: #f0f0f0;
+            color: #000;
+            word-wrap: break-word;
+            max-width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #e0e0e0;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+        }
+
+        #input-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: black;
+        }
+
+        /* Main input field for "Describe the coding task..." */
+        .main-input-field {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .main-input-field::placeholder {
+            color: #000000;
+        }
+
+        /* Adjustments input field for "Adjustments" */
+        .adjustments-field {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .adjustments-field::placeholder {
+            color: #000000;
+        }
+
+        /* Logo Positioned at the Bottom Right and Scaled Down */
+        #logo-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        #logo-container img {
+            width: 50px;
+            height: auto;
+        }
+
+        /* Dropdown style */
+        #chat-history-select {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+    </style>
 </head>
-<body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center; height:100vh;">
-    <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo" style="max-width:100%; height:auto;">
-</body>
-</html>
+<body>
+
+    <!-- Chat Interface Container -->
+    <div id="chat-container">
+
+        <!-- Dropdown to select previous chats -->
+        <select id="chat-history-select">
+            <option value="recent">Most Recent Chat</option>
+            <!-- Additional chat history options will be dynamically populated here -->
+        </select>
+
+        <!-- Chat History / Chat Box -->
+        <div id="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <!-- Input Fields -->
+        <div id="input-container">
+            <!-- Describe the coding task field -->
+            <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
+        </div>
+
+        <!-- Adjustments input field -->
+        <div id="input-container">
+            <input type="text" id="adjustments-input" class="adjustments-field" placeholder="Adjustments..." />
+        </div>
+    </div>
+
+    <!-- Logo Section -->
+    <div id="logo-container">
+        <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const codingTaskInput = document.getElementById('coding-task-input');
+        const adjustmentsInput = document.getElementById('adjustments-input');
+        const chatHistorySelect = document.getElementById('chat-history-select');
+        let businessUrl = '';
+        let userIp = '';
+
+        let previousChats = []; // To store all chats dynamically
+
+        // Fetch the user's IP address using the ipify service
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                userIp = data.ip;
+                console.log("User's IP Address: ", userIp);
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+            });
+
+        function appendMessage(sender, text) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
+            messageElement.textContent = text;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Handle Enter key for main coding task input
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
+        });
+
+        // Handle Enter key for adjustments input
+        adjustmentsInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitAdjustments();
+            }
+        });
+
+        // Function to submit the main coding task
+        function submitCodingTask() {
+            const message = codingTaskInput.value;
+
+            if (message) {
+                appendMessage('User', message);
+                codingTaskInput.value = '';
+
+                const separator = "§¶∆≈¥";
+                const combinedMessage = `${message}${separator}${businessUrl}`;
+
+                // Send the message to the backend
+                fetch('https://1db9-34-126-156-247.ngrok-free.app/chat', {  // Replace with your backend URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: combinedMessage,
+                        ip_address: userIp
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Append the AI's response to the chat
+                    appendMessage('AI', data.response);  // Assuming your backend returns { response: "AI's response" }
+
+                    // Store chat history and update dropdown
+                    previousChats.push({ task: message, response: data.response });
+                    updateChatHistoryDropdown();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    appendMessage('AI', 'We are conducting maintenance on our chat service, this feature is unavailable right now. Check back in later and learn what Thirdeye can do for you.');
+                });
+            }
+        }
+
+        // Function to submit adjustments
+        function submitAdjustments() {
+            const adjustment = adjustmentsInput.value;
+
+            if (adjustment) {
+                businessUrl = adjustment;
+                appendMessage('AI', `Adjustments entered: ${adjustment}`);
+                adjustmentsInput.value = '';
+            }
+        }
+
+        // Function to dynamically update the chat history dropdown
+        function updateChatHistoryDropdown() {
+            // Clear the previous options
+            chatHistorySelect.innerHTML = `<option value="recent">Most Recent Chat</option>`;
+
+            previousChats.forEach((chat, index) => {
+                const option = document.createElement('option');
+                option.value = `chat${index}`;
+                option.textContent = `Task: ${chat.task}`;
+                chatHistorySelect.appendChild(option);
+            });
+        }
+
+        // Event listener to handle selection of previous
