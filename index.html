@@ -122,16 +122,16 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Logo Positioned at the Bottom Right and Scaled Up */
+        /* Logo Positioned Lower and Scaled Down to 75% */
         #logo-container {
             position: fixed;
-            bottom: 20px;
+            bottom: -40px; /* Move it significantly lower than the send button */
             right: 20px;
             z-index: 10;
         }
 
         #logo-container img {
-            width: 300px;
+            width: 225px; /* 75% of the current 300px */
             height: auto;
             cursor: pointer;
         }
@@ -199,7 +199,7 @@
                 codingTaskInput.value = '';  // Clear the input field
 
                 // Send the coding task to the backend
-                fetch('https://989e-34-126-156-247.ngrok-free.app/chat', {
+                fetch('https://51ad-35-201-243-177.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
