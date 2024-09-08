@@ -20,7 +20,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-x: hidden; /* Ensure no horizontal scroll */
+            overflow: hidden; /* Prevents any overflow causing scroll */
         }
 
         /* Chat Container to take up the full screen */
@@ -92,7 +92,6 @@
             max-width: 600px;
             padding: 10px;
             background-color: white;
-            overflow-x: hidden; /* Ensure no horizontal scroll */
         }
 
         /* Main input field for "Describe the coding task..." */
@@ -112,13 +111,13 @@
             color: #000000;
         }
 
-        /* Send Button (Upside Down Triangle) - Make it larger and remove the circle */
+        /* Send Button (Upside Down Triangle) */
         .triangle {
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 40px solid black; /* Make triangle larger to match input field height */
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid black; /* Match the height of the input field */
             cursor: pointer;
         }
 
@@ -127,6 +126,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100%; /* Aligns the triangle with the input field height */
         }
 
         /* Logo Positioned Significantly Lower for Scroll Visibility */
