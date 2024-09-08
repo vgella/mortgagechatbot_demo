@@ -244,7 +244,7 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);
+                hljs.highlightElement(codeElement);  // Syntax highlighting for code
             } else {
                 messageElement.textContent = text;
             }
@@ -255,9 +255,11 @@
 
         // Function to reapply syntax highlighting to all code blocks
         function reapplySyntaxHighlighting() {
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
+            setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }, 100); // Timeout allows DOM to update before reapplying
         }
 
         // Function to handle submission of the coding task
