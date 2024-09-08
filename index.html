@@ -20,13 +20,14 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Prevents any overflow causing scroll */
+            overflow-y: scroll; /* Restores the ability to scroll down */
+            overflow-x: hidden; /* Removes any horizontal scroll */
         }
 
-        /* Chat Container to take up the full screen */
+        /* Chat Container to take up 75% of the window */
         #chat-container {
-            width: 100%;
-            max-width: 600px;
+            width: 75%; /* Wider chat container */
+            max-width: 900px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -89,7 +90,6 @@
             gap: 10px;
             color: black;
             position: relative;
-            max-width: 600px;
             padding: 10px;
             background-color: white;
         }
@@ -129,10 +129,10 @@
             height: 100%; /* Aligns the triangle with the input field height */
         }
 
-        /* Logo Positioned Significantly Lower for Scroll Visibility */
+        /* Logo Positioned Lower for Scroll Visibility */
         #logo-container {
-            position: absolute;
-            bottom: -200px; /* Moves logo down to require scrolling to see it */
+            position: relative;
+            margin-top: 300px; /* Moves logo down to require scrolling */
             right: 20px;
             z-index: 10;
         }
