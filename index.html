@@ -15,27 +15,24 @@
             font-family: 'Roboto', sans-serif;
             background-color: #ffffff;
             color: #000000;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-y: scroll; /* Restores the ability to scroll down */
-            overflow-x: hidden; /* Removes any horizontal scroll */
+            overflow: hidden; /* Prevents any overflow */
         }
 
-        /* Chat Container to take up 75% of the window */
+        /* Chat Container to take up the full window */
         #chat-container {
-            width: 75%; /* Wider chat container */
-            max-width: 900px;
+            width: 100%;
+            height: 100vh; /* Full window height */
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: flex-start;
-            padding: 20px;
+            align-items: center;
+            padding: 0;
             box-sizing: border-box;
-            overflow-y: auto;
-            height: calc(100vh - 120px); /* Adjusts height to fill most of the viewport */
         }
 
         #chat-box {
@@ -46,10 +43,10 @@
             gap: 15px; /* Add spacing between chat entries */
             color: white;
             background-color: #000000;
-            padding: 10px;
-            border-radius: 15px;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 0;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
             overflow-y: auto;
             word-wrap: break-word;
         }
@@ -89,9 +86,10 @@
             align-items: center;
             gap: 10px;
             color: black;
-            position: relative;
             padding: 10px;
             background-color: white;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
         }
 
         /* Main input field for "Describe the coding task..." */
@@ -121,24 +119,22 @@
             cursor: pointer;
         }
 
-        /* Send button container (no circle, just triangle) */
+        /* Send button container */
         .send-button-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%; /* Aligns the triangle with the input field height */
         }
 
-        /* Logo Positioned Lower for Scroll Visibility */
+        /* Logo Positioned Lower */
         #logo-container {
-            position: relative;
-            margin-top: 300px; /* Moves logo down to require scrolling */
+            position: absolute;
+            bottom: 20px;
             right: 20px;
-            z-index: 10;
         }
 
         #logo-container img {
-            width: 225px; /* 75% of original size */
+            width: 225px;
             height: auto;
             cursor: pointer;
         }
