@@ -7,6 +7,9 @@
     <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
     <!-- Import Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Include highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
 
     <style>
         body {
@@ -69,6 +72,16 @@
 
         .message.ai {
             align-self: flex-start;
+        }
+
+        .message pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
         }
 
         #input-container {
@@ -182,10 +195,21 @@
             });
 
         // Helper function to append messages to the chatbox
-        function appendMessage(sender, text) {
+        function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-            messageElement.textContent = text;
+
+            if (isCode) {
+                const preElement = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.textContent = text;
+                preElement.appendChild(codeElement);
+                messageElement.appendChild(preElement);
+                hljs.highlightElement(codeElement); // Apply syntax highlighting
+            } else {
+                messageElement.textContent = text;
+            }
+
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
         }
@@ -211,7 +235,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessage('AI', data.response);  // Append AI response to chat
+                    appendMessage('AI', data.response, true);  // Append AI response as code with syntax highlighting
                 })
                 .catch(error => {
                     console.error('Error:', error);
