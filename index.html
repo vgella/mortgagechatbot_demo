@@ -13,26 +13,28 @@
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
-            background-color: #ffffff;
+            background-color: #d3d3d3; /* Set page background to grey */
             color: #000000;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow: hidden; /* Prevents any overflow */
+            overflow-y: scroll; /* Allow scrolling */
         }
 
-        /* Chat Container to take up the full window */
+        /* Chat Container */
         #chat-container {
             width: 100%;
-            height: 100vh; /* Full window height */
+            max-width: 900px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            padding: 0;
+            justify-content: flex-start;
+            padding: 20px;
             box-sizing: border-box;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
         #chat-box {
@@ -44,9 +46,8 @@
             color: white;
             background-color: #000000;
             padding: 20px;
-            border-radius: 0;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
         }
@@ -115,7 +116,10 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-top: 40px solid black; /* Match the height of the input field */
+            border-top: 40px solid black;
+            position: relative;
+            left: -5px; /* Move the triangle 5px closer to the left */
+            outline: 3px solid white; /* Add a white 3px outline around the triangle */
             cursor: pointer;
         }
 
