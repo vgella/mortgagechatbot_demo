@@ -13,7 +13,7 @@
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
-            background-color: #d3d3d3; /* Set page background to grey */
+            background-color: #ff1493; /* Hot pink background */
             color: #000000;
             min-height: 100vh;
             display: flex;
@@ -31,7 +31,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 20px;
+            padding: 25px 20px 20px; /* Added 25px space above */
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -46,7 +46,7 @@
             color: white;
             background-color: #000000;
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 0; /* Removed rounded corners */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
@@ -54,12 +54,12 @@
 
         .message {
             padding: 10px;
-            border-radius: 15px;
             background-color: #f0f0f0;
             color: #000;
             word-wrap: break-word;
             max-width: 100%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #000; /* Hard corners for messages */
         }
 
         .message.user {
@@ -75,7 +75,6 @@
             background-color: #272822;
             color: #f8f8f2;
             padding: 10px;
-            border-radius: 10px;
             font-size: 14px;
             overflow-x: auto;
             white-space: pre-wrap;
@@ -88,12 +87,10 @@
             gap: 10px;
             color: black;
             padding: 10px;
-            background-color: white;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
+            background-color: transparent; /* Remove white background from input */
         }
 
-        /* Main input field for "Describe the coding task..." */
+        /* Main input field */
         .main-input-field {
             flex-grow: 1;
             padding: 15px;
@@ -102,7 +99,6 @@
             outline: none;
             background-color: #ffffff;
             color: #000000;
-            border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -118,8 +114,8 @@
             border-right: 20px solid transparent;
             border-top: 40px solid black;
             position: relative;
-            left: -5px; /* Move the triangle 5px closer to the left */
-            outline: 3px solid white; /* Add a white 3px outline around the triangle */
+            left: -5px;
+            outline: 3px solid white;
             cursor: pointer;
         }
 
@@ -130,10 +126,10 @@
             justify-content: center;
         }
 
-        /* Logo Positioned Lower */
+        /* Logo Positioned Far Below */
         #logo-container {
             position: absolute;
-            bottom: 20px;
+            bottom: -250px; /* Moves the logo far below the visible window */
             right: 20px;
         }
 
