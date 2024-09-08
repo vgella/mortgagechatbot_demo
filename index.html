@@ -66,6 +66,20 @@
             cursor: default;
         }
 
+        /* Rounded "+" Button */
+        #add-page-button {
+            border-radius: 15px; /* Rounded edges to match the tabs */
+            background-color: #d3d3d3;
+            border: 1px solid #888;
+            padding: 5px; /* Adjust the padding to match the design */
+            cursor: pointer;
+            height: 50%; /* Half the height of the tab bar */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 5px;
+        }
+
         /* Chat Container */
         #chat-container {
             width: 100%; 
@@ -279,13 +293,12 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        page: currentPage,  // Pass current page to the backend
                         message: codingTask  
                     }),
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessage('AI', data.response, true);  // Display AI response with syntax highlighting
+                    appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                 })
                 .catch(error => {
@@ -312,7 +325,6 @@
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
             chatHistories[`New Page ${pageCount}`] = [];
 
-            // Switch to new tab on click
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, `New Page ${pageCount}`);
             });
