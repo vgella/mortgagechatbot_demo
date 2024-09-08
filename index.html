@@ -29,22 +29,23 @@
             display: flex;
             width: 100%;
             background-color: #ff1493; /* Hot pink matching the background */
-            padding: 0; /* Remove padding */
+            padding: 0;
             box-sizing: border-box;
         }
 
         /* Tabs */
         .tab {
             padding: 10px 15px;
-            margin-right: 5px;
             background-color: #ffffff;
             border: 1px solid #888;
-            border-radius: 15px;
+            border-radius: 15px 15px 0 0;
             cursor: pointer;
             display: flex;
             align-items: center;
             color: black;
             transition: background-color 0.3s;
+            /* Remove gap between tabs */
+            margin-right: -1px;
         }
 
         .tab.active {
@@ -73,7 +74,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0; /* Removed padding from chat container */
+            padding: 0;
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -84,7 +85,7 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px; 
+            gap: 15px;
             color: white;
             background-color: #000000;
             padding: 20px;
