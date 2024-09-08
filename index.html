@@ -14,7 +14,7 @@
             margin: 0;  
             padding: 0; 
             font-family: 'Roboto', sans-serif;
-            background-color: #ffbfd3; /* Hot pink background */
+            background-color: #ffffff; /* White background */
             color: #000000;
             min-height: 100vh;
             display: flex;
@@ -28,7 +28,7 @@
         #tab-container {
             display: flex;
             width: 100%;
-            background-color: #ff1493; /* Hot pink matching the background */
+            background-color: #ffffff; /* White background matching the body */
             padding: 0;
             box-sizing: border-box;
         }
@@ -36,7 +36,7 @@
         /* Tabs */
         .tab {
             padding: 10px 15px;
-            background-color: #ffffff;
+            background-color: #d3d3d3; /* Grey for non-selected tabs */
             border: 1px solid #888;
             border-radius: 15px 15px 0 0;
             cursor: pointer;
@@ -44,13 +44,12 @@
             align-items: center;
             color: black;
             transition: background-color 0.3s;
-            /* Remove gap between tabs */
             margin-right: -1px;
         }
 
         .tab.active {
-            background-color: #ff1493;
-            color: #fff;
+            background-color: #ffffff; /* White for the selected tab */
+            color: #000;
         }
 
         .tab input {
@@ -178,7 +177,7 @@
     <!-- Tab Container -->
     <div id="tab-container">
         <!-- Tabs will be added here dynamically -->
-        <div class="tab active">
+        <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
         <button id="add-page-button">+</button>
@@ -312,7 +311,10 @@
 
         function setActiveTab(tab, pageName) {
             // Mark previous tab as inactive
-            document.querySelector('.tab.active').classList.remove('active');
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.classList.remove('active');
+            }
 
             // Mark current tab as active
             tab.classList.add('active');
@@ -331,6 +333,12 @@
                 appendMessage(msg.sender, msg.text);
             });
         }
+
+        // Fix for selecting first page initially
+        const firstTab = document.getElementById('new-page-1');
+        firstTab.addEventListener('click', () => {
+            setActiveTab(firstTab, 'New Page 1');
+        });
     </script>
 </body>
 </html>
