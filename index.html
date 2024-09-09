@@ -21,7 +21,6 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-y: scroll;
         }
 
         /* Tab Container */
@@ -68,11 +67,11 @@
 
         /* Rounded "+" Button */
         #add-page-button {
-            border-radius: 15px 15px 0 0; /* Top rounded, bottom sharp */
+            border-radius: 15px 15px 0 0;
             background-color: #000000;
             padding: 5px;
             cursor: pointer;
-            height: 50%; /* Half the height of the tab bar */
+            height: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -85,14 +84,13 @@
         /* Chat Container */
         #chat-container {
             width: 100%;
+            height: calc(100vh - 60px); /* Fill remaining height of window minus tab bar */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0;
             box-sizing: border-box;
             overflow-y: auto;
-            flex-grow: 1;
             position: relative;
         }
 
@@ -176,13 +174,12 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black; /* This creates an upwards-pointing triangle */
+            border-bottom: 40px solid black;
             position: relative;
             left: -5px;
             cursor: pointer;
             outline: 3px solid white;
         }
-
 
         /* Scrollable Logo Section */
         #logo-container {
@@ -203,7 +200,6 @@
 
     <!-- Tab Container -->
     <div id="tab-container">
-        <!-- Tabs will be added here dynamically -->
         <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
@@ -213,23 +209,18 @@
     <!-- Chat Interface Container -->
     <div id="chat-container">
 
-        <!-- Chat History / Chat Box -->
         <div id="chat-box">
             <img id="logo-overlay" src="white_eye_logo.svg" alt="White Eye Logo">
         </div>
 
-        <!-- Input Fields -->
         <div id="input-container">
-            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
-            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
         </div>
     </div>
 
-    <!-- Logo Section (Scrollable logo) -->
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
             <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
@@ -241,18 +232,16 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const logoOverlay = document.getElementById('logo-overlay');
+        const logoOverlay = document.getElementById('logo-overlay'); // New logo
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
         let syntaxHighlightTimeout;
 
-        // Store chat histories in an object with page names as keys
         const chatHistories = {
             'New Page 1': []
         };
 
-        // Fetch the user's IP address
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -262,7 +251,6 @@
                 console.error('Error fetching IP address:', error);
             });
 
-        // Helper function to append messages to the chatbox
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -273,21 +261,19 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);  // Syntax highlighting for code
+                hljs.highlightElement(codeElement);
             } else {
                 messageElement.textContent = text;
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; 
+            chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Hide logoOverlay when chat is not empty
             if (chatHistories[currentPage].length > 0) {
                 logoOverlay.style.display = 'none';
             }
         }
 
-        // Function to reapply syntax highlighting
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -296,16 +282,15 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
-            }, 100);  // Delay for DOM update
+            }, 100);
         }
 
-        // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
+                codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
@@ -316,7 +301,7 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  
+                        message: codingTask
                     }),
                 })
                 .then(response => response.json())
@@ -331,7 +316,6 @@
             }
         }
 
-        // Attach event listeners for sending messages
         sendButton.addEventListener('click', submitCodingTask);
         codingTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -339,7 +323,6 @@
             }
         });
 
-        // Tab Functionality: Create New Tab and Switch Between Tabs
         addPageButton.addEventListener('click', () => {
             pageCount++;
             const newTab = document.createElement('div');
@@ -369,7 +352,7 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; 
+            chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
@@ -377,9 +360,10 @@
 
             reapplySyntaxHighlighting();
 
-            // Show logo overlay if the chat is empty
             if (chatHistories[pageName].length === 0) {
                 logoOverlay.style.display = 'block';
+            } else {
+                logoOverlay.style.display = 'none';
             }
         }
 
@@ -388,7 +372,6 @@
             setActiveTab(firstTab, 'New Page 1');
         });
 
-        // Show logo overlay initially if the chat is empty
         if (chatHistories[currentPage].length === 0) {
             logoOverlay.style.display = 'block';
         }
