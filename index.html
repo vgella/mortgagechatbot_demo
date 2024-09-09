@@ -44,6 +44,7 @@
             color: black;
             transition: background-color 0.3s;
             margin-right: -1px;
+            border: none; /* Removed the black border/outline */
         }
 
         .tab.active {
@@ -58,7 +59,6 @@
             width: 100px;
             text-align: center;
             color: black;
-            font-weight: bold;
         }
 
         .tab input:disabled {
@@ -70,15 +70,14 @@
         #add-page-button {
             border-radius: 15px; /* Rounded edges to match the tabs */
             background-color: #d3d3d3;
-            border: none; /* Removed borders */
-            padding: 10px; /* Adjusted padding */
+            border: 1px solid #888;
+            padding: 5px; /* Adjust the padding to match the design */
             cursor: pointer;
-            height: 60px; /* Same height as the tabs */
+            height: 50%; /* Half the height of the tab bar */
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: -1px;
-            font-weight: bold;
+            margin-left: 5px;
         }
 
         /* Chat Container */
@@ -285,7 +284,6 @@
                 appendMessage('User', codingTask);
                 codingTaskInput.value = ''; 
 
-                // Ensure chat history for the current page is updated
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
                 fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
@@ -325,7 +323,7 @@
             newTab.classList.add('tab');
             newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-            chatHistories[`New Page ${pageCount}`] = [];  // Create an empty chat history for the new page
+            chatHistories[`New Page ${pageCount}`] = [];
 
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, `New Page ${pageCount}`);
@@ -344,8 +342,8 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = '';  // Clear current chat box
-            const history = chatHistories[pageName] || [];  // Get chat history for the selected page
+            chatBox.innerHTML = ''; 
+            const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
