@@ -78,8 +78,8 @@
             justify-content: center;
             margin-left: -1px;
             margin-top: 15px;
-            border: none; /* Removed black border */
             color: #ffffff;
+            border: none; /* Removed black border */
         }
 
         /* Chat Container */
@@ -93,6 +93,7 @@
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
+            position: relative;
         }
 
         #chat-box {
@@ -108,6 +109,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
+            position: relative;
         }
 
         /* Bubble styling for user/AI messages */
@@ -130,22 +132,6 @@
         .message.ai {
             align-self: flex-start;
             background-color: #ffffff;
-        }
-
-        /* Logo Overlay */
-        #logo-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #logo-overlay img {
-            width: 225px;
-            height: auto;
         }
 
         /* Input Field */
@@ -185,21 +171,25 @@
             position: relative;
             left: -5px;
             cursor: pointer;
-            outline: 3px solid white;
+            outline: none;
         }
 
         /* Logo Section */
         #logo-container {
-            position: relative;
-            margin-top: 20px;
-            right: 20px;
-            align-self: flex-end;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            z-index: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #logo-container img {
-            width: 225px;
+            width: 150px;
             height: auto;
-            cursor: pointer;
+            opacity: 0.4;
         }
     </style>
 </head>
@@ -216,8 +206,8 @@
 
     <!-- Chat Interface Container -->
     <div id="chat-container">
-        <!-- Logo Overlay (initially visible) -->
-        <div id="logo-overlay">
+        <!-- Logo overlay (Centered in the chat container) -->
+        <div id="logo-container">
             <img src="white_eye_logo.svg" alt="Logo">
         </div>
 
@@ -237,19 +227,12 @@
         </div>
     </div>
 
-    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
-    <div id="logo-container">
-        <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
-        </a>
-    </div>
-
     <script>
         const chatBox = document.getElementById('chat-box');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const logoOverlay = document.getElementById('logo-overlay');
+        const logoOverlay = document.getElementById('logo-container');
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -287,7 +270,12 @@
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; 
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Remove the logo when there's chat history
+            if (chatHistories[currentPage].length > 0) {
+                logoOverlay.style.display = 'none';
+            }
         }
 
         // Function to reapply syntax highlighting
@@ -312,28 +300,25 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                // Hide the logo when a message is sent
-                logoOverlay.style.display = 'none';
-
-                fetch('https://your-endpoint-url/chat', {
+                fetch('https://148c-34-23-132-38.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  
+                        message: codingTask
                     }),
                 })
-                .then(response => response.json())
-                .then(data => {
-                    appendMessage('AI', data.response, true);
-                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    appendMessage('AI', 'An error occurred while processing your request.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        appendMessage('AI', data.response, true);
+                        chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        appendMessage('AI', 'An error occurred while processing your request.');
+                    });
             }
         }
 
@@ -375,20 +360,13 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; 
+            chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
 
             reapplySyntaxHighlighting();
-
-            // Show logo if the chat history is empty
-            if (chatHistories[pageName].length === 0) {
-                logoOverlay.style.display = 'flex'; // Show the logo
-            } else {
-                logoOverlay.style.display = 'none'; // Hide the logo
-            }
         }
 
         const firstTab = document.getElementById('new-page-1');
