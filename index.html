@@ -72,13 +72,13 @@
             background-color: #000000;
             padding: 5px;
             cursor: pointer;
-            height: 50%;
+            height: 50%; /* Half the height of the tab bar */
             display: flex;
             align-items: center;
             justify-content: center;
             margin-left: -1px;
             margin-top: 15px;
-            border: none;
+            border: none; /* Removed black border */
             color: #ffffff;
         }
 
@@ -93,8 +93,6 @@
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
-            min-height: calc(100vh - 50px); /* Take up full height minus the tabs */
-            position: relative;
         }
 
         #chat-box {
@@ -110,25 +108,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
-            position: relative;
-        }
-
-        /* Logo centered in the chat container */
-        #logo-overlay {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Optional transparent overlay */
-        }
-
-        #logo-overlay img {
-            width: 200px;
-            height: auto;
         }
 
         /* Bubble styling for user/AI messages */
@@ -151,6 +130,22 @@
         .message.ai {
             align-self: flex-start;
             background-color: #ffffff;
+        }
+
+        /* Logo Overlay */
+        #logo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #logo-overlay img {
+            width: 225px;
+            height: auto;
         }
 
         /* Input Field */
@@ -186,13 +181,12 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black;
+            border-bottom: 40px solid black; /* This creates an upwards-pointing triangle */
             position: relative;
             left: -5px;
             cursor: pointer;
             outline: 3px solid white;
         }
-
 
         /* Logo Section */
         #logo-container {
@@ -222,8 +216,7 @@
 
     <!-- Chat Interface Container -->
     <div id="chat-container">
-
-        <!-- Logo Overlay -->
+        <!-- Logo Overlay (initially visible) -->
         <div id="logo-overlay">
             <img src="white_eye_logo.svg" alt="Logo">
         </div>
@@ -288,18 +281,13 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);
+                hljs.highlightElement(codeElement);  // Syntax highlighting for code
             } else {
                 messageElement.textContent = text;
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // Hide the logo after the first message is added
-            if (chatHistories[currentPage].length > 0) {
-                logoOverlay.style.display = 'none';
-            }
+            chatBox.scrollTop = chatBox.scrollHeight; 
         }
 
         // Function to reapply syntax highlighting
@@ -311,15 +299,9 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
-            }, 100);
+            }, 100);  // Delay for DOM update
         }
-        function toggleLogoOverlay() {
-            if (chatHistories[currentPage].length === 0) {
-                logoOverlay.style.display = 'flex'; // Show the logo if chat history is empty
-            } else {
-                logoOverlay.style.display = 'none'; // Hide the logo if there are messages
-            }
-        }
+
         // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
@@ -330,14 +312,17 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://148c-34-23-132-38.ngrok-free.app/chat', {
+                // Hide the logo when a message is sent
+                logoOverlay.style.display = 'none';
+
+                fetch('https://your-endpoint-url/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask
+                        message: codingTask  
                     }),
                 })
                 .then(response => response.json())
@@ -390,14 +375,20 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = '';
+            chatBox.innerHTML = ''; 
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
 
-            toggleLogoOverlay();
             reapplySyntaxHighlighting();
+
+            // Show logo if the chat history is empty
+            if (chatHistories[pageName].length === 0) {
+                logoOverlay.style.display = 'flex'; // Show the logo
+            } else {
+                logoOverlay.style.display = 'none'; // Hide the logo
+            }
         }
 
         const firstTab = document.getElementById('new-page-1');
