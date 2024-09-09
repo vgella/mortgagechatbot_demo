@@ -166,39 +166,45 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black;
+            border-bottom: 40px solid black; /* This creates an upwards-pointing triangle */
             position: relative;
             left: -5px;
             cursor: pointer;
             outline: 3px solid white;
         }
 
+        /* White Eye Logo overlay */
+        #white-eye-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: auto;
+            z-index: 1;
+            display: none;
+        }
+
         /* Logo Section */
         #logo-container {
             position: relative;
             margin-top: 60px;
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
+            right: 20px;
+            align-self: flex-end;
         }
 
         #logo-container img {
+            width: 225px;
+            height: auto;
             cursor: pointer;
         }
 
-        /* Footer Logos Styling */
-        #terms-logo {
-            width: 150px;
-            height: auto;
-        }
-
+        /* Litcode logo positioning */
         #litcode-logo {
-            width: 343px; /* Larger Litcode logo */
-            height: auto;
-        }
-
-        #thirdeye-logo {
-            width: 150px;
+            position: relative;
+            margin-top: -20px; /* Positioned similarly to thirdeye_experience logo */
+            left: 10px;
+            width: 343px; /* Increased size for better visibility */
             height: auto;
         }
     </style>
@@ -207,6 +213,7 @@
 
     <!-- Tab Container -->
     <div id="tab-container">
+        <!-- Tabs will be added here dynamically -->
         <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
@@ -215,31 +222,32 @@
 
     <!-- Chat Interface Container -->
     <div id="chat-container">
+        <!-- Chat History / Chat Box -->
         <div id="chat-box">
             <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
+            <!-- Chat messages will appear here -->
         </div>
 
+        <!-- Input Fields -->
         <div id="input-container">
+            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
+            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
         </div>
     </div>
 
-    <!-- Footer Logos Section -->
+    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
-        <!-- Terms and Agreement Logo -->
-        <img id="terms-logo" src="terms_and_agreement.svg" alt="Terms and Agreement Logo" onclick="openPopup('terms_and_agreement.txt', 'Terms and Agreement')"/>
-
-        <!-- Litcode Logo -->
-        <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
-
-        <!-- ThirdEye Experience Logo -->
         <a href="https://thirdeyeai.org" target="_blank">
-            <img id="thirdeye-logo" src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
+
+    <!-- Litcode Logo -->
+    <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
 
     <script>
         const chatBox = document.getElementById('chat-box');
@@ -252,10 +260,12 @@
         let pageCount = 1;
         let syntaxHighlightTimeout;
 
+        // Store chat histories in an object with page names as keys
         const chatHistories = {
             'New Page 1': []
         };
 
+        // Show the white eye logo initially if there is no chat history
         function toggleWhiteEyeLogo() {
             if (chatHistories[currentPage].length === 0) {
                 whiteEyeLogo.style.display = 'block';
@@ -264,6 +274,7 @@
             }
         }
 
+        // Fetch the user's IP address
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -273,6 +284,7 @@
                 console.error('Error fetching IP address:', error);
             });
 
+        // Helper function to append messages to the chatbox
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -283,7 +295,7 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);
+                hljs.highlightElement(codeElement);  // Syntax highlighting for code
             } else {
                 messageElement.textContent = text;
             }
@@ -293,6 +305,7 @@
             toggleWhiteEyeLogo();
         }
 
+        // Function to reapply syntax highlighting
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -301,16 +314,21 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
-            }, 100);
+            }, 100);  // Delay for DOM update
         }
 
+        // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
                 codingTaskInput.value = ''; 
+
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+
+                console.log("Submitted coding task:", codingTask, "to page:", currentPage);
+                console.log("Current chat history for", currentPage, ":", chatHistories[currentPage]);
 
                 fetch('https://cff9-34-23-132-38.ngrok-free.app/chat', {
                     method: 'POST',
@@ -327,37 +345,16 @@
                 .then(data => {
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    console.log("Received response:", data.response, "for page:", currentPage);
                 })
                 .catch(error => {
+                    console.error('Error:', error);
                     appendMessage('AI', 'An error occurred while processing your request.');
                 });
             }
         }
 
-        function openPopup(file, title) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
-                    popupWindow.document.write(`
-                        <html>
-                        <head><title>${title}</title></head>
-                        <body>
-                            <div class="popup-content">
-                                <h2>${title}</h2>
-                                <div>${data}</div>
-                                <button onclick="window.close()">Close</button>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    popupWindow.document.close();
-                })
-                .catch(error => {
-                    console.error('Error fetching the file:', error);
-                });
-        }
-
+        // Attach event listeners for sending messages
         sendButton.addEventListener('click', submitCodingTask);
         codingTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -365,6 +362,7 @@
             }
         });
 
+        // Tab Functionality: Create New Tab and Switch Between Tabs
         addPageButton.addEventListener('click', () => {
             pageCount++;
             const newTab = document.createElement('div');
@@ -372,9 +370,12 @@
             const newPageName = `New Page ${pageCount}`;
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" disabled />`;
 
+            console.log("Creating new tab:", newPageName);
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
 
+            // Initialize chat history for the new tab
             chatHistories[newPageName] = [];
+            console.log("Initialized chat history for:", newPageName);
             setActiveTab(newTab, newPageName);
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
@@ -393,10 +394,16 @@
 
             tab.classList.add('active');
             currentPage = pageName;
+            console.log("Switched to tab:", currentPage);
+            console.log("Current chat history for", currentPage, ":", chatHistories[currentPage]);
+
             loadChatHistory(pageName);
         }
 
         function loadChatHistory(pageName) {
+            console.log("Loading chat history for page:", pageName);
+            console.log("Chat history for", pageName, ":", chatHistories[pageName]);
+
             chatBox.innerHTML = ''; 
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
@@ -412,6 +419,7 @@
             setActiveTab(firstTab, 'New Page 1');
         });
 
+        // Initial check for white eye logo visibility
         toggleWhiteEyeLogo();
     </script>
 </body>
