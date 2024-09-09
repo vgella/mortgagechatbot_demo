@@ -297,7 +297,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             // Hide the logo after the first message is added
-            if (chatHistories[currentPage].length === 0) {
+            if (chatHistories[currentPage].length > 0) {
                 logoOverlay.style.display = 'none';
             }
         }
@@ -313,7 +313,13 @@
                 });
             }, 100);
         }
-
+        function toggleLogoOverlay() {
+            if (chatHistories[currentPage].length === 0) {
+                logoOverlay.style.display = 'flex'; // Show the logo if chat history is empty
+            } else {
+                logoOverlay.style.display = 'none'; // Hide the logo if there are messages
+            }
+        }
         // Function to handle submission of the coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
@@ -390,12 +396,7 @@
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
 
-            if (history.length === 0) {
-                logoOverlay.style.display = 'flex'; // Show the logo if no chat history
-            } else {
-                logoOverlay.style.display = 'none'; // Hide the logo if chat history exists
-            }
-
+            toggleLogoOverlay();
             reapplySyntaxHighlighting();
         }
 
