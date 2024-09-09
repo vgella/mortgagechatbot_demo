@@ -11,8 +11,8 @@
 
     <style>
         body {
-            margin: 0;  /* Remove body margin */
-            padding: 0; /* Remove body padding */
+            margin: 0;  
+            padding: 0; 
             font-family: 'Roboto', sans-serif;
             background-color: #ffffff; /* White background */
             color: #000000;
@@ -21,7 +21,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-y: scroll; /* Allow scrolling */
+            overflow-y: scroll; 
         }
 
         /* Tab Container */
@@ -31,7 +31,6 @@
             background-color: #ffffff; /* White background matching the body */
             padding: 0;
             box-sizing: border-box;
-            align-items: center; /* Center aligns the "+" button and tabs together */
         }
 
         /* Tabs */
@@ -43,10 +42,9 @@
             display: flex;
             align-items: center;
             color: black;
-            font-weight: bold; /* Make tab title bold */
             transition: background-color 0.3s;
             margin-right: -1px;
-            border: none; /* Removed border */
+            border: none; /* Removed the black border/outline */
         }
 
         .tab.active {
@@ -70,27 +68,26 @@
 
         /* Rounded "+" Button */
         #add-page-button {
-            border-radius: 15px 15px 0 0; /* Rounded edges to match the tabs */
+            border-radius: 15px; /* Rounded edges to match the tabs */
             background-color: #d3d3d3;
-            padding: 5px; 
+            border: 1px solid #888;
+            padding: 5px; /* Adjust the padding to match the design */
             cursor: pointer;
-            height: 100%; /* Same height as tabs */
+            height: 50%; /* Half the height of the tab bar */
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: -1px; /* Flush to the last tab */
-            font-weight: bold; /* Make the "+" button bold */
-            border: none; /* Removed border */
+            margin-left: 5px;
         }
 
         /* Chat Container */
         #chat-container {
-            width: 100%; /* Full width of the window */
+            width: 100%; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0; /* Removed padding above */
+            padding: 0;
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -101,24 +98,26 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Add spacing between chat entries */
+            gap: 15px;
             color: white;
             background-color: #000000;
             padding: 20px;
-            border-radius: 0; /* Removed rounded corners */
+            border-radius: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
         }
 
+        /* Bubble styling for user/AI messages */
         .message {
             padding: 10px;
             background-color: #f0f0f0;
             color: #000;
             word-wrap: break-word;
-            max-width: 100%;
+            max-width: 60%;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #000; /* Hard corners for messages */
+            border-radius: 15px;
+            margin-bottom: 10px;
         }
 
         .message.user {
@@ -128,17 +127,10 @@
 
         .message.ai {
             align-self: flex-start;
+            background-color: #ffffff;
         }
 
-        .message pre {
-            background-color: #272822;
-            color: #f8f8f2;
-            padding: 10px;
-            font-size: 14px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-
+        /* Input Field */
         #input-container {
             width: 100%;
             display: flex;
@@ -149,7 +141,6 @@
             background-color: transparent;
         }
 
-        /* Main input field */
         .main-input-field {
             flex-grow: 1;
             padding: 15px;
@@ -158,7 +149,7 @@
             outline: none;
             background-color: #ffffff;
             color: #000000;
-            border-radius: 15px; /* Rounded edges for the input field */
+            border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -175,23 +166,17 @@
             border-top: 40px solid black;
             position: relative;
             left: -5px;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* Shape the outline like a triangle */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             outline: 3px solid white;
             cursor: pointer;
         }
 
-        /* Send button container */
-        .send-button-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Logo Positioned Far Below */
+        /* Logo Section */
         #logo-container {
-            position: absolute;
-            bottom: -250px; /* Moves the logo far below the visible window */
+            position: relative; /* Relative to chat container */
+            margin-top: 20px;
             right: 20px;
+            align-self: flex-end;
         }
 
         #logo-container img {
@@ -205,17 +190,11 @@
 
     <!-- Tab Container -->
     <div id="tab-container">
-        <div class="tab" id="new-page-1">
+        <!-- Tabs will be added here dynamically -->
+        <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
-        <div class="tab" id="new-page-2">
-            <input type="text" value="New Page 2" class="tab-title" disabled />
-        </div>
-        <div class="tab" id="new-page-3">
-            <input type="text" value="New Page 3" class="tab-title" disabled />
-        </div>
-        <!-- Add Page Button -->
-        <div id="add-page-button">+</div>
+        <button id="add-page-button">+</button>
     </div>
 
     <!-- Chat Interface Container -->
@@ -250,12 +229,12 @@
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
         let userIp = '';
-        let pageCount = 3;
         let currentPage = 'New Page 1';
+        let pageCount = 1;
+
+        // Store chat histories in an object with page names as keys
         const chatHistories = {
-            'New Page 1': [],
-            'New Page 2': [],
-            'New Page 3': []
+            'New Page 1': []
         };
 
         // Fetch the user's IP address
@@ -279,13 +258,22 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement); // Apply syntax highlighting
+                hljs.highlightElement(codeElement);  // Syntax highlighting for code
             } else {
                 messageElement.textContent = text;
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the latest message
+            chatBox.scrollTop = chatBox.scrollHeight; 
+        }
+
+        // Function to reapply syntax highlighting
+        function reapplySyntaxHighlighting() {
+            setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }, 100);  // Delay for DOM update
         }
 
         // Function to handle submission of the coding task
@@ -294,9 +282,10 @@
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = '';  // Clear the input field
+                codingTaskInput.value = ''; 
 
-                // Send the coding task to the backend
+                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+
                 fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
@@ -304,12 +293,13 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  /* Changed to "message" */
+                        message: codingTask  
                     }),
                 })
                 .then(response => response.json())
                 .then(data => {
-                    appendMessage('AI', data.response, true);  // Append AI response as code with syntax highlighting
+                    appendMessage('AI', data.response, true);
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -326,51 +316,45 @@
             }
         });
 
-        // Handle adding a new page
-        addPageButton.addEventListener('click', function() {
+        // Tab Functionality: Create New Tab and Switch Between Tabs
+        addPageButton.addEventListener('click', () => {
             pageCount++;
-            const newPageId = `new-page-${pageCount}`;
-            chatHistories[newPageId] = [];
-
             const newTab = document.createElement('div');
             newTab.classList.add('tab');
-            newTab.id = newPageId;
+            newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
+            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
+            chatHistories[`New Page ${pageCount}`] = [];
 
-            const inputField = document.createElement('input');
-            inputField.type = 'text';
-            inputField.value = `New Page ${pageCount}`;
-            inputField.disabled = true;
-            newTab.appendChild(inputField);
-
-            newTab.addEventListener('click', function() {
-                selectTab(newPageId);
+            newTab.addEventListener('click', () => {
+                setActiveTab(newTab, `New Page ${pageCount}`);
             });
-
-            document.getElementById('add-page-button').before(newTab);
         });
 
-        // Function to select a tab
-        function selectTab(pageId) {
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-                tab.querySelector('input').disabled = true;
-            });
+        function setActiveTab(tab, pageName) {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.classList.remove('active');
+            }
 
-            const selectedTab = document.getElementById(pageId);
-            selectedTab.classList.add('active');
-            selectedTab.querySelector('input').disabled = false;
-
-            currentPage = pageId;
-            loadChatHistory(currentPage);
+            tab.classList.add('active');
+            currentPage = pageName;
+            loadChatHistory(pageName);
         }
 
-        // Load chat history for the selected page
-        function loadChatHistory(pageId) {
-            chatBox.innerHTML = '';
-            chatHistories[pageId].forEach(message => {
-                appendMessage(message.sender, message.text, message.isCode);
+        function loadChatHistory(pageName) {
+            chatBox.innerHTML = ''; 
+            const history = chatHistories[pageName] || [];
+            history.forEach(msg => {
+                appendMessage(msg.sender, msg.text, msg.isCode);
             });
+
+            reapplySyntaxHighlighting();
         }
+
+        const firstTab = document.getElementById('new-page-1');
+        firstTab.addEventListener('click', () => {
+            setActiveTab(firstTab, 'New Page 1');
+        });
     </script>
 </body>
 </html>
