@@ -238,6 +238,7 @@
         let pageCount = 1;
         let syntaxHighlightTimeout;
 
+        // Store chat histories for all tabs
         const chatHistories = {
             'New Page 1': []
         };
@@ -269,6 +270,7 @@
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            // Hide logo once messages are added
             if (chatHistories[currentPage].length > 0) {
                 logoOverlay.style.display = 'none';
             }
