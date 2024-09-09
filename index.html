@@ -94,6 +94,7 @@
             overflow-y: auto;
             flex-grow: 1;
             min-height: calc(100vh - 50px); /* Take up full height minus the tabs */
+            position: relative;
         }
 
         #chat-box {
@@ -109,6 +110,25 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
+            position: relative;
+        }
+
+        /* Logo centered in the chat container */
+        #logo-overlay {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Optional transparent overlay */
+        }
+
+        #logo-overlay img {
+            width: 200px;
+            height: auto;
         }
 
         /* Bubble styling for user/AI messages */
@@ -203,6 +223,11 @@
     <!-- Chat Interface Container -->
     <div id="chat-container">
 
+        <!-- Logo Overlay -->
+        <div id="logo-overlay">
+            <img src="white_eye_logo.svg" alt="Logo">
+        </div>
+
         <!-- Chat History / Chat Box -->
         <div id="chat-box">
             <!-- Chat messages will appear here -->
@@ -231,6 +256,7 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
+        const logoOverlay = document.getElementById('logo-overlay');
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -262,13 +288,18 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);  // Syntax highlighting for code
+                hljs.highlightElement(codeElement);
             } else {
                 messageElement.textContent = text;
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; 
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Hide the logo after the first message is added
+            if (chatHistories[currentPage].length === 0) {
+                logoOverlay.style.display = 'none';
+            }
         }
 
         // Function to reapply syntax highlighting
@@ -280,7 +311,7 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
-            }, 100);  // Delay for DOM update
+            }, 100);
         }
 
         // Function to handle submission of the coding task
@@ -289,7 +320,7 @@
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
+                codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
@@ -300,7 +331,7 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  
+                        message: codingTask
                     }),
                 })
                 .then(response => response.json())
@@ -353,11 +384,17 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; 
+            chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
+
+            if (history.length === 0) {
+                logoOverlay.style.display = 'flex'; // Show the logo if no chat history
+            } else {
+                logoOverlay.style.display = 'none'; // Hide the logo if chat history exists
+            }
 
             reapplySyntaxHighlighting();
         }
