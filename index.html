@@ -318,14 +318,15 @@
                 console.log("Submitted coding task:", codingTask, "to page:", currentPage);
                 console.log("Current chat history for", currentPage, ":", chatHistories[currentPage]);
 
-                fetch('https://148c-34-23-132-38.ngrok-free.app/chat', {
+                fetch('https://03bc-34-23-132-38.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask  
+                        message: codingTask,
+                        page: currentPage
                     }),
                 })
                 .then(response => response.json())
