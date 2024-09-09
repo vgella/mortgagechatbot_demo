@@ -11,24 +11,24 @@
 
     <style>
         body {
-            margin: 0;  
-            padding: 0; 
+            margin: 0;
+            padding: 0;
             font-family: 'Roboto', sans-serif;
-            background-color: #ffffff; /* White background */
+            background-color: #ffffff;
             color: #000000;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            overflow-y: scroll; 
+            overflow-y: scroll;
         }
 
         /* Tab Container */
         #tab-container {
             display: flex;
             width: 100%;
-            background-color: #ffffff; /* White background matching the body */
+            background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
         }
@@ -36,7 +36,7 @@
         /* Tabs */
         .tab {
             padding: 10px 15px;
-            background-color: #d3d3d3; /* Grey for non-selected tabs */
+            background-color: #d3d3d3;
             border-radius: 15px 15px 0 0;
             cursor: pointer;
             display: flex;
@@ -44,11 +44,11 @@
             color: black;
             transition: background-color 0.3s;
             margin-right: -1px;
-            border: none; /* Removed the black border/outline */
+            border: none;
         }
 
         .tab.active {
-            background-color: #ffffff; /* White for the selected tab */
+            background-color: #ffffff;
             color: #000;
         }
 
@@ -68,23 +68,21 @@
 
         /* Rounded "+" Button */
         #add-page-button {
-            border-radius: 15px; /* Rounded edges to match the tabs */
+            border-radius: 15px 15px 0 0; /* Top rounded, bottom sharp */
             background-color: #d3d3d3;
-            border: 1px solid #888;
-            padding: 5px; /* Adjust the padding to match the design */
+            padding: 5px;
             cursor: pointer;
+            height: 50%; /* Half the height of the tab bar */
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Move the button down and flush to the rightmost tab */
-            margin-left: -1px; 
-            margin-top: 10px; /* Adjusted to align with the bottom of the tabs */
-            height: auto; /* Ensure the button height remains the same */
+            margin-left: 5px;
+            border: none; /* Removed black border */
         }
 
         /* Chat Container */
         #chat-container {
-            width: 100%; 
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -175,7 +173,7 @@
 
         /* Logo Section */
         #logo-container {
-            position: relative; /* Relative to chat container */
+            position: relative;
             margin-top: 20px;
             right: 20px;
             align-self: flex-end;
@@ -233,6 +231,7 @@
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
+        let syntaxHighlightTimeout;
 
         // Store chat histories in an object with page names as keys
         const chatHistories = {
@@ -271,7 +270,10 @@
 
         // Function to reapply syntax highlighting
         function reapplySyntaxHighlighting() {
-            setTimeout(() => {
+            if (syntaxHighlightTimeout) {
+                clearTimeout(syntaxHighlightTimeout);
+            }
+            syntaxHighlightTimeout = setTimeout(() => {
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
@@ -333,6 +335,10 @@
         });
 
         function setActiveTab(tab, pageName) {
+            if (syntaxHighlightTimeout) {
+                clearTimeout(syntaxHighlightTimeout);
+            }
+
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.classList.remove('active');
