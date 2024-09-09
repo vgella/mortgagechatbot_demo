@@ -73,11 +73,13 @@
             border: 1px solid #888;
             padding: 5px; /* Adjust the padding to match the design */
             cursor: pointer;
-            height: 50%; /* Half the height of the tab bar */
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 5px;
+            /* Move the button down and flush to the rightmost tab */
+            margin-left: -1px; 
+            margin-top: 10px; /* Adjusted to align with the bottom of the tabs */
+            height: auto; /* Ensure the button height remains the same */
         }
 
         /* Chat Container */
