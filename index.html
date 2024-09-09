@@ -198,7 +198,18 @@
             height: auto;
             cursor: pointer;
         }
+        #terms-logo-container {
+            position: relative;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
+        #terms-logo-container img {
+            cursor: pointer;
+            width: 225px;
+            height: auto;
+        }
         /* Litcode logo positioning */
         #litcode-logo {
             position: relative;
@@ -245,7 +256,11 @@
             <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
-
+    <div id="terms-logo-container">
+        <img src="terms_and_agreement.svg" alt="Terms and Agreement Logo" 
+             onclick="openPopup('terms_and_agreement.txt', 'Terms and Agreement')" />
+    </div>
+    
     <!-- Litcode Logo -->
     <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
 
@@ -418,7 +433,29 @@
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
-
+         function openPopup(file, title) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
+                    popupWindow.document.write(`
+                        <html>
+                        <head><title>${title}</title></head>
+                        <body>
+                            <div class="popup-content">
+                                <h2>${title}</h2>
+                                <div>${data}</div>
+                                <button onclick="window.close()">Close</button>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    popupWindow.document.close();
+                })
+                .catch(error => {
+                    console.error('Error fetching the file:', error);
+                });
+            }
         // Initial check for white eye logo visibility
         toggleWhiteEyeLogo();
     </script>
