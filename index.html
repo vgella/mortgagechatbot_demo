@@ -79,7 +79,7 @@
             margin-left: -1px;
             margin-top: 15px;
             color: #ffffff;
-            border: none; /* Removed black border */
+            border: none;
         }
 
         /* Chat Container */
@@ -110,6 +110,15 @@
             overflow-y: auto;
             word-wrap: break-word;
             position: relative;
+        }
+
+        /* Logo Overlay for Empty Chat */
+        #logo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden once chat begins */
         }
 
         /* Bubble styling for user/AI messages */
@@ -171,25 +180,22 @@
             position: relative;
             left: -5px;
             cursor: pointer;
-            outline: none;
+            outline: 3px solid white;
         }
 
-        /* Logo Section */
+
+        /* Scrollable Logo Section */
         #logo-container {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -40%);
-            z-index: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
+            margin-top: 20px;
+            right: 20px;
+            align-self: flex-end;
         }
 
         #logo-container img {
-            width: 150px;
+            width: 225px;
             height: auto;
-            opacity: 0.4;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -206,14 +212,10 @@
 
     <!-- Chat Interface Container -->
     <div id="chat-container">
-        <!-- Logo overlay (Centered in the chat container) -->
-        <div id="logo-container">
-            <img src="white_eye_logo.svg" alt="Logo">
-        </div>
 
         <!-- Chat History / Chat Box -->
         <div id="chat-box">
-            <!-- Chat messages will appear here -->
+            <img id="logo-overlay" src="white_eye_logo.svg" alt="White Eye Logo">
         </div>
 
         <!-- Input Fields -->
@@ -227,12 +229,19 @@
         </div>
     </div>
 
+    <!-- Logo Section (Scrollable logo) -->
+    <div id="logo-container">
+        <a href="https://thirdeyeai.org" target="_blank">
+            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+        </a>
+    </div>
+
     <script>
         const chatBox = document.getElementById('chat-box');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const logoOverlay = document.getElementById('logo-container');
+        const logoOverlay = document.getElementById('logo-overlay');
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -270,9 +279,9 @@
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.scrollTop = chatBox.scrollHeight; 
 
-            // Remove the logo when there's chat history
+            // Hide logoOverlay when chat is not empty
             if (chatHistories[currentPage].length > 0) {
                 logoOverlay.style.display = 'none';
             }
@@ -296,7 +305,7 @@
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = '';
+                codingTaskInput.value = ''; 
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
@@ -307,18 +316,18 @@
                     },
                     body: JSON.stringify({
                         ip_address: userIp,
-                        message: codingTask
+                        message: codingTask  
                     }),
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        appendMessage('AI', data.response, true);
-                        chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        appendMessage('AI', 'An error occurred while processing your request.');
-                    });
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage('AI', data.response, true);
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    appendMessage('AI', 'An error occurred while processing your request.');
+                });
             }
         }
 
@@ -360,19 +369,29 @@
         }
 
         function loadChatHistory(pageName) {
-            chatBox.innerHTML = '';
+            chatBox.innerHTML = ''; 
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
 
             reapplySyntaxHighlighting();
+
+            // Show logo overlay if the chat is empty
+            if (chatHistories[pageName].length === 0) {
+                logoOverlay.style.display = 'block';
+            }
         }
 
         const firstTab = document.getElementById('new-page-1');
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
+
+        // Show logo overlay initially if the chat is empty
+        if (chatHistories[currentPage].length === 0) {
+            logoOverlay.style.display = 'block';
+        }
     </script>
 </body>
 </html>
