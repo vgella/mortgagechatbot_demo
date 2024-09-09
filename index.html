@@ -1,134 +1,362 @@
-<script>
-    const chatBox = document.getElementById('chat-box');
-    const codingTaskInput = document.getElementById('coding-task-input');
-    const sendButton = document.getElementById('send-button');
-    const addPageButton = document.getElementById('add-page-button');
-    let userIp = '';
-    let currentPage = 'New Page 1';
-    let pageCount = 1;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Litcode by thirdeye</title>
+    <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
+    <!-- Include highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
 
-    // Store chat histories in an object with page names as keys
-    const chatHistories = {
-        'New Page 1': []
-    };
-
-    // Fetch the user's IP address
-    fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-            userIp = data.ip;
-        })
-        .catch(error => {
-            console.error('Error fetching IP address:', error);
-        });
-
-    // Helper function to append messages to the chatbox
-    function appendMessage(sender, text, isCode = false) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-
-        if (isCode) {
-            const preElement = document.createElement('pre');
-            const codeElement = document.createElement('code');
-            codeElement.textContent = text;
-            preElement.appendChild(codeElement);
-            messageElement.appendChild(preElement);
-            hljs.highlightElement(codeElement);  // Syntax highlighting for code
-        } else {
-            messageElement.textContent = text;
+    <style>
+        body {
+            margin: 0;  
+            padding: 0; 
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff; /* White background */
+            color: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow-y: scroll; 
         }
 
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight; 
-    }
+        /* Tab Container */
+        #tab-container {
+            display: flex;
+            width: 100%;
+            background-color: #ffffff; /* White background matching the body */
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    // Function to reapply syntax highlighting
-    function reapplySyntaxHighlighting() {
-        setTimeout(() => {
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-        }, 100);  // Delay for DOM update
-    }
+        /* Tabs */
+        .tab {
+            padding: 10px 15px;
+            background-color: #d3d3d3; /* Grey for non-selected tabs */
+            border-radius: 15px 15px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: black;
+            transition: background-color 0.3s;
+            margin-right: -1px;
+        }
 
-    // Function to handle submission of the coding task
-    function submitCodingTask() {
-        const codingTask = codingTaskInput.value;
+        .tab.active {
+            background-color: #ffffff; /* White for the selected tab */
+            color: #000;
+        }
 
-        if (codingTask) {
-            appendMessage('User', codingTask);
-            codingTaskInput.value = ''; 
+        .tab input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100px;
+            text-align: center;
+            color: black;
+            font-weight: bold;
+        }
 
-            // Ensure chat history for the current page is updated
-            chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+        .tab input:disabled {
+            color: black;
+            cursor: default;
+        }
 
-            fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ip_address: userIp,
-                    message: codingTask  
-                }),
-            })
+        /* Rounded "+" Button */
+        #add-page-button {
+            border-radius: 15px; /* Rounded edges to match the tabs */
+            background-color: #d3d3d3;
+            border: none; /* Removed borders */
+            padding: 10px; /* Adjusted padding */
+            cursor: pointer;
+            height: 60px; /* Same height as the tabs */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: -1px;
+            font-weight: bold;
+        }
+
+        /* Chat Container */
+        #chat-container {
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        #chat-box {
+            flex-grow: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+            background-color: #000000;
+            padding: 20px;
+            border-radius: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            word-wrap: break-word;
+        }
+
+        /* Bubble styling for user/AI messages */
+        .message {
+            padding: 10px;
+            background-color: #f0f0f0;
+            color: #000;
+            word-wrap: break-word;
+            max-width: 60%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #e0e0e0;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background-color: #ffffff;
+        }
+
+        /* Input Field */
+        #input-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: black;
+            padding: 10px;
+            background-color: transparent;
+        }
+
+        .main-input-field {
+            flex-grow: 1;
+            padding: 15px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            background-color: #ffffff;
+            color: #000000;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-input-field::placeholder {
+            color: #000000;
+        }
+
+        /* Send Button (Upside Down Triangle) */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid black;
+            position: relative;
+            left: -5px;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            outline: 3px solid white;
+            cursor: pointer;
+        }
+
+        /* Logo Section */
+        #logo-container {
+            position: relative; /* Relative to chat container */
+            margin-top: 20px;
+            right: 20px;
+            align-self: flex-end;
+        }
+
+        #logo-container img {
+            width: 225px;
+            height: auto;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Tab Container -->
+    <div id="tab-container">
+        <!-- Tabs will be added here dynamically -->
+        <div class="tab active" id="new-page-1">
+            <input type="text" value="New Page 1" class="tab-title" disabled />
+        </div>
+        <button id="add-page-button">+</button>
+    </div>
+
+    <!-- Chat Interface Container -->
+    <div id="chat-container">
+
+        <!-- Chat History / Chat Box -->
+        <div id="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <!-- Input Fields -->
+        <div id="input-container">
+            <!-- Describe the coding task field -->
+            <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
+            <!-- Send button (triangle) -->
+            <div class="send-button-container" id="send-button">
+                <div class="triangle"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
+    <div id="logo-container">
+        <a href="https://thirdeyeai.org" target="_blank">
+            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+        </a>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const codingTaskInput = document.getElementById('coding-task-input');
+        const sendButton = document.getElementById('send-button');
+        const addPageButton = document.getElementById('add-page-button');
+        let userIp = '';
+        let currentPage = 'New Page 1';
+        let pageCount = 1;
+
+        // Store chat histories in an object with page names as keys
+        const chatHistories = {
+            'New Page 1': []
+        };
+
+        // Fetch the user's IP address
+        fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
-                appendMessage('AI', data.response, true);
-                chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                userIp = data.ip;
             })
             .catch(error => {
-                console.error('Error:', error);
-                appendMessage('AI', 'An error occurred while processing your request.');
+                console.error('Error fetching IP address:', error);
             });
+
+        // Helper function to append messages to the chatbox
+        function appendMessage(sender, text, isCode = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
+
+            if (isCode) {
+                const preElement = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.textContent = text;
+                preElement.appendChild(codeElement);
+                messageElement.appendChild(preElement);
+                hljs.highlightElement(codeElement);  // Syntax highlighting for code
+            } else {
+                messageElement.textContent = text;
+            }
+
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; 
         }
-    }
 
-    // Attach event listeners for sending messages
-    sendButton.addEventListener('click', submitCodingTask);
-    codingTaskInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            submitCodingTask();
+        // Function to reapply syntax highlighting
+        function reapplySyntaxHighlighting() {
+            setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }, 100);  // Delay for DOM update
         }
-    });
 
-    // Tab Functionality: Create New Tab and Switch Between Tabs
-    addPageButton.addEventListener('click', () => {
-        pageCount++;
-        const newTab = document.createElement('div');
-        newTab.classList.add('tab');
-        newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
-        document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-        chatHistories[`New Page ${pageCount}`] = [];  // Create an empty chat history for the new page
+        // Function to handle submission of the coding task
+        function submitCodingTask() {
+            const codingTask = codingTaskInput.value;
 
-        newTab.addEventListener('click', () => {
-            setActiveTab(newTab, `New Page ${pageCount}`);
+            if (codingTask) {
+                appendMessage('User', codingTask);
+                codingTaskInput.value = ''; 
+
+                // Ensure chat history for the current page is updated
+                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+
+                fetch('https://070f-34-126-156-247.ngrok-free.app/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ip_address: userIp,
+                        message: codingTask  
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage('AI', data.response, true);
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    appendMessage('AI', 'An error occurred while processing your request.');
+                });
+            }
+        }
+
+        // Attach event listeners for sending messages
+        sendButton.addEventListener('click', submitCodingTask);
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
         });
-    });
 
-    function setActiveTab(tab, pageName) {
-        const activeTab = document.querySelector('.tab.active');
-        if (activeTab) {
-            activeTab.classList.remove('active');
-        }
+        // Tab Functionality: Create New Tab and Switch Between Tabs
+        addPageButton.addEventListener('click', () => {
+            pageCount++;
+            const newTab = document.createElement('div');
+            newTab.classList.add('tab');
+            newTab.innerHTML = `<input type="text" value="New Page ${pageCount}" class="tab-title" disabled />`;
+            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
+            chatHistories[`New Page ${pageCount}`] = [];  // Create an empty chat history for the new page
 
-        tab.classList.add('active');
-        currentPage = pageName;
-        loadChatHistory(pageName);
-    }
-
-    function loadChatHistory(pageName) {
-        chatBox.innerHTML = '';  // Clear current chat box
-        const history = chatHistories[pageName] || [];  // Get chat history for the selected page
-        history.forEach(msg => {
-            appendMessage(msg.sender, msg.text, msg.isCode);
+            newTab.addEventListener('click', () => {
+                setActiveTab(newTab, `New Page ${pageCount}`);
+            });
         });
 
-        reapplySyntaxHighlighting();
-    }
+        function setActiveTab(tab, pageName) {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.classList.remove('active');
+            }
 
-    const firstTab = document.getElementById('new-page-1');
-    firstTab.addEventListener('click', () => {
-        setActiveTab(firstTab, 'New Page 1');
-    });
-</script>
+            tab.classList.add('active');
+            currentPage = pageName;
+            loadChatHistory(pageName);
+        }
+
+        function loadChatHistory(pageName) {
+            chatBox.innerHTML = '';  // Clear current chat box
+            const history = chatHistories[pageName] || [];  // Get chat history for the selected page
+            history.forEach(msg => {
+                appendMessage(msg.sender, msg.text, msg.isCode);
+            });
+
+            reapplySyntaxHighlighting();
+        }
+
+        const firstTab = document.getElementById('new-page-1');
+        firstTab.addEventListener('click', () => {
+            setActiveTab(firstTab, 'New Page 1');
+        });
+    </script>
+</body>
+</html>
