@@ -339,7 +339,7 @@
             // Initialize chat history for the new tab
             chatHistories[newPageName] = [];
             console.log("Initialized chat history for:", newPageName);
-            SetActiveTab(newTab, newPageName);
+            setActiveTab(newTab, newPageName);
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
             });
