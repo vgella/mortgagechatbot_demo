@@ -166,7 +166,7 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black; /* This creates an upwards-pointing triangle */
+            border-bottom: 40px solid black;
             position: relative;
             left: -5px;
             cursor: pointer;
@@ -188,7 +188,7 @@
         /* Logo Section */
         #logo-container {
             position: relative;
-            margin-top: 60px;
+            margin-top: 20px;
             right: 20px;
             align-self: flex-end;
         }
@@ -199,13 +199,51 @@
             cursor: pointer;
         }
 
-        /* Litcode logo positioning */
-        #litcode-logo {
-            position: relative;
-            margin-top: -20px; /* Positioned similarly to thirdeye_experience logo */
-            left: 10px;
-            width: 343px; /* Increased size for better visibility */
+        #terms-logo {
+            cursor: pointer;
+            width: 200px; /* Adjust the size as needed */
             height: auto;
+        }
+
+        /* Popup Window for Terms */
+        #popup-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        #popup-content {
+            background: white;
+            padding: 20px;
+            max-width: 500px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        #popup-content h2 {
+            margin-top: 0;
+        }
+
+        #popup-content pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #close-popup {
+            margin-top: 10px;
+            cursor: pointer;
+            padding: 5px;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -239,15 +277,25 @@
         </div>
     </div>
 
-    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
+    <!-- Logos Section -->
     <div id="logo-container">
+        <!-- Terms and Agreement Logo -->
+        <img id="terms-logo" src="terms_and_agreement.svg" alt="Terms and Agreement Logo" />
+
+        <!-- Existing Logo -->
         <a href="https://thirdeyeai.org" target="_blank">
             <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
 
-    <!-- Litcode Logo -->
-    <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
+    <!-- Popup Window for Terms -->
+    <div id="popup-container">
+        <div id="popup-content">
+            <h2>Terms and Agreement</h2>
+            <pre id="terms-content"></pre>
+            <button id="close-popup">Close</button>
+        </div>
+    </div>
 
     <script>
         const chatBox = document.getElementById('chat-box');
@@ -255,6 +303,9 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
+        const popupContainer = document.getElementById('popup-container');
+        const termsContent = document.getElementById('terms-content');
+        const closePopupButton = document.getElementById('close-popup');
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -421,6 +472,25 @@
 
         // Initial check for white eye logo visibility
         toggleWhiteEyeLogo();
+
+        // Terms Logo - show popup on click
+        const termsLogo = document.getElementById('terms-logo');
+        termsLogo.addEventListener('click', () => {
+            fetch('/mnt/data/terms_and_agreement.txt')
+                .then(response => response.text())
+                .then(data => {
+                    termsContent.textContent = data;
+                    popupContainer.style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error fetching terms:', error);
+                });
+        });
+
+        // Close popup
+        closePopupButton.addEventListener('click', () => {
+            popupContainer.style.display = 'none';
+        });
     </script>
 </body>
 </html>
