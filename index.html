@@ -45,26 +45,15 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
+            margin-top: 10px; /* Added margin to prevent overlap with the logo */
         }
 
+        /* Adjust tab active state */
         .tab.active {
             background-color: #ffffff;
             color: #000;
             transform: translateY(-5px); /* Slight upward movement for active tab */
-        }
-
-        .tab input {
-            border: none;
-            background: none;
-            outline: none;
-            width: 100px;
-            text-align: center;
-            color: black;
-        }
-
-        .tab input:disabled {
-            color: black;
-            cursor: default;
+            z-index: 1; /* Ensures the active tab is above others */
         }
 
         /* Rounded "+" Button */
@@ -78,9 +67,10 @@
             align-items: center;
             justify-content: center;
             margin-left: -1px;
-            margin-top: 15px;
+            margin-top: 20px; /* Added margin to give space between tabs and button */
             border: none;
             color: #ffffff;
+            z-index: 1; /* Ensures the + button stays above */
         }
 
         /* Chat Container */
@@ -90,14 +80,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 100px); /* Full height minus space for tabs and input */
             box-sizing: border-box;
-            overflow-y: auto;
             flex-grow: 1;
+            padding-bottom: 20px; /* Adds space at the bottom for better visibility */
         }
 
+        /* Chat Box (removed height constraints) */
         #chat-box {
-            flex-grow: 1;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -107,7 +96,6 @@
             padding: 20px;
             border-radius: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
             word-wrap: break-word;
             position: relative;
         }
@@ -168,6 +156,15 @@
         }
 
         /* Send Button (Upside Down Triangle) */
+        .send-button-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0; /* Ensure no padding around the triangle */
+            background: none; /* Remove any background color */
+            border: none; /* Remove any borders */
+        }
+
         .triangle {
             width: 0;
             height: 0;
@@ -177,7 +174,7 @@
             position: relative;
             left: -5px;
             cursor: pointer;
-            outline: 3px solid white;
+            outline: none;
             transition: transform 0.3s ease; /* Button hover animation */
         }
 
@@ -220,12 +217,13 @@
         /* Litcode logo positioning */
         #litcode-logo {
             position: relative;
-            margin-top: 5px; /* Positioned similarly to thirdeye_experience logo */
-            width: 343px; /* Increased size for better visibility */
+            margin-top: 25px; /* Added more space above the tabs */
+            width: 343px;
             height: auto;
             display: block;
             margin-left: auto;
             margin-right: auto;
+            z-index: 0; /* Ensure the logo is behind the tabs */
         }
 
         /* Footer Links */
@@ -301,7 +299,7 @@
     <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
+            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
 
@@ -362,10 +360,14 @@
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth' // Smooth scrolling when new messages are added
+            adjustChatContainerSize();  // Adjust chat box size when a new message is added
+
+            // Scroll smoothly to the new content
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
             });
+
             toggleWhiteEyeLogo();
         }
 
@@ -381,45 +383,11 @@
             }, 100);  // Delay for DOM update
         }
 
-        // Function to handle submission of the coding task
-        function submitCodingTask() {
-            const codingTask = codingTaskInput.value;
-
-            if (codingTask) {
-                appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
-
-                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
-
-                fetch('https://209c-35-204-89-29.ngrok-free.app/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ip_address: userIp,
-                        message: codingTask,
-                        page: currentPage
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    appendMessage('AI', data.response, true);
-                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                })
-                .catch(error => {
-                    appendMessage('AI', 'An error occurred while processing your request.');
-                });
-            }
+        // Adjust the chat container size dynamically based on chat content
+        function adjustChatContainerSize() {
+            const chatBoxHeight = chatBox.scrollHeight;  // Get the actual height of the content in the chat box
+            chatBox.style.height = `${chatBoxHeight}px`;  // Set the chat-box height to match the content
         }
-
-        // Attach event listeners for sending messages
-        sendButton.addEventListener('click', submitCodingTask);
-        codingTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                submitCodingTask();
-            }
-        });
 
         // Tab Functionality: Create New Tab and Switch Between Tabs
         addPageButton.addEventListener('click', () => {
@@ -440,10 +408,6 @@
         });
 
         function setActiveTab(tab, pageName) {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.classList.remove('active');
@@ -451,8 +415,9 @@
 
             tab.classList.add('active');
             currentPage = pageName;
-
             loadChatHistory(pageName);
+
+            adjustChatContainerSize();  // Adjust size based on the content of the newly active page
         }
 
         function loadChatHistory(pageName) {
