@@ -56,7 +56,7 @@
             z-index: 1; /* Ensures the active tab is above others */
         }
 
-        /* Rounded "+" Button */
+        /* Adjust the + button */
         #add-page-button {
             border-radius: 15px 15px 0 0;
             background-color: #000000;
@@ -80,13 +80,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
+            height: calc(100vh - 100px); /* Full height minus space for tabs and input */
             box-sizing: border-box;
+            overflow-y: auto;
             flex-grow: 1;
-            padding-bottom: 20px; /* Adds space at the bottom for better visibility */
         }
 
-        /* Chat Box (removed height constraints) */
         #chat-box {
+            flex-grow: 1;
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -96,6 +97,7 @@
             padding: 20px;
             border-radius: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
             word-wrap: break-word;
             position: relative;
         }
@@ -170,9 +172,7 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black;
-            position: relative;
-            left: -5px;
+            border-bottom: 40px solid black; /* Creates the triangle */
             cursor: pointer;
             outline: none;
             transition: transform 0.3s ease; /* Button hover animation */
@@ -360,14 +360,10 @@
             }
 
             chatBox.appendChild(messageElement);
-            adjustChatContainerSize();  // Adjust chat box size when a new message is added
-
-            // Scroll smoothly to the new content
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth' // Smooth scrolling when new messages are added
             });
-
             toggleWhiteEyeLogo();
         }
 
@@ -383,11 +379,45 @@
             }, 100);  // Delay for DOM update
         }
 
-        // Adjust the chat container size dynamically based on chat content
-        function adjustChatContainerSize() {
-            const chatBoxHeight = chatBox.scrollHeight;  // Get the actual height of the content in the chat box
-            chatBox.style.height = `${chatBoxHeight}px`;  // Set the chat-box height to match the content
+        // Function to handle submission of the coding task
+        function submitCodingTask() {
+            const codingTask = codingTaskInput.value;
+
+            if (codingTask) {
+                appendMessage('User', codingTask);
+                codingTaskInput.value = ''; 
+
+                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+
+                fetch('https://209c-35-204-89-29.ngrok-free.app/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ip_address: userIp,
+                        message: codingTask,
+                        page: currentPage
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    appendMessage('AI', data.response, true);
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                })
+                .catch(error => {
+                    appendMessage('AI', 'An error occurred while processing your request.');
+                });
+            }
         }
+
+        // Attach event listeners for sending messages
+        sendButton.addEventListener('click', submitCodingTask);
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
+        });
 
         // Tab Functionality: Create New Tab and Switch Between Tabs
         addPageButton.addEventListener('click', () => {
@@ -408,6 +438,10 @@
         });
 
         function setActiveTab(tab, pageName) {
+            if (syntaxHighlightTimeout) {
+                clearTimeout(syntaxHighlightTimeout);
+            }
+
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.classList.remove('active');
@@ -415,9 +449,8 @@
 
             tab.classList.add('active');
             currentPage = pageName;
-            loadChatHistory(pageName);
 
-            adjustChatContainerSize();  // Adjust size based on the content of the newly active page
+            loadChatHistory(pageName);
         }
 
         function loadChatHistory(pageName) {
