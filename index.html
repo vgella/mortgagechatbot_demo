@@ -214,13 +214,17 @@
         /* Litcode logo positioning */
         #litcode-logo {
             position: relative;
-            margin-top: 49%; /* Positioned similarly to thirdeye_experience logo */
+            margin-top: 20px; /* Positioned similarly to thirdeye_experience logo */
             width: 343px; /* Increased size for better visibility */
             height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
 <body>
+    <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
 
     <!-- Tab Container -->
     <div id="tab-container">
@@ -262,7 +266,6 @@
     </div>
     
     <!-- Litcode Logo -->
-    <img id="litcode-logo" src="litcode_logo_letra.svg" alt="Litcode Logo">
 
     <script>
         const chatBox = document.getElementById('chat-box');
