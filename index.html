@@ -42,7 +42,7 @@
             display: flex;
             align-items: center;
             color: black;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
         }
@@ -50,6 +50,7 @@
         .tab.active {
             background-color: #ffffff;
             color: #000;
+            transform: translateY(-5px); /* Slight upward movement for active tab */
         }
 
         .tab input {
@@ -121,6 +122,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px;
             margin-bottom: 10px;
+            animation: fadeIn 0.5s ease-in-out; /* Fade in animation */
         }
 
         .message.user {
@@ -154,6 +156,11 @@
             color: #000000;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease; /* Smooth shadow on focus */
+        }
+
+        .main-input-field:focus {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow on focus */
         }
 
         .main-input-field::placeholder {
@@ -166,11 +173,16 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black; /* This creates an upwards-pointing triangle */
+            border-bottom: 40px solid black;
             position: relative;
             left: -5px;
             cursor: pointer;
             outline: 3px solid white;
+            transition: transform 0.3s ease; /* Button hover animation */
+        }
+
+        .triangle:hover {
+            transform: scale(1.1); /* Slight enlarge on hover */
         }
 
         /* White Eye Logo overlay */
@@ -182,7 +194,12 @@
             width: 200px;
             height: auto;
             z-index: 1;
-            display: none;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+        }
+
+        #white-eye-logo.visible {
+            opacity: 1;
         }
 
         /* Logo Section */
@@ -210,6 +227,8 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* Footer Links */
         .footer-links {
             text-align: center;
             position: relative;
@@ -231,6 +250,7 @@
             text-decoration: underline;
         }
 
+        /* Pop-up Content */
         .popup-content {
             padding: 20px;
             max-width: 600px;
@@ -238,6 +258,12 @@
             overflow-y: auto;
             white-space: pre-wrap;
             font-family: Arial, sans-serif;
+        }
+
+        /* Animation for message fade-in */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -275,14 +301,15 @@
     <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
+            <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
 
-    
-   <div class="footer-links">
+    <!-- Footer Links -->
+    <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
     </div>
+
     <script>
         const chatBox = document.getElementById('chat-box');
         const whiteEyeLogo = document.getElementById('white-eye-logo');
@@ -302,9 +329,9 @@
         // Show the white eye logo initially if there is no chat history
         function toggleWhiteEyeLogo() {
             if (chatHistories[currentPage].length === 0) {
-                whiteEyeLogo.style.display = 'block';
+                whiteEyeLogo.classList.add('visible');
             } else {
-                whiteEyeLogo.style.display = 'none';
+                whiteEyeLogo.classList.remove('visible');
             }
         }
 
@@ -335,7 +362,10 @@
             }
 
             chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth' // Smooth scrolling when new messages are added
+            });
             toggleWhiteEyeLogo();
         }
 
@@ -361,9 +391,6 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                console.log("Submitted coding task:", codingTask, "to page:", currentPage);
-                console.log("Current chat history for", currentPage, ":", chatHistories[currentPage]);
-
                 fetch('https://209c-35-204-89-29.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
@@ -379,10 +406,8 @@
                 .then(data => {
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    console.log("Received response:", data.response, "for page:", currentPage);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
                     appendMessage('AI', 'An error occurred while processing your request.');
                 });
             }
@@ -404,12 +429,10 @@
             const newPageName = `New Page ${pageCount}`;
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" disabled />`;
 
-            console.log("Creating new tab:", newPageName);
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
 
             // Initialize chat history for the new tab
             chatHistories[newPageName] = [];
-            console.log("Initialized chat history for:", newPageName);
             setActiveTab(newTab, newPageName);
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
@@ -428,16 +451,11 @@
 
             tab.classList.add('active');
             currentPage = pageName;
-            console.log("Switched to tab:", currentPage);
-            console.log("Current chat history for", currentPage, ":", chatHistories[currentPage]);
 
             loadChatHistory(pageName);
         }
 
         function loadChatHistory(pageName) {
-            console.log("Loading chat history for page:", pageName);
-            console.log("Chat history for", pageName, ":", chatHistories[pageName]);
-
             chatBox.innerHTML = ''; 
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
@@ -452,7 +470,8 @@
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
-         function openPopup(file, title) {
+
+        function openPopup(file, title) {
             fetch(file)
                 .then(response => response.text())
                 .then(data => {
@@ -474,7 +493,8 @@
                 .catch(error => {
                     console.error('Error fetching the file:', error);
                 });
-            }
+        }
+
         // Initial check for white eye logo visibility
         toggleWhiteEyeLogo();
     </script>
