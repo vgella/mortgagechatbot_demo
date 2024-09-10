@@ -222,6 +222,29 @@
             margin-left: auto;
             margin-right: auto;
         }
+        .footer-links {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-links a {
+            display: inline-block;
+            margin: 0 15px;
+            text-decoration: none;
+            color: black;
+            font-family: 'Times New Roman', serif; 
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .popup-content {
+            padding: 20px;
+            max-width: 600px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -261,13 +284,11 @@
             <img src="experience_thirdeye.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
-    <div id="terms-logo-container">
-        <img src="terms_and_agreement.svg" alt="Terms and Agreement Logo" 
-             onclick="openPopup('terms_and_agreement.txt', 'Terms and Agreement')" />
-    </div>
-    
-    <!-- Litcode Logo -->
 
+    
+   <div class="footer-links">
+        <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
+    </div>
     <script>
         const chatBox = document.getElementById('chat-box');
         const whiteEyeLogo = document.getElementById('white-eye-logo');
