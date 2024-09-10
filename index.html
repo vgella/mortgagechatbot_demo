@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litcode by thirdeye</title>
     <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
+    <!-- Include highlight.js for syntax highlighting -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
 
@@ -23,6 +24,7 @@
             overflow-y: scroll;
         }
 
+        /* Tab Container */
         #tab-container {
             display: flex;
             width: 100%;
@@ -31,6 +33,7 @@
             box-sizing: border-box;
         }
 
+        /* Tabs */
         .tab {
             padding: 10px 15px;
             background-color: #d3d3d3;
@@ -42,9 +45,9 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
-            margin-top: 10px;
+            margin-top: 10px; /* Added margin to prevent overlap with the logo */
         }
-
+        /* Tab input fields - remove borders and background */
         .tab input {
             border: none;
             background-color: transparent;
@@ -55,6 +58,7 @@
             width: 100px;
         }
 
+        /* Adjust tab active state */
         .tab.active {
             background-color: #ffffff;
             color: #000;
@@ -66,6 +70,7 @@
             z-index: 1;
         }
 
+        /* Adjust the + button */
         #add-page-button {
             border-radius: 15px 15px 0 0;
             background-color: #000000;
@@ -82,6 +87,7 @@
             z-index: 1;
         }
 
+        /* Chat Container */
         #chat-container {
             width: 100%;
             display: flex;
@@ -110,6 +116,7 @@
             position: relative;
         }
 
+        /* Bubble styling for user/AI messages */
         .message {
             padding: 10px;
             background-color: #f0f0f0;
@@ -132,6 +139,7 @@
             background-color: #ffffff;
         }
 
+        /* Input Field */
         #input-container {
             width: calc(100% - 20px);
             display: flex;
@@ -165,6 +173,7 @@
             color: #000000;
         }
 
+        /* Send Button (Upside Down Triangle) */
         .send-button-container {
             display: flex;
             align-items: center;
@@ -189,6 +198,7 @@
             transform: scale(1.1);
         }
 
+        /* White Eye Logo overlay */
         #white-eye-logo {
             position: absolute;
             top: 50%;
@@ -205,6 +215,7 @@
             opacity: 1;
         }
 
+        /* Logo Section */
         #logo-container {
             position: relative;
             top: 49px;
@@ -219,6 +230,7 @@
             cursor: pointer;
         }
 
+        /* Litcode logo positioning */
         #litcode-logo {
             position: relative;
             margin-top: 25px;
@@ -230,6 +242,7 @@
             z-index: 0;
         }
 
+        /* Footer Links */
         .footer-links {
             text-align: center;
             position: relative;
@@ -251,16 +264,30 @@
             text-decoration: underline;
         }
 
+        /* Pop-up Content */
+        .popup-content {
+            padding: 20px;
+            max-width: 600px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Animation for message fade-in */
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
 
-        .button-container {
+        /* Button Container */
+        #button-container {
+            position: absolute;
+            top: 20%;
+            left: 15%;
+            width: 70%;
             display: flex;
             justify-content: space-around;
-            width: 100%;
-            margin: 20px 0;
         }
 
         .chat-button {
@@ -281,38 +308,48 @@
 <body>
     <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
+    <!-- Tab Container -->
     <div id="tab-container">
+        <!-- Tabs will be added here dynamically -->
         <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
         <button id="add-page-button">+</button>
     </div>
 
+    <!-- Chat Interface Container -->
     <div id="chat-container">
+        <!-- Chat History / Chat Box -->
         <div id="chat-box">
             <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
+            <!-- Chat messages will appear here -->
         </div>
 
-        <div class="button-container" id="button-container">
-            <div class="chat-button" onclick="triggerMessage('create a cutting-edge stock market prediction machine learning model in python using pytorch and yahoofinance')">Stock Market Model</div>
+        <!-- Buttons -->
+        <div id="button-container">
             <div class="chat-button" onclick="triggerMessage('create the index.html file for a website resume')">Create Resume</div>
             <div class="chat-button" onclick="triggerMessage('Teach me the basics about using linux command line')">Linux Command Line</div>
         </div>
 
+        <!-- Input Fields -->
         <div id="input-container">
+            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
+            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
         </div>
     </div>
 
+    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
             <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
 
+    <!-- Footer Links -->
     <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
     </div>
@@ -322,6 +359,7 @@
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
+        const addPageButton = document.getElementById('add-page-button');
         const buttonContainer = document.getElementById('button-container');
         let userIp = '';
         let currentPage = 'New Page 1';
@@ -335,10 +373,10 @@
         function toggleWhiteEyeLogo() {
             if (chatHistories[currentPage].length === 0) {
                 whiteEyeLogo.classList.add('visible');
-                buttonContainer.style.display = 'flex';  // Show the buttons
+                buttonContainer.style.display = 'flex'; // Show buttons
             } else {
                 whiteEyeLogo.classList.remove('visible');
-                buttonContainer.style.display = 'none';  // Hide the buttons
+                buttonContainer.style.display = 'none'; // Hide buttons
             }
         }
 
@@ -380,7 +418,7 @@
                 if (i < message.length) {
                     codingTaskInput.value += message.charAt(i);
                     i++;
-                    setTimeout(typeNext, 150);
+                    setTimeout(typeNext, 50); // 50ms typing delay
                 } else if (callback) {
                     callback();
                 }
