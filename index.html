@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Litcode by thirdeye</title>
     <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
-    <!-- Include highlight.js for syntax highlighting -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
 
@@ -24,7 +23,6 @@
             overflow-y: scroll;
         }
 
-        /* Tab Container */
         #tab-container {
             display: flex;
             width: 100%;
@@ -33,7 +31,6 @@
             box-sizing: border-box;
         }
 
-        /* Tabs */
         .tab {
             padding: 10px 15px;
             background-color: #d3d3d3;
@@ -45,32 +42,30 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
-            margin-top: 10px; /* Added margin to prevent overlap with the logo */
-        }
-        /* Tab input fields - remove borders and background */
-        .tab input {
-            border: none;            /* Removes the border */
-            background-color: transparent; /* Makes background transparent */
-            outline: none;           /* Removes the outline when focused */
-            text-align: center;
-            font-size: 16px;         /* Adjust the font size for better visibility */
-            color: black;            /* Set text color to match other elements */
-            width: 100px;            /* Adjust the width as needed */
+            margin-top: 10px;
         }
 
-        /* Adjust tab active state */
+        .tab input {
+            border: none;
+            background-color: transparent;
+            outline: none;
+            text-align: center;
+            font-size: 16px;
+            color: black;
+            width: 100px;
+        }
+
         .tab.active {
             background-color: #ffffff;
             color: #000;
-            transform: translateY(-5px); /* Slight upward movement for active tab */
-            z-index: 1; /* Ensures the active tab is above others */
+            transform: translateY(-5px);
+            z-index: 1;
         }
         .tab:hover {
-            transform: translateY(-5px); /* Makes the tab rise slightly */
-            z-index: 1; /* Ensures the tab rises above others */
+            transform: translateY(-5px);
+            z-index: 1;
         }
 
-        /* Adjust the + button */
         #add-page-button {
             border-radius: 15px 15px 0 0;
             background-color: #000000;
@@ -81,20 +76,19 @@
             align-items: center;
             justify-content: center;
             margin-left: -1px;
-            margin-top: 25px; /* Added margin to give space between tabs and button */
+            margin-top: 25px;
             border: none;
             color: #ffffff;
-            z-index: 1; /* Ensures the + button stays above */
+            z-index: 1;
         }
 
-        /* Chat Container */
         #chat-container {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 100px); /* Full height minus space for tabs and input */
+            height: calc(100vh - 100px);
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -102,7 +96,7 @@
 
         #chat-box {
             flex-grow: 1;
-            width: calc(100% - 40px); /* Adjust the width to account for the 20px padding on each side */
+            width: calc(100% - 40px);
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -116,8 +110,6 @@
             position: relative;
         }
 
-
-        /* Bubble styling for user/AI messages */
         .message {
             padding: 10px;
             background-color: #f0f0f0;
@@ -127,7 +119,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px;
             margin-bottom: 10px;
-            animation: fadeIn 0.5s ease-in-out; /* Fade in animation */
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .message.user {
@@ -140,9 +132,8 @@
             background-color: #ffffff;
         }
 
-        /* Input Field */
         #input-container {
-            width: calc(100% - 20px); /* Adjust the width to account for 10px padding on each side */
+            width: calc(100% - 20px);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -152,7 +143,6 @@
             box-sizing: border-box;
             overflow-x: hidden;
         }
-
 
         .main-input-field {
             flex-grow: 1;
@@ -164,25 +154,24 @@
             color: #000000;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease; /* Smooth shadow on focus */
+            transition: box-shadow 0.3s ease;
         }
 
         .main-input-field:focus {
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow on focus */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         .main-input-field::placeholder {
             color: #000000;
         }
 
-        /* Send Button (Upside Down Triangle) */
         .send-button-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0; /* Ensure no padding around the triangle */
-            background: none; /* Remove any background color */
-            border: none; /* Remove any borders */
+            padding: 0;
+            background: none;
+            border: none;
         }
 
         .triangle {
@@ -190,17 +179,16 @@
             height: 0;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 40px solid black; /* Creates the triangle */
+            border-bottom: 40px solid black;
             cursor: pointer;
             outline: none;
-            transition: transform 0.3s ease; /* Button hover animation */
+            transition: transform 0.3s ease;
         }
 
         .triangle:hover {
-            transform: scale(1.1); /* Slight enlarge on hover */
+            transform: scale(1.1);
         }
 
-        /* White Eye Logo overlay */
         #white-eye-logo {
             position: absolute;
             top: 50%;
@@ -217,7 +205,6 @@
             opacity: 1;
         }
 
-        /* Logo Section */
         #logo-container {
             position: relative;
             top: 49px;
@@ -232,19 +219,17 @@
             cursor: pointer;
         }
 
-        /* Litcode logo positioning */
         #litcode-logo {
             position: relative;
-            margin-top: 25px; /* Added more space above the tabs */
+            margin-top: 25px;
             width: 343px;
             height: auto;
             display: block;
             margin-left: auto;
             margin-right: auto;
-            z-index: 0; /* Ensure the logo is behind the tabs */
+            z-index: 0;
         }
 
-        /* Footer Links */
         .footer-links {
             text-align: center;
             position: relative;
@@ -256,7 +241,7 @@
             margin: 0 15px;
             text-decoration: none;
             color: black;
-            font-family: 'Times New Roman', serif; 
+            font-family: 'Times New Roman', serif;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
@@ -266,62 +251,68 @@
             text-decoration: underline;
         }
 
-        /* Pop-up Content */
-        .popup-content {
-            padding: 20px;
-            max-width: 600px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Animation for message fade-in */
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .chat-button {
+            padding: 10px 20px;
+            border-radius: 15px;
+            background-color: #f0f0f0;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
 <body>
     <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
-    <!-- Tab Container -->
     <div id="tab-container">
-        <!-- Tabs will be added here dynamically -->
         <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
         <button id="add-page-button">+</button>
     </div>
 
-    <!-- Chat Interface Container -->
     <div id="chat-container">
-        <!-- Chat History / Chat Box -->
         <div id="chat-box">
             <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
-            <!-- Chat messages will appear here -->
         </div>
 
-        <!-- Input Fields -->
+        <div class="button-container" id="button-container">
+            <div class="chat-button" onclick="triggerMessage('create a cutting-edge stock market prediction machine learning model in python using pytorch and yahoofinance')">Stock Market Model</div>
+            <div class="chat-button" onclick="triggerMessage('create the index.html file for a website resume')">Create Resume</div>
+            <div class="chat-button" onclick="triggerMessage('Teach me the basics about using linux command line')">Linux Command Line</div>
+        </div>
+
         <div id="input-container">
-            <!-- Describe the coding task field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Describe the coding task..." />
-            <!-- Send button (triangle) -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
         </div>
     </div>
 
-    <!-- Logo Section (Clickable link to thirdeyeai.org) -->
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
             <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
         </a>
     </div>
 
-    <!-- Footer Links -->
     <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
     </div>
@@ -331,27 +322,26 @@
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
-        const addPageButton = document.getElementById('add-page-button');
+        const buttonContainer = document.getElementById('button-container');
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
         let syntaxHighlightTimeout;
 
-        // Store chat histories in an object with page names as keys
         const chatHistories = {
             'New Page 1': []
         };
 
-        // Show the white eye logo initially if there is no chat history
         function toggleWhiteEyeLogo() {
             if (chatHistories[currentPage].length === 0) {
                 whiteEyeLogo.classList.add('visible');
+                buttonContainer.style.display = 'flex';  // Show the buttons
             } else {
                 whiteEyeLogo.classList.remove('visible');
+                buttonContainer.style.display = 'none';  // Hide the buttons
             }
         }
 
-        // Fetch the user's IP address
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -361,7 +351,6 @@
                 console.error('Error fetching IP address:', error);
             });
 
-        // Helper function to append messages to the chatbox
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -372,7 +361,7 @@
                 codeElement.textContent = text;
                 preElement.appendChild(codeElement);
                 messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);  // Syntax highlighting for code
+                hljs.highlightElement(codeElement);
             } else {
                 messageElement.textContent = text;
             }
@@ -380,30 +369,36 @@
             chatBox.appendChild(messageElement);
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
-                behavior: 'smooth' // Smooth scrolling when new messages are added
+                behavior: 'smooth'
             });
             toggleWhiteEyeLogo();
         }
 
-        // Function to reapply syntax highlighting
-        function reapplySyntaxHighlighting() {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
+        function typeMessageSlowly(message, callback) {
+            let i = 0;
+            function typeNext() {
+                if (i < message.length) {
+                    codingTaskInput.value += message.charAt(i);
+                    i++;
+                    setTimeout(typeNext, 150);
+                } else if (callback) {
+                    callback();
+                }
             }
-            syntaxHighlightTimeout = setTimeout(() => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            }, 100);  // Delay for DOM update
+            codingTaskInput.value = '';
+            typeNext();
         }
 
-        // Function to handle submission of the coding task
+        function triggerMessage(message) {
+            typeMessageSlowly(message, submitCodingTask);
+        }
+
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
+                codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
@@ -429,7 +424,6 @@
             }
         }
 
-        // Attach event listeners for sending messages
         sendButton.addEventListener('click', submitCodingTask);
         codingTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -437,81 +431,11 @@
             }
         });
 
-        // Tab Functionality: Create New Tab and Switch Between Tabs
-        addPageButton.addEventListener('click', () => {
-            pageCount++;
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            const newPageName = `New Page ${pageCount}`;
-            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" disabled />`;
-
-            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-
-            // Initialize chat history for the new tab
-            chatHistories[newPageName] = [];
-            setActiveTab(newTab, newPageName);
-            newTab.addEventListener('click', () => {
-                setActiveTab(newTab, newPageName);
-            });
-        });
-
-        function setActiveTab(tab, pageName) {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) {
-                activeTab.classList.remove('active');
-            }
-
-            tab.classList.add('active');
-            currentPage = pageName;
-
-            loadChatHistory(pageName);
-        }
-
-        function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; 
-            const history = chatHistories[pageName] || [];
-            history.forEach(msg => {
-                appendMessage(msg.sender, msg.text, msg.isCode);
-            });
-
-            reapplySyntaxHighlighting();
-            toggleWhiteEyeLogo();
-        }
-
         const firstTab = document.getElementById('new-page-1');
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
 
-        function openPopup(file, title) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
-                    popupWindow.document.write(`
-                        <html>
-                        <head><title>${title}</title></head>
-                        <body>
-                            <div class="popup-content">
-                                <h2>${title}</h2>
-                                <div>${data}</div>
-                                <button onclick="window.close()">Close</button>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    popupWindow.document.close();
-                })
-                .catch(error => {
-                    console.error('Error fetching the file:', error);
-                });
-        }
-
-        // Initial check for white eye logo visibility
         toggleWhiteEyeLogo();
     </script>
 </body>
