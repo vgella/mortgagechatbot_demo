@@ -102,7 +102,7 @@
 
         #chat-box {
             flex-grow: 1;
-            width: 100%;
+            width: calc(100% - 40px); /* Adjust the width to account for the 20px padding on each side */
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -115,6 +115,7 @@
             word-wrap: break-word;
             position: relative;
         }
+
 
         /* Bubble styling for user/AI messages */
         .message {
@@ -141,14 +142,17 @@
 
         /* Input Field */
         #input-container {
-            width: 100%;
+            width: calc(100% - 20px); /* Adjust the width to account for 10px padding on each side */
             display: flex;
             align-items: center;
             gap: 10px;
             color: black;
             padding: 10px;
             background-color: transparent;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
+
 
         .main-input-field {
             flex-grow: 1;
