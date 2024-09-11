@@ -407,7 +407,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://209c-35-204-89-29.ngrok-free.app/chat', {
+                fetch('https://7881-35-196-41-150.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -424,7 +424,7 @@
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                 })
                 .catch(error => {
-                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. this service will be back online soon.');
+                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
                 });
             }
         }
