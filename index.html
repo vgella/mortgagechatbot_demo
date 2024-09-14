@@ -312,7 +312,6 @@
     </div>
 
     <!-- New Feedback Button -->
-    <button id="feedback-button">Give Feedback</button>
 
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
@@ -528,25 +527,7 @@
                 });
         }
 
-        feedbackButton.addEventListener('click', () => {
-            const feedbackWindow = window.open('', 'Litcode Feedback Survey', 'width=800,height=600,resizable,scrollbars');
-            feedbackWindow.document.write(`
-                <html>
-                <head><title>Litcode Feedback Survey</title></head>
-                <body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-                    <h1 style="text-align: center; color: #007bff;">Litcode Feedback Survey</h1>
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <p>We value your feedback! Please complete the survey below to help us improve our service. Your input is crucial for enhancing our performance and user experience.</p>
-                    </div>
-                    <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdVAu228pk2nJHrdZMLOtlhUekTN1sFA__zU9B7ZtYjKToaqg/viewform?embedded=true"
-                                width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-                    </div>
-                </body>
-                </html>
-            `);
-            feedbackWindow.document.close();
-        });
+
 
         toggleWhiteEyeLogo();
     </script>
