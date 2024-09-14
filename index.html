@@ -26,35 +26,35 @@
         /* Tab Container */
         #tab-container {
             display: flex;
-            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
             background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
+            width: 100%;
         }
 
         /* Tabs */
         .tab {
+            flex-shrink: 1;
+            min-width: 100px;
+            max-width: 200px;
             padding: 10px 15px;
             background-color: #d3d3d3;
             border-radius: 15px 15px 0 0;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             color: black;
             transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
             margin-top: 10px;
-        }
-
-        .tab input {
-            border: none;
-            background-color: transparent;
-            outline: none;
-            text-align: center;
-            font-size: 16px;
-            color: black;
-            width: 100px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
         }
 
         .tab.active {
@@ -63,9 +63,22 @@
             transform: translateY(-5px);
             z-index: 1;
         }
+        
         .tab:hover {
             transform: translateY(-5px);
             z-index: 1;
+        }
+
+        .tab:hover::after {
+            content: attr(data-title); /* Show full title on hover */
+            position: absolute;
+            bottom: -30px; /* Position below the tab */
+            left: 0;
+            background-color: #f0f0f0;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         #add-page-button {
@@ -112,28 +125,6 @@
             position: relative;
         }
 
-        .message {
-            padding: 10px;
-            background-color: #f0f0f0;
-            color: #000;
-            word-wrap: break-word;
-            max-width: 60%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            margin-bottom: 10px;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            background-color: #e0e0e0;
-        }
-
-        .message.ai {
-            align-self: flex-start;
-            background-color: #ffffff;
-        }
-
         #input-container {
             width: calc(100% - 20px);
             display: flex;
@@ -157,14 +148,6 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
-        }
-
-        .main-input-field:focus {
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .main-input-field::placeholder {
-            color: #000000;
         }
 
         .send-button-container {
@@ -191,108 +174,11 @@
             transform: scale(1.1);
         }
 
-        #white-eye-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: auto;
-            z-index: 1;
-            transition: opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none; /* Make sure it doesn't block interaction */
-        }
-
-        #white-eye-logo.visible {
-            opacity: 1;
-        }
-
-        #logo-container {
-            position: relative;
-            top: 49px;
-            right: 0px;
-            display: flex;
-            justify-content: center;
-        }
-
-        #logo-container img {
-            width: 343px;
-            height: auto;
-            cursor: pointer;
-        }
-
-        #litcode-logo {
-            position: relative;
-            margin-top: 25px;
-            width: 343px;
-            height: auto;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            z-index: 0;
-        }
-
-        .footer-links {
-            text-align: center;
-            position: relative;
-            margin-top: 30px;
-        }
-
-        .footer-links a {
-            display: inline-block;
-            margin: 0 15px;
-            text-decoration: none;
-            color: black;
-            font-family: 'Times New Roman', serif;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        .popup-content {
-            padding: 20px;
-            max-width: 600px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: Arial, sans-serif;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        /* New feedback button */
-        #feedback-button {
-            position: relative;
-            margin: 15px 0;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #feedback-button:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 <body>
-    <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
-
     <div id="tab-container">
-        <div class="tab active" id="new-page-1">
+        <div class="tab active" id="new-page-1" data-title="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" disabled />
         </div>
         <button id="add-page-button">+</button>
@@ -300,7 +186,7 @@
 
     <div id="chat-container">
         <div id="chat-box">
-            <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
+            <!-- Chat messages will go here -->
         </div>
 
         <div id="input-container">
@@ -311,154 +197,27 @@
         </div>
     </div>
 
-    <!-- New Feedback Button -->
-
-    <div id="logo-container">
-        <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
-        </a>
-    </div>
-
-    <div class="footer-links">
-        <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
-    </div>
-
     <script>
-        const chatBox = document.getElementById('chat-box');
-        const whiteEyeLogo = document.getElementById('white-eye-logo');
-        const codingTaskInput = document.getElementById('coding-task-input');
-        const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const feedbackButton = document.getElementById('feedback-button');
-        
-        let feedbackButtonShown = false; // Flag to track if the feedback button has been shown
-        let userIp = '';
-        let currentPage = 'New Page 1';
         let pageCount = 1;
-        let syntaxHighlightTimeout;
 
-        const chatHistories = {
-            'New Page 1': []
-        };
+        function resizeTabs() {
+            const tabContainer = document.getElementById('tab-container');
+            const tabs = document.querySelectorAll('.tab');
+            const tabContainerWidth = tabContainer.offsetWidth;
+            const addPageButtonWidth = addPageButton.offsetWidth;
+            const totalTabWidth = Array.from(tabs).reduce((acc, tab) => acc + tab.offsetWidth, 0);
 
-        function toggleWhiteEyeLogo() {
-            if (chatHistories[currentPage].length === 0) {
-                whiteEyeLogo.classList.add('visible');
-            } else {
-                whiteEyeLogo.classList.remove('visible');
-                whiteEyeLogo.style.pointerEvents = 'none'; // Ensure it doesn't block any interaction
-            }
-        }
-
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                userIp = data.ip;
-            })
-            .catch(error => {
-                console.error('Error fetching IP address:', error);
-            });
-
-        function appendMessage(sender, text, isCode = false) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-
-            if (isCode) {
-                const preElement = document.createElement('pre');
-                const codeElement = document.createElement('code');
-                codeElement.textContent = text;
-                preElement.appendChild(codeElement);
-                messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);
-            } else {
-                messageElement.textContent = text;
-            }
-
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
-            toggleWhiteEyeLogo();
-        }
-        function appendFeedbackButton() {
-            const feedbackMessage = document.createElement('div');
-            feedbackMessage.classList.add('message', 'ai'); // Make it look like an AI message
-            feedbackMessage.style.backgroundColor = '#007bff'; // Blue background for the feedback message
-            feedbackMessage.style.color = 'white';
-            feedbackMessage.style.cursor = 'pointer';
-            feedbackMessage.style.textAlign = 'center';
-            feedbackMessage.style.fontWeight = 'bold';
-            feedbackMessage.innerText = 'Give feedback';
-        
-            feedbackMessage.addEventListener('click', () => {
-                const feedbackWindow = window.open('', 'Litcode Feedback Survey', 'width=800,height=600,resizable,scrollbars');
-                feedbackWindow.document.write(`
-                    <html>
-                    <head><title>Litcode Feedback Survey</title></head>
-                    <body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4;">
-                        <h1 style="text-align: center; color: #007bff;">Litcode Feedback Survey</h1>
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <p>We value your feedback! Please complete the survey below to help us improve our service. Your input is crucial for enhancing our performance and user experience.</p>
-                        </div>
-                        <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdVAu228pk2nJHrdZMLOtlhUekTN1sFA__zU9B7ZtYjKToaqg/viewform?embedded=true"
-                                    width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-                        </div>
-                    </body>
-                    </html>
-                `);
-                feedbackWindow.document.close();
-            });
-        
-            chatBox.appendChild(feedbackMessage);
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
-        }
-
-        function submitCodingTask() {
-            const codingTask = codingTaskInput.value;
-
-            if (codingTask) {
-                appendMessage('User', codingTask);
-                codingTaskInput.value = ''; 
-
-                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+            if (totalTabWidth + addPageButtonWidth > tabContainerWidth) {
+                const availableWidth = tabContainerWidth - addPageButtonWidth;
+                const newTabWidth = availableWidth / tabs.length;
                 
-                fetch('https://2d3f-34-126-98-38.ngrok-free.app/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ip_address: userIp,
-                        message: codingTask,
-                        page: currentPage
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    appendMessage('AI', data.response, true);
-                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    if (!feedbackButtonShown) {
-                        appendFeedbackButton(); // Show the feedback button
-                        feedbackButtonShown = true; // Set the flag to true, so it doesn't show again
-                    }          
-                })
-                .catch(error => {
-                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
+                tabs.forEach(tab => {
+                    tab.style.width = `${newTabWidth}px`;
+                    tab.setAttribute('data-title', tab.querySelector('input').value);
                 });
             }
         }
-
-        sendButton.addEventListener('click', submitCodingTask);
-        codingTaskInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                submitCodingTask();
-            }
-        });
 
         addPageButton.addEventListener('click', () => {
             pageCount++;
@@ -466,75 +225,33 @@
             newTab.classList.add('tab');
             const newPageName = `New Page ${pageCount}`;
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" disabled />`;
+            newTab.setAttribute('data-title', newPageName);
 
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
 
-            chatHistories[newPageName] = [];
-            setActiveTab(newTab, newPageName);
+            resizeTabs(); 
+
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
             });
         });
 
         function setActiveTab(tab, pageName) {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.classList.remove('active');
             }
 
             tab.classList.add('active');
-            currentPage = pageName;
-
-            loadChatHistory(pageName);
         }
 
-        function loadChatHistory(pageName) {
-            chatBox.innerHTML = ''; 
-            const history = chatHistories[pageName] || [];
-            history.forEach(msg => {
-                appendMessage(msg.sender, msg.text, msg.isCode);
-            });
-
-            reapplySyntaxHighlighting();
-            toggleWhiteEyeLogo();
-        }
+        window.addEventListener('resize', resizeTabs);
 
         const firstTab = document.getElementById('new-page-1');
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
 
-        function openPopup(file, title) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
-                    popupWindow.document.write(`
-                        <html>
-                        <head><title>${title}</title></head>
-                        <body>
-                            <div class="popup-content">
-                                <h2>${title}</h2>
-                                <div>${data}</div>
-                                <button onclick="window.close()">Close</button>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    popupWindow.document.close();
-                })
-                .catch(error => {
-                    console.error('Error fetching the file:', error);
-                });
-        }
-
-
-
-        toggleWhiteEyeLogo();
     </script>
 </body>
 </html>
