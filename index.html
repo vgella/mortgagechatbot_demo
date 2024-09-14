@@ -330,6 +330,8 @@
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
         const feedbackButton = document.getElementById('feedback-button');
+        
+        let feedbackButtonShown = false; // Flag to track if the feedback button has been shown
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -440,7 +442,10 @@
                 .then(data => {
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    appendFeedbackButton();
+                    if (!feedbackButtonShown) {
+                        appendFeedbackButton(); // Show the feedback button
+                        feedbackButtonShown = true; // Set the flag to true, so it doesn't show again
+                    }          
                 })
                 .catch(error => {
                     appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
