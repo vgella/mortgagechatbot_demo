@@ -30,6 +30,7 @@
             background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
+            overflow: hidden; /* Prevent overflow */
         }
 
         /* Tabs */
@@ -45,24 +46,24 @@
             margin-right: -1px;
             border: none;
             margin-top: 10px;
+            white-space: nowrap; /* Prevent text wrapping */
+            box-sizing: border-box;
         }
 
-        .tab input {
-            border: none;
-            background-color: transparent;
-            outline: none;
-            text-align: center;
-            font-size: 16px;
-            color: black;
-            width: 100px;
+        .tab.shrunk {
+            padding: 5px 10px;
+            transform: scale(0.9);
         }
 
-        .tab.active {
+        .tab.active,
+        .tab.prev,
+        .tab.next {
             background-color: #ffffff;
             color: #000;
             transform: translateY(-5px);
             z-index: 1;
         }
+
         .tab:hover {
             transform: translateY(-5px);
             z-index: 1;
@@ -329,7 +330,6 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const feedbackButton = document.getElementById('feedback-button');
         
         let feedbackButtonShown = false; // Flag to track if the feedback button has been shown
         let userIp = '';
@@ -491,6 +491,8 @@
             newTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
             });
+
+            resizeTabs(); // Call resize after adding a new tab
         });
 
         function setActiveTab(tab, pageName) {
@@ -507,6 +509,8 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
+
+            resizeTabs(); // Recalculate sizes when a new tab is selected
         }
 
         function loadChatHistory(pageName) {
@@ -519,11 +523,6 @@
             reapplySyntaxHighlighting();
             toggleWhiteEyeLogo();
         }
-
-        const firstTab = document.getElementById('new-page-1');
-        firstTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-        });
 
         function openPopup(file, title) {
             fetch(file)
@@ -549,7 +548,53 @@
                 });
         }
 
+        function resizeTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const chatContainer = document.getElementById('chat-container');
+            const chatContainerWidth = chatContainer.offsetWidth;
+            const addPageButton = document.getElementById('add-page-button');
 
+            const activeTab = document.querySelector('.tab.active');
+            const activeTabIndex = Array.from(tabs).indexOf(activeTab);
+
+            // If no tabs or chat container not available, return
+            if (tabs.length === 0 || !chatContainerWidth) return;
+
+            let availableWidth = chatContainerWidth - addPageButton.offsetWidth; // Account for the "+" button
+            const originalTabWidth = activeTab.offsetWidth;
+            const totalTabsWidth = Array.from(tabs).reduce((sum, tab) => sum + tab.offsetWidth, 0);
+
+            // Check if tabs overflow the chat container
+            if (totalTabsWidth > availableWidth) {
+                // Resize tabs if the total width exceeds the chat container's width
+                tabs.forEach((tab, index) => {
+                    tab.classList.remove('shrunk', 'prev', 'next');
+
+                    if (index === activeTabIndex) {
+                        tab.style.flex = 'none'; // Keep the active tab at its original size
+                    } else if (index === activeTabIndex - 1 || index === activeTabIndex + 1) {
+                        tab.classList.add('prev', 'next'); // Keep the previous and next tabs at their original size
+                        tab.style.flex = 'none';
+                    } else {
+                        tab.classList.add('shrunk'); // Shrink the rest of the tabs
+                        tab.style.flex = '1'; // Allow shrunk tabs to scale and fit within the container
+                    }
+                });
+            } else {
+                // Reset tab sizes when they fit within the chat container
+                tabs.forEach((tab) => {
+                    tab.classList.remove('shrunk', 'prev', 'next');
+                    tab.style.flex = 'none'; // Reset to default size
+                });
+            }
+        }
+
+        // Call resizeTabs function on window resize and tab add events
+        window.addEventListener('resize', resizeTabs);
+        addPageButton.addEventListener('click', resizeTabs); // Recalculate after adding new tabs
+
+        // Call resizeTabs initially to adjust the size based on the current state
+        resizeTabs();
 
         toggleWhiteEyeLogo();
     </script>
