@@ -417,7 +417,16 @@
                 behavior: 'smooth'
             });
         }
-
+        function reapplySyntaxHighlighting() {
+            if (syntaxHighlightTimeout) {
+                clearTimeout(syntaxHighlightTimeout);
+            }
+            syntaxHighlightTimeout = setTimeout(() => {
+                document.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+            }, 100);  // Delay for DOM update
+        }
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
 
