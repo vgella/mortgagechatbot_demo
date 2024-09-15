@@ -429,14 +429,14 @@
         }
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
-
+        
             if (codingTask) {
                 appendMessage('User', codingTask);
                 codingTaskInput.value = ''; 
-
+        
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
                 
-                fetch('https://2292-34-126-98-38.ngrok-free.app/chat', {
+                fetch('https://2d3f-34-126-98-38.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -449,8 +449,16 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    // Update the AI response in the chat
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    
+                    // Update the tab title with the new tab_title from the response
+                    const activeTab = document.querySelector('.tab.active input.tab-title');
+                    if (activeTab) {
+                        activeTab.value = data.tab_title; // Set the new tab title
+                    }
+        
                     if (!feedbackButtonShown) {
                         appendFeedbackButton(); // Show the feedback button
                         feedbackButtonShown = true; // Set the flag to true, so it doesn't show again
