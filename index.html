@@ -322,7 +322,7 @@
 
     <div id="tab-container">
         <div class="tab active" id="new-page-1">
-            <input type="text" value="New Page 1" class="tab-title" disabled />
+            <input type="text" value="New Page 1" class="tab-title" />
         </div>
         <button id="add-page-button">+</button>
     </div>
@@ -498,6 +498,7 @@
             tab.classList.add('active');
             const currentInput = tab.querySelector('input.tab-title');
             currentInput.removeAttribute('disabled'); // Enable the input of the active tab
+            currentInput.focus();  // Focus the input for immediate editing
 
             currentPage = pageName;
 
@@ -518,16 +519,12 @@
         // Apply event listeners for tab title editing
         function addTabEditEventListener(tabTitle) {
             tabTitle.addEventListener('click', function() {
-                if (tabTitle.parentElement.classList.contains('active')) {
-                    this.removeAttribute('disabled');
-                    this.focus();
-                }
+                this.removeAttribute('disabled');
+                this.focus();
             });
 
             tabTitle.addEventListener('blur', function() {
-                if (tabTitle.parentElement.classList.contains('active')) {
-                    this.setAttribute('disabled', true);
-                }
+                this.setAttribute('disabled', true);
             });
 
             tabTitle.addEventListener('keypress', function(e) {
