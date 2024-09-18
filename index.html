@@ -113,33 +113,50 @@
             color: white;
             background-color: #000000;
             padding: 20px;
-            border-radius: 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
             position: relative;
         }
 
+        /* General Message Style */
         .message {
-            padding: 10px;
-            background-color: #f0f0f0;
-            color: #000;
-            word-wrap: break-word;
-            max-width: 60%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            margin-bottom: 10px;
-            animation: fadeIn 0.5s ease-in-out;
+            padding: 0;
+            background-color: transparent;
+            box-shadow: none;
+            margin-bottom: 0;
         }
 
+        /* User message */
         .message.user {
             align-self: flex-end;
             background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 10px;
         }
 
+        /* AI message should look like a code block in a text editor */
         .message.ai {
-            align-self: flex-start;
-            background-color: #ffffff;
+            align-self: stretch;
+            width: 100%; /* Full width */
+            background-color: transparent; /* No background color for the AI response */
+            color: #ffffff;
+            padding: 0;
+            margin: 0; /* Remove margins */
+            border: none;
+        }
+
+        /* Highlight.js Code Block Styling */
+        .message pre code {
+            background-color: #1e1e1e; /* Similar to Vim's default background */
+            color: #ffffff;
+            width: 100%;
+            border-radius: 0; /* No border radius to make it look like an editor */
+            padding: 10px; /* Padding for the code */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Fira Code', monospace; /* Use a code-like font */
         }
 
         #input-container {
@@ -209,7 +226,7 @@
             z-index: 1;
             transition: opacity 0.5s ease;
             opacity: 0;
-            pointer-events: none; /* Make sure it doesn't block interaction */
+            pointer-events: none;
         }
 
         #white-eye-logo.visible {
@@ -337,9 +354,7 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        const feedbackButton = document.getElementById('feedback-button');
-        
-        let feedbackButtonShown = false; // Flag to track if the feedback button has been shown
+        let feedbackButtonShown = false;
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -354,7 +369,7 @@
                 whiteEyeLogo.classList.add('visible');
             } else {
                 whiteEyeLogo.classList.remove('visible');
-                whiteEyeLogo.style.pointerEvents = 'none'; // Ensure it doesn't block any interaction
+                whiteEyeLogo.style.pointerEvents = 'none';
             }
         }
 
@@ -371,7 +386,7 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
 
-            if (isCode) {
+            if (sender === 'AI') {
                 const preElement = document.createElement('pre');
                 const codeElement = document.createElement('code');
                 codeElement.textContent = text;
@@ -389,10 +404,11 @@
             });
             toggleWhiteEyeLogo();
         }
+
         function appendFeedbackButton() {
             const feedbackMessage = document.createElement('div');
-            feedbackMessage.classList.add('message', 'ai'); // Make it look like an AI message
-            feedbackMessage.style.backgroundColor = '#007bff'; // Blue background for the feedback message
+            feedbackMessage.classList.add('message', 'ai');
+            feedbackMessage.style.backgroundColor = '#007bff';
             feedbackMessage.style.color = 'white';
             feedbackMessage.style.cursor = 'pointer';
             feedbackMessage.style.textAlign = 'center';
@@ -425,6 +441,7 @@
                 behavior: 'smooth'
             });
         }
+
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -433,8 +450,9 @@
                 document.querySelectorAll('pre code').forEach((block) => {
                     hljs.highlightElement(block);
                 });
-            }, 100);  // Delay for DOM update
+            }, 100);
         }
+
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
         
@@ -457,19 +475,17 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Update the AI response in the chat
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                     
-                    // Update the tab title with the new tab_title from the response
                     const activeTab = document.querySelector('.tab.active input.tab-title');
                     if (activeTab) {
-                        activeTab.value = data.tab_title; // Set the new tab title
+                        activeTab.value = data.tab_title;
                     }
         
                     if (!feedbackButtonShown) {
-                        appendFeedbackButton(); // Show the feedback button
-                        feedbackButtonShown = true; // Set the flag to true, so it doesn't show again
+                        appendFeedbackButton();
+                        feedbackButtonShown = true;
                     }          
                 })
                 .catch(error => {
@@ -490,7 +506,7 @@
             const newTab = document.createElement('div');
             newTab.classList.add('tab');
             const newPageName = `New Page ${pageCount}`;
-            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" disabled />`;
+            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
 
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
 
@@ -533,6 +549,23 @@
             setActiveTab(firstTab, 'New Page 1');
         });
 
+        document.querySelectorAll('.tab-title').forEach(tabTitle => {
+            tabTitle.addEventListener('click', function() {
+                this.removeAttribute('disabled');
+                this.focus();
+            });
+
+            tabTitle.addEventListener('blur', function() {
+                this.setAttribute('disabled', true);
+            });
+
+            tabTitle.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    this.setAttribute('disabled', true);
+                }
+            });
+        });
+
         function openPopup(file, title) {
             fetch(file)
                 .then(response => response.text())
@@ -556,8 +589,6 @@
                     console.error('Error fetching the file:', error);
                 });
         }
-
-
 
         toggleWhiteEyeLogo();
     </script>
