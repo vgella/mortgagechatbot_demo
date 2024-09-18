@@ -548,7 +548,22 @@
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
-
+        const firstTabTitle = firstTab.querySelector('.tab-title');
+        firstTabTitle.addEventListener('click', function() {
+            this.removeAttribute('disabled');
+            this.focus();
+        });
+        
+        firstTabTitle.addEventListener('blur', function() {
+            this.setAttribute('disabled', true);
+        });
+        
+        firstTabTitle.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.setAttribute('disabled', true);
+            }
+        });
+        
         document.querySelectorAll('.tab-title').forEach(tabTitle => {
             tabTitle.addEventListener('click', function() {
                 this.removeAttribute('disabled');
