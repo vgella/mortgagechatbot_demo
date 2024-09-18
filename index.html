@@ -490,10 +490,15 @@
 
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
+                const activeInput = activeTab.querySelector('input.tab-title');
                 activeTab.classList.remove('active');
+                activeInput.setAttribute('disabled', true); // Disable the previous tab's input
             }
 
             tab.classList.add('active');
+            const currentInput = tab.querySelector('input.tab-title');
+            currentInput.removeAttribute('disabled'); // Enable the input of the active tab
+
             currentPage = pageName;
 
             loadChatHistory(pageName);
@@ -513,12 +518,16 @@
         // Apply event listeners for tab title editing
         function addTabEditEventListener(tabTitle) {
             tabTitle.addEventListener('click', function() {
-                this.removeAttribute('disabled');
-                this.focus();
+                if (tabTitle.parentElement.classList.contains('active')) {
+                    this.removeAttribute('disabled');
+                    this.focus();
+                }
             });
 
             tabTitle.addEventListener('blur', function() {
-                this.setAttribute('disabled', true);
+                if (tabTitle.parentElement.classList.contains('active')) {
+                    this.setAttribute('disabled', true);
+                }
             });
 
             tabTitle.addEventListener('keypress', function(e) {
