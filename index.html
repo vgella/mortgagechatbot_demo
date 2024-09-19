@@ -51,9 +51,11 @@
         #tab-container {
             display: flex;
             width: 100%;
-            background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
+            background-color: transparent; /* Remove background color to blend with the gradient */
+            position: relative;
+            z-index: 1; /* Ensure it stays above the gradient */
         }
 
         /* Tabs */
@@ -87,11 +89,13 @@
             transform: translateY(-5px);
             z-index: 1;
         }
+        
         .tab:hover {
             transform: translateY(-5px);
             z-index: 1;
         }
 
+        /* Add page button */
         #add-page-button {
             border-radius: 15px 15px 0 0;
             background-color: #000000;
