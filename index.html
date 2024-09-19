@@ -38,6 +38,7 @@
         /* Gradient background for the header section */
         #header-gradient {
             width: 100%;
+            height: 250px;
             background: radial-gradient(circle, #ff00ff, #00ffff, #ffff00);
             padding: 0;
             display: flex;
@@ -47,42 +48,14 @@
             overflow: hidden;
         }
 
-        /* Make the gradient follow the cursor */
-        body {
-            position: relative;
-        }
-
-        #header-gradient {
-            height: 200px; /* Control the height of the header gradient */
-        }
-
-        #header-gradient::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #ff00ff, #00ffff, #ffff00);
-            transition: background-position 0.1s ease;
-            z-index: -1;
-        }
-
-        #header-gradient:hover::before {
-            transition: background-position 0.1s ease;
-        }
-
-        /* Litcode Logo */
-        #litcode-logo {
-            margin-top: 20px;
-        }
-
         /* Tab Container */
         #tab-container {
             display: flex;
             width: 100%;
             background-color: transparent; /* Inherit background from gradient container */
             box-sizing: border-box;
+            position: relative;
+            bottom: 0;
         }
 
         /* Tabs */
@@ -97,7 +70,6 @@
             transition: background-color 0.3s ease, transform 0.3s ease;
             margin-right: -1px;
             border: none;
-            margin-top: 10px;
         }
 
         .tab input {
@@ -131,7 +103,6 @@
             align-items: center;
             justify-content: center;
             margin-left: -1px;
-            margin-top: 25px;
             border: none;
             color: #ffffff;
             z-index: 1;
@@ -143,7 +114,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 150px);
+            height: calc(100vh - 250px); /* Adjust to account for header height */
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -589,10 +560,9 @@
 
         // Function to make gradient move with cursor
         document.addEventListener('mousemove', function(e) {
-            const gradient = document.querySelector('#header-gradient::before');
             const x = e.pageX / window.innerWidth * 100;
             const y = e.pageY / window.innerHeight * 100;
-            gradient.style.backgroundPosition = `${x}% ${y}%`;
+            document.querySelector('#header-gradient').style.backgroundPosition = `${x}% ${y}%`;
         });
 
         function openPopup(file, title) {
