@@ -39,10 +39,42 @@
         #header-gradient {
             width: 100%;
             background: radial-gradient(circle, #ff00ff, #00ffff, #ffff00);
-            padding: 20px 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Make the gradient follow the cursor */
+        body {
+            position: relative;
+        }
+
+        #header-gradient {
+            height: 200px; /* Control the height of the header gradient */
+        }
+
+        #header-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #ff00ff, #00ffff, #ffff00);
+            transition: background-position 0.1s ease;
+            z-index: -1;
+        }
+
+        #header-gradient:hover::before {
+            transition: background-position 0.1s ease;
+        }
+
+        /* Litcode Logo */
+        #litcode-logo {
+            margin-top: 20px;
         }
 
         /* Tab Container */
@@ -50,7 +82,6 @@
             display: flex;
             width: 100%;
             background-color: transparent; /* Inherit background from gradient container */
-            padding: 0;
             box-sizing: border-box;
         }
 
@@ -555,6 +586,15 @@
         // Apply the tab title edit listener to the first tab's title
         const firstTabTitle = firstTab.querySelector('.tab-title');
         addTabEditEventListener(firstTabTitle);
+
+        // Function to make gradient move with cursor
+        document.addEventListener('mousemove', function(e) {
+            const gradient = document.querySelector('#header-gradient::before');
+            const x = e.pageX / window.innerWidth * 100;
+            const y = e.pageY / window.innerHeight * 100;
+            gradient.style.backgroundPosition = `${x}% ${y}%`;
+        });
+
         function openPopup(file, title) {
             fetch(file)
                 .then(response => response.text())
