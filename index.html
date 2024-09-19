@@ -35,27 +35,13 @@
             overflow-y: scroll;
         }
 
-        /* Gradient Background */
-        #gradient-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, #ff00ff, #00ffff, #ffff00); /* Initial gradient */
-            z-index: -1; /* Behind the logo */
-            transition: background-position 0.1s ease;
-        }
-
         /* Tab Container */
         #tab-container {
             display: flex;
             width: 100%;
+            background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
-            background-color: transparent; /* Remove background color to blend with the gradient */
-            position: relative;
-            z-index: 1; /* Ensure it stays above the gradient */
         }
 
         /* Tabs */
@@ -89,13 +75,11 @@
             transform: translateY(-5px);
             z-index: 1;
         }
-        
         .tab:hover {
             transform: translateY(-5px);
             z-index: 1;
         }
 
-        /* Add page button */
         #add-page-button {
             border-radius: 15px 15px 0 0;
             background-color: #000000;
@@ -275,7 +259,7 @@
             display: block;
             margin-left: auto;
             margin-right: auto;
-            z-index: 1;
+            z-index: 0;
         }
 
         .footer-links {
@@ -334,8 +318,6 @@
     </style>
 </head>
 <body>
-    <div id="gradient-background"></div> <!-- Gradient background div -->
-
     <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
     <div id="tab-container">
@@ -371,15 +353,6 @@
     </div>
 
     <script>
-        // JavaScript to handle gradient movement based on cursor
-        const gradientBackground = document.getElementById('gradient-background');
-
-        document.addEventListener('mousemove', function(event) {
-            const x = event.clientX / window.innerWidth * 100;
-            const y = event.clientY / window.innerHeight * 100;
-            gradientBackground.style.background = `radial-gradient(circle at ${x}% ${y}%, #ff00ff, #00ffff, #ffff00)`;
-        });
-
         const chatBox = document.getElementById('chat-box');
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
