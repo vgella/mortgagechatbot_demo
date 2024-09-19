@@ -123,6 +123,22 @@
             position: relative;
         }
 
+        /* Dropdown Model Selector */
+        #model-select-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px 0;
+            margin-left: 20px;
+        }
+
+        #model-select {
+            margin-left: 10px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
         /* General Message Style */
         .message {
             padding: 0;
@@ -328,6 +344,15 @@
     </div>
 
     <div id="chat-container">
+        <!-- Dropdown for selecting model -->
+        <div id="model-select-container">
+            <label for="model-select">Choose Model:</label>
+            <select id="model-select">
+                <option value="basic">LitCode Basic Model</option>
+                <option value="advanced">LitCode Advanced Model</option>
+            </select>
+        </div>
+
         <div id="chat-box">
             <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
         </div>
@@ -422,6 +447,7 @@
 
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
+            const selectedModel = document.getElementById('model-select').value; // Get the selected model
 
             if (codingTask) {
                 appendMessage('User', codingTask);
@@ -429,7 +455,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://5021-34-75-255-175.ngrok-free.app/chat', {
+                fetch('https://9233-34-143-130-224.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -437,7 +463,8 @@
                     body: JSON.stringify({
                         ip_address: userIp,
                         message: codingTask,
-                        page: currentPage
+                        page: currentPage,
+                        model: selectedModel // Include the selected model in the request payload
                     }),
                 })
                 .then(response => response.json())
