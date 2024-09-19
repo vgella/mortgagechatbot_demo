@@ -131,6 +131,8 @@
             align-items: center;
             padding: 10px 0;
             margin-left: 20px;
+            background-color: #000000; /* Set black background */
+
         }
 
         #model-select {
@@ -346,7 +348,6 @@
     <div id="chat-container">
         <!-- Dropdown for selecting model -->
         <div id="model-select-container">
-            <label for="model-select">Choose Model:</label>
             <select id="model-select">
                 <option value="basic">LitCode Basic Model</option>
                 <option value="advanced">LitCode Advanced Model</option>
@@ -455,7 +456,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://9233-34-143-130-224.ngrok-free.app/chat', {
+                fetch('https://f71f-34-143-130-224.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
