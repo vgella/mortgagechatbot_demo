@@ -96,6 +96,7 @@
             z-index: 1;
         }
 
+    /* Chat container */
         #chat-container {
             width: 100%;
             display: flex;
@@ -106,8 +107,71 @@
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
+            position: relative; /* Ensure the dropdown can be positioned absolutely inside this container */
         }
-
+    
+        /* Dropdown container */
+        #model-select-container {
+            position: absolute; /* Absolute positioning inside the chat container */
+            top: 10px; /* Position it at the top of the chat container */
+            left: 10px; /* Align it to the left of the chat container */
+            z-index: 2; /* Ensure it stays above the chat messages */
+            display: inline-block; /* Behave like a button */
+        }
+    
+        /* Dropdown styling */
+        #model-select {
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: black;
+            border: 2px solid white;
+            border-radius: 5px;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            padding-right: 30px; /* Space for the arrow */
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+    
+        /* Custom dropdown arrow */
+        #model-select-container::after {
+            content: '▼';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            pointer-events: none;
+        }
+    
+        /* Dropdown options styling */
+        #model-select option {
+            background-color: black;
+            color: white;
+        }
+    
+        /* Selected option styling */
+        #model-select option:checked {
+            background-color: #007bff;
+            color: white;
+        }
+    
+        /* Hover effect for select */
+        #model-select:hover {
+            background-color: #333;
+            border-color: #007bff;
+        }
+    
+        /* Focus effect */
+        #model-select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+    
+        /* Chat box styling */
         #chat-box {
             flex-grow: 1;
             width: calc(100% - 40px);
@@ -116,73 +180,13 @@
             gap: 15px;
             color: white;
             background-color: #000000;
-            padding: 20px;
+            padding: 60px 20px 20px 20px; /* Padding adjusted to leave space for the dropdown */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
             position: relative;
         }
-
-        /* Dropdown container */
-        #model-select-container {
-            position: relative;
-            width: auto; /* Adjust the width as needed */
-            display: inline-block; /* So it behaves like a button */
-        }
     
-        /* Dropdown styling */
-        #model-select {
-            padding: 10px;
-            font-size: 16px;
-            color: white; /* White text */
-            background-color: black; /* Black background for dropdown */
-            border: 2px solid white; /* White border to make it stand out */
-            border-radius: 5px; /* Rounded corners to make it look like a button */
-            outline: none;
-            appearance: none; /* Remove default dropdown styling */
-            -webkit-appearance: none; /* Safari */
-            -moz-appearance: none; /* Firefox */
-            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
-            position: relative;
-            padding-right: 30px; /* Space for dropdown arrow */
-            transition: background-color 0.3s, border-color 0.3s; /* Smooth hover effect */
-        }
-    
-        /* Add a custom dropdown arrow inside the select */
-        #model-select-container::after {
-            content: '▼'; /* Dropdown arrow */
-            position: absolute;
-            right: 10px; /* Align it to the right */
-            top: 50%; /* Vertically center it */
-            transform: translateY(-50%);
-            color: white; /* White arrow */
-            pointer-events: none; /* Disable interaction with the arrow */
-        }
-    
-        /* Dropdown options styling */
-        #model-select option {
-            background-color: black; /* Black background for dropdown options */
-            color: white; /* White text for options */
-        }
-    
-        /* Highlight selected option */
-        #model-select option:checked {
-            background-color: #007bff; /* Highlight selected option */
-            color: white;
-        }
-    
-        /* Hover effect for select */
-        #model-select:hover {
-            background-color: #333; /* Darken background on hover */
-            border-color: #007bff; /* Change border color to blue on hover */
-        }
-    
-        /* Focus effect */
-        #model-select:focus {
-            border-color: #007bff; /* Blue border on focus */
-            outline: none; /* Remove focus outline */
-        }
-
 
         /* General Message Style */
         .message {
