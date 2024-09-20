@@ -532,7 +532,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://2585-34-143-130-224.ngrok-free.app/chat', {
+                fetch('https://55ce-104-199-168-160.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -576,10 +576,10 @@
             const tabs = document.querySelectorAll('.tab');
             const activeTabIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
             
-            // Calculate available width: chat container width - add button width
+            // Calculate available width: chat container width - add button width - padding for flexibility
             const chatContainerWidth = document.getElementById('chat-container').offsetWidth;
             const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
-            const availableWidth = chatContainerWidth - addPageButtonWidth - 10; // Subtract some padding
+            const availableWidth = chatContainerWidth - addPageButtonWidth - (3 * maxTabWidth); // Subtract some padding
 
             let totalTabWidth = 0;
             tabs.forEach(tab => {
@@ -643,7 +643,7 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
-            
+            toggleWhiteEyeLogo();
             resizeTabs(); // Resize tabs after the active tab changes
         }
 
