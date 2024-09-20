@@ -42,6 +42,7 @@
             background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         /* Tabs */
@@ -580,23 +581,26 @@
             const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
             const availableWidth = chatContainerWidth - addPageButtonWidth - 10; // Subtract some padding
 
-            // Determine how many tabs need to be resized
-            const nonActiveTabCount = tabs.length - 3; // Tabs excluding active and its adjacent ones
-
-            let dynamicTabWidth = Math.max(
-                Math.min(availableWidth / (tabs.length), maxTabWidth), 
-                minTabWidth
-            );
-
-            tabs.forEach((tab, index) => {
-                if (index === activeTabIndex || index === activeTabIndex - 1 || index === activeTabIndex + 1) {
-                    // Active tab and its adjacent tabs should have max width
-                    tab.style.width = `${maxTabWidth}px`;
-                } else {
-                    // Other tabs should be dynamically resized
-                    tab.style.width = `${dynamicTabWidth}px`;
-                }
+            let totalTabWidth = 0;
+            tabs.forEach(tab => {
+                totalTabWidth += maxTabWidth;
             });
+
+            if (totalTabWidth > availableWidth) {
+                const nonActiveTabCount = tabs.length - 3; // Tabs excluding active and its adjacent ones
+                let dynamicTabWidth = Math.max(
+                    Math.min(availableWidth / tabs.length, maxTabWidth),
+                    minTabWidth
+                );
+                
+                tabs.forEach((tab, index) => {
+                    if (index === activeTabIndex || index === activeTabIndex - 1 || index === activeTabIndex + 1) {
+                        tab.style.width = `${maxTabWidth}px`;
+                    } else {
+                        tab.style.width = `${dynamicTabWidth}px`;
+                    }
+                });
+            }
         }
 
         addPageButton.addEventListener('click', () => {
