@@ -147,8 +147,11 @@
             appearance: none; /* Remove default dropdown styling */
             -webkit-appearance: none; /* Safari */
             -moz-appearance: none; /* Firefox */
+            cursor: pointer; /* Change cursor to indicate it's clickable */
+            position: relative;
+            padding-right: 20px; /* Make space for the arrow icon */
+            transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
         }
-    
         /* Dropdown options styling */
         #model-select option {
             background-color: black; /* Black background for dropdown options */
