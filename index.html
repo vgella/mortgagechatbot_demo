@@ -57,6 +57,7 @@
             margin-right: -1px;
             border: none;
             margin-top: 10px;
+            width: 150px; /* Default width for each tab */
         }
 
         .tab input {
@@ -566,6 +567,38 @@
             }
         });
 
+        const maxTabWidth = 150; // Maximum width for active and adjacent tabs
+        const minTabWidth = 80;  // Minimum width for dynamically resized tabs
+
+        function resizeTabs() {
+            const tabContainer = document.getElementById('tab-container');
+            const tabs = document.querySelectorAll('.tab');
+            const activeTabIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
+            
+            // Calculate available width: chat container width - add button width
+            const chatContainerWidth = document.getElementById('chat-container').offsetWidth;
+            const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
+            const availableWidth = chatContainerWidth - addPageButtonWidth - 10; // Subtract some padding
+
+            // Determine how many tabs need to be resized
+            const nonActiveTabCount = tabs.length - 3; // Tabs excluding active and its adjacent ones
+
+            let dynamicTabWidth = Math.max(
+                Math.min(availableWidth / (tabs.length), maxTabWidth), 
+                minTabWidth
+            );
+
+            tabs.forEach((tab, index) => {
+                if (index === activeTabIndex || index === activeTabIndex - 1 || index === activeTabIndex + 1) {
+                    // Active tab and its adjacent tabs should have max width
+                    tab.style.width = `${maxTabWidth}px`;
+                } else {
+                    // Other tabs should be dynamically resized
+                    tab.style.width = `${dynamicTabWidth}px`;
+                }
+            });
+        }
+
         addPageButton.addEventListener('click', () => {
             pageCount++;
             const newTab = document.createElement('div');
@@ -581,8 +614,9 @@
                 setActiveTab(newTab, newPageName);
             });
 
-            // Apply event listeners to the newly added tab
             addTabEditEventListener(newTab.querySelector('.tab-title'));
+
+            resizeTabs(); // Call resizeTabs to resize the tabs after a new one is added
         });
 
         function setActiveTab(tab, pageName) {
@@ -605,6 +639,8 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
+            
+            resizeTabs(); // Resize tabs after the active tab changes
         }
 
         function loadChatHistory(pageName) {
@@ -624,7 +660,6 @@
             }
         }
 
-        // Apply event listeners for tab title editing
         function addTabEditEventListener(tabTitle) {
             tabTitle.addEventListener('click', function() {
                 this.removeAttribute('disabled');
@@ -642,15 +677,14 @@
             });
         }
 
-        // Apply the event listener to the first tab
         const firstTab = document.getElementById('new-page-1');
         firstTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
         });
 
-        // Apply the tab title edit listener to the first tab's title
         const firstTabTitle = firstTab.querySelector('.tab-title');
         addTabEditEventListener(firstTabTitle);
+
         function openPopup(file, title) {
             fetch(file)
                 .then(response => response.text())
