@@ -156,6 +156,7 @@
             padding: 10px;
             border-radius: 15px;
             margin-bottom: 10px;
+            color: black; /* Change user message text color to black */
         }
 
         /* AI message should look like a code block in a text editor */
@@ -328,6 +329,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            display: none; /* Initially hidden */
         }
 
         #feedback-button:hover {
@@ -367,8 +369,6 @@
         </div>
     </div>
 
-    <!-- New Feedback Button -->
-
     <div id="logo-container">
         <a href="https://thirdeyeai.org" target="_blank">
             <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
@@ -386,7 +386,7 @@
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
         const addPageButton = document.getElementById('add-page-button');
-        let feedbackButtonShown = false;
+        let feedbackButtonShown = {};
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -422,7 +422,7 @@
             const selectedModel = document.getElementById('model-select').value;
         
             if (sender === 'AI') {
-                if (isCode && selectedModel !== 'chat') { // Only apply highlighting if it's code and the chat model is not selected
+                if (isCode && selectedModel !== 'chat') { 
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
                     codeElement.textContent = text;
@@ -430,7 +430,21 @@
                     messageElement.appendChild(preElement);
                     hljs.highlightElement(codeElement);
                 } else {
-                    messageElement.textContent = text; // Just append the text if no highlighting is needed
+                    messageElement.textContent = text;
+                }
+
+                // Show feedback button after the first AI message in the current tab
+                if (!feedbackButtonShown[currentPage]) {
+                    const feedbackButton = document.createElement('button');
+                    feedbackButton.id = 'feedback-button';
+                    feedbackButton.textContent = 'Leave Feedback';
+                    feedbackButton.addEventListener('click', () => {
+                        alert('Feedback button clicked');
+                    });
+
+                    chatBox.appendChild(feedbackButton);
+                    feedbackButtonShown[currentPage] = true; // Mark feedback button as shown for the current tab
+                    feedbackButton.style.display = 'block'; // Make feedback button visible
                 }
             } else {
                 messageElement.textContent = text;
@@ -458,7 +472,7 @@
 
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
-            const selectedModel = document.getElementById('model-select').value; // Get the selected model
+            const selectedModel = document.getElementById('model-select').value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
@@ -475,7 +489,7 @@
                         ip_address: userIp,
                         message: codingTask,
                         page: currentPage,
-                        model: selectedModel // Include the selected model in the request payload
+                        model: selectedModel
                     }),
                 })
                 .then(response => response.json())
@@ -530,13 +544,13 @@
             if (activeTab) {
                 const activeInput = activeTab.querySelector('input.tab-title');
                 activeTab.classList.remove('active');
-                activeInput.setAttribute('disabled', true); // Disable the previous tab's input
+                activeInput.setAttribute('disabled', true);
             }
 
             tab.classList.add('active');
             const currentInput = tab.querySelector('input.tab-title');
-            currentInput.removeAttribute('disabled'); // Enable the input of the active tab
-            currentInput.focus();  // Focus the input for immediate editing
+            currentInput.removeAttribute('disabled');
+            currentInput.focus();
 
             currentPage = pageName;
 
