@@ -134,20 +134,42 @@
             background-color: #000000; /* Set black background */
         }
 
+
+    /* Dropdown styling */
         #model-select {
             margin-left: 10px;
             padding: 5px;
             font-size: 14px;
-            color: white; /* White text for visibility */
-            background-color: black; /* Transparent background */
+            color: white; /* White text for the selected option */
+            background-color: black; /* Black background for the dropdown */
             border: none; /* Remove border */
             outline: none;
             appearance: none; /* Remove default dropdown styling */
-            -webkit-appearance: none; /* For Safari */
-            -moz-appearance: none; /* For Firefox */
+            -webkit-appearance: none; /* Safari */
+            -moz-appearance: none; /* Firefox */
         }
+    
+        /* Dropdown options styling */
+        #model-select option {
+            background-color: black; /* Black background for dropdown options */
+            color: white; /* White text for dropdown options */
+        }
+    
+        /* Fix for selected option styling */
+        #model-select option:checked {
+            background-color: #007bff; /* Highlight selected option */
+            color: white; /* Ensure white text for selected option */
+        }
+    
+        /* Option hover styling */
+        #model-select option:hover {
+            background-color: #333333; /* Darker gray for hovered option */
+            color: white; /* White text when hovered */
+        }
+    
+        /* Remove outline on focus */
         #model-select:focus {
-            outline: none; /* Remove outline on focus */
+            outline: none;
         }
 
         /* General Message Style */
