@@ -349,8 +349,9 @@
         <!-- Dropdown for selecting model -->
         <div id="model-select-container">
             <select id="model-select">
-                <option value="basic">LitCode Basic Model</option>
-                <option value="advanced">LitCode Advanced Model</option>
+                <option value="basic">LitCode Basic Coding Model</option>
+                <option value="advanced">LitCode Advanced Coding Model</option>
+                <option value="chat">LitCode General Chat Llama3.1 Model</option>
             </select>
         </div>
 
@@ -375,6 +376,7 @@
     </div>
 
     <div class="footer-links">
+        <a href="javascript:void(0);" onclick="openPopup('Notice.txt', 'Notice')">Notice</a>
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
     </div>
 
@@ -456,7 +458,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://f71f-34-143-130-224.ngrok-free.app/chat', {
+                fetch('https://cbc6-34-143-130-224.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
