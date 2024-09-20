@@ -131,16 +131,30 @@
             align-items: center;
             padding: 10px 0;
             margin-left: 0px;
-            background-color: #000000; /* Set black background */
-
+            background-color: transparent; /* Set black background */
         }
 
         #model-select {
             margin-left: 10px;
             padding: 5px;
             font-size: 14px;
+            color: white; /* White text for visibility */
+            background-color: transparent; /* Transparent background */
+            border: none; /* Remove border */
+            outline: none;
+            appearance: none; /* Remove default dropdown styling */
+            -webkit-appearance: none; /* For Safari */
+            -moz-appearance: none; /* For Firefox */
         }
-
+        #model-select:focus {
+            outline: none; /* Remove outline on focus */
+        }
+        #model-select-container::after {
+            content: '▼';
+            color: white; /* White dropdown arrow */
+            margin-left: -25px; /* Position it properly */
+            pointer-events: none; /* Disable interaction with the arrow */
+        }
         /* General Message Style */
         .message {
             padding: 0;
@@ -329,7 +343,6 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            display: none; /* Initially hidden */
         }
 
         #feedback-button:hover {
@@ -351,9 +364,10 @@
         <!-- Dropdown for selecting model -->
         <div id="model-select-container">
             <select id="model-select">
+                <option value="chat">LitCode General Chat Llama3.1 Model</option>
+
                 <option value="basic">LitCode Basic Coding Model</option>
                 <option value="advanced">LitCode Advanced Coding Model</option>
-                <option value="chat">LitCode General Chat Llama3.1 Model</option>
             </select>
         </div>
 
@@ -435,16 +449,9 @@
 
                 // Show feedback button after the first AI message in the current tab
                 if (!feedbackButtonShown[currentPage]) {
-                    const feedbackButton = document.createElement('button');
-                    feedbackButton.id = 'feedback-button';
-                    feedbackButton.textContent = 'Leave Feedback';
-                    feedbackButton.addEventListener('click', () => {
-                        window.open('feedback_survey.html', 'Litcode Feedback Survey', 'width=800,height=600');
-                    });
-
+                    const feedbackButton = createFeedbackButton();
                     chatBox.appendChild(feedbackButton);
-                    feedbackButtonShown[currentPage] = true; // Mark feedback button as shown for the current tab
-                    feedbackButton.style.display = 'block'; // Make feedback button visible
+                    feedbackButtonShown[currentPage] = true;
                 }
             } else {
                 messageElement.textContent = text;
@@ -458,6 +465,16 @@
             toggleWhiteEyeLogo();
         }
 
+        // Create Feedback Button Function
+        function createFeedbackButton() {
+            const feedbackButton = document.createElement('button');
+            feedbackButton.id = 'feedback-button';
+            feedbackButton.textContent = 'Leave Feedback';
+            feedbackButton.addEventListener('click', () => {
+                window.open('feedback_survey.html', 'Litcode Feedback Survey', 'width=800,height=600');
+            });
+            return feedbackButton;
+        }
 
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
@@ -566,6 +583,12 @@
 
             reapplySyntaxHighlighting();
             toggleWhiteEyeLogo();
+
+            // Re-append feedback button if it was already shown
+            if (feedbackButtonShown[pageName]) {
+                const feedbackButton = createFeedbackButton();
+                chatBox.appendChild(feedbackButton);
+            }
         }
 
         // Apply event listeners for tab title editing
