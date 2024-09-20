@@ -123,60 +123,67 @@
             position: relative;
         }
 
-        /* Dropdown Model Selector */
+        /* Dropdown container */
         #model-select-container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 10px 0;
-            margin-left: 0px;
-            background-color: #000000; /* Set black background */
+            position: relative;
+            width: auto; /* Adjust the width as needed */
+            display: inline-block; /* So it behaves like a button */
         }
-
-
-    /* Dropdown styling */
+    
+        /* Dropdown styling */
         #model-select {
-            margin-left: 10px;
-            padding: 5px;
-            font-size: 14px;
-            color: white; /* White text for the selected option */
-            background-color: black; /* Black background for the dropdown */
-            border: none; /* Remove border */
+            padding: 10px;
+            font-size: 16px;
+            color: white; /* White text */
+            background-color: black; /* Black background for dropdown */
+            border: 2px solid white; /* White border to make it stand out */
+            border-radius: 5px; /* Rounded corners to make it look like a button */
             outline: none;
             appearance: none; /* Remove default dropdown styling */
             -webkit-appearance: none; /* Safari */
             -moz-appearance: none; /* Firefox */
-            cursor: pointer; /* Change cursor to indicate it's clickable */
+            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
             position: relative;
-            padding-right: 20px; /* Make space for the arrow icon */
-            transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+            padding-right: 30px; /* Space for dropdown arrow */
+            transition: background-color 0.3s, border-color 0.3s; /* Smooth hover effect */
         }
+    
+        /* Add a custom dropdown arrow inside the select */
+        #model-select-container::after {
+            content: '▼'; /* Dropdown arrow */
+            position: absolute;
+            right: 10px; /* Align it to the right */
+            top: 50%; /* Vertically center it */
+            transform: translateY(-50%);
+            color: white; /* White arrow */
+            pointer-events: none; /* Disable interaction with the arrow */
+        }
+    
         /* Dropdown options styling */
         #model-select option {
             background-color: black; /* Black background for dropdown options */
-            color: white; /* White text for dropdown options */
+            color: white; /* White text for options */
         }
     
-        /* Fix for selected option styling */
+        /* Highlight selected option */
         #model-select option:checked {
             background-color: #007bff; /* Highlight selected option */
-            color: white; /* Ensure white text for selected option */
+            color: white;
         }
     
-        /* Option hover styling */
-        #model-select option:hover {
-            background-color: #333333; /* Darker gray for hovered option */
-            color: white; /* White text when hovered */
-        }
-    
-        /* Remove outline on focus */
-        #model-select:focus {
-            outline: none;
-        }
+        /* Hover effect for select */
         #model-select:hover {
-            border-color: #666666; /* Light gray border on hover */
+            background-color: #333; /* Darken background on hover */
+            border-color: #007bff; /* Change border color to blue on hover */
         }
+    
+        /* Focus effect */
+        #model-select:focus {
+            border-color: #007bff; /* Blue border on focus */
+            outline: none; /* Remove focus outline */
+        }
+
+
         /* General Message Style */
         .message {
             padding: 0;
