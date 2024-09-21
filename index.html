@@ -733,22 +733,29 @@
             }
         }
 
-        function addTabEditEventListener(tabTitle) {
-            tabTitle.addEventListener('click', function() {
+// Add Tab Edit Event Listener
+        function addTabEditEventListener(tabTitle, sidebarTab) {
+            tabTitle.addEventListener('input', function () {
+                // Update the corresponding sidebar tab title when the user edits the tab title
+                sidebarTab.textContent = tabTitle.value;
+            });
+        
+            tabTitle.addEventListener('click', function () {
                 this.removeAttribute('disabled');
                 this.focus();
             });
-
-            tabTitle.addEventListener('blur', function() {
+        
+            tabTitle.addEventListener('blur', function () {
                 this.setAttribute('disabled', true);
             });
-
-            tabTitle.addEventListener('keypress', function(e) {
+        
+            tabTitle.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     this.setAttribute('disabled', true);
                 }
             });
         }
+
 
         const firstTab = document.getElementById('new-page-1');
         firstTab.addEventListener('click', () => {
@@ -799,6 +806,7 @@
         });
 
         // Populate sidebar with tab titles
+// Populate sidebar with tab titles
         function populateSidebar() {
             sidebarContent.innerHTML = '';
             const tabs = document.querySelectorAll('.tab input.tab-title');
@@ -807,14 +815,17 @@
                 const sidebarTab = document.createElement('div');
                 sidebarTab.classList.add('sidebar-tab');
                 sidebarTab.textContent = tabTitle;
-
+        
                 // Switch tabs on click
                 sidebarTab.addEventListener('click', () => {
                     setActiveTab(tab.parentElement, tabTitle);
                     sidebar.classList.remove('open');
                     sidebarVisible = false;
                 });
-
+        
+                // Attach the edit listener to both the tab title and the sidebar tab
+                addTabEditEventListener(tab, sidebarTab);
+        
                 sidebarContent.appendChild(sidebarTab);
             });
         }
