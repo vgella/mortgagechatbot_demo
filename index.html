@@ -304,23 +304,10 @@
             opacity: 1;
         }
 
-        #logo-container {
-            position: relative;
-            top: 49px;
-            right: 0px;
-            display: flex;
-            justify-content: center;
-        }
-
-        #logo-container img {
-            width: 343px;
-            height: auto;
-            cursor: pointer;
-        }
 
         #litcode-logo {
             position: relative;
-            margin-top: 25px;
+            margin-top: 5px;
             width: 343px;
             height: auto;
             display: block;
@@ -399,7 +386,7 @@
         .hamburger-menu .line {
             width: 30px;
             height: 3px;
-            background-color: black;
+            background-color: white; /* White hamburger button */
         }
 
         /* Sidebar styles */
@@ -413,7 +400,7 @@
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px 0 0 15px;
             transition: right 0.3s ease;
-            z-index: 2;
+            z-index: 5; /* High z-index to give priority when opened */
             display: flex;
             flex-direction: column;
             padding: 20px;
@@ -423,8 +410,36 @@
             right: 0; /* When open, it slides in */
         }
 
-        #chat-container {
-            position: relative; /* Ensure the sidebar and hamburger menu are positioned relative to the chat container */
+        /* Sidebar Content Styling */
+        .sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .search-tabs {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar-content .sidebar-tab {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-content .sidebar-tab:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
@@ -476,15 +491,13 @@
         </div>
     </div>
 
-    <div id="logo-container">
-        <a href="https://thirdeyeai.org" target="_blank">
-            <img src="experience_thirdeye_slimthick.svg" alt="ThirdEye Experience Logo">
-        </a>
-    </div>
+
 
     <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('notice.txt', 'Notice')">Notice</a>
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
+        <a href="https://thirdeyeai.org" target="_blank">thirdeye ai</a> <!-- New link to LitCode -->
+
     </div>
 
     <script>
