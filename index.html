@@ -121,7 +121,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 150px);
+            height: calc(100vh - 150px + 72px);
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -316,8 +316,8 @@
         #litcode-logo {
             position: relative;
             margin-top: 5px;
-            width: 343px;
-            height: auto;
+            width: auto;
+            height: 72px;
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -403,7 +403,7 @@
             top: 0;
             right: -343px; /* Move the sidebar completely out of view */
             width: 300px;
-            height: calc(100vh - 150px);
+            height: calc(100vh - 150px + 72px);
             background-color: #d3d3d3;
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px 0 0 15px;
@@ -882,5 +882,10 @@
         // Initial population of the sidebar
         populateSidebar();
     </script>
+            window.onload = function() {
+            window.scrollBy(0, 72); // Scroll down 72px vertically
+        };
+    </script>
+
 </body>
 </html>
