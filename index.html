@@ -122,8 +122,13 @@
             overflow-y: auto;
             flex-grow: 1;
             position: relative;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* Internet Explorer and Edge */
         }
-    
+        
+        #chat-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
         /* Dropdown container */
         #model-select-container {
             position: absolute;
