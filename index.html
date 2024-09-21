@@ -313,6 +313,16 @@
             opacity: 1;
         }
 
+        #litcode-logo {
+            position: relative;
+            margin-top: 5px;
+            width: 343px;
+            height: auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            z-index: 0;
+        }
 
         .footer-links {
             text-align: center;
@@ -401,7 +411,7 @@
             z-index: 5; /* High z-index to give priority when opened */
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 0px;
         }
 
         .sidebar.open {
@@ -442,7 +452,7 @@
     </style>
 </head>
 <body>
-
+    <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
     <div id="tab-container">
         <div class="tab active" id="new-page-1">
             <input type="text" value="New Page 1" class="tab-title" />
