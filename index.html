@@ -35,14 +35,25 @@
             overflow-y: scroll;
         }
 
-        /* Tab Container */
+        /* Tab container with hidden scrollbar */
         #tab-container {
             display: flex;
             width: 100%;
             background-color: #ffffff;
             padding: 0;
             box-sizing: border-box;
-            overflow-x: hidden;
+            overflow-x: auto; /* Enable horizontal scrolling */
+            scroll-behavior: smooth;
+        }
+
+        /* Hide the scrollbar */
+        #tab-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+
+        #tab-container {
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
         }
 
         /* Tabs */
@@ -77,6 +88,7 @@
             transform: translateY(-5px);
             z-index: 1;
         }
+
         .tab:hover {
             transform: translateY(-5px);
             z-index: 1;
@@ -98,7 +110,7 @@
             z-index: 1;
         }
 
-    /* Chat container */
+        /* Chat container */
         #chat-container {
             width: 100%;
             display: flex;
@@ -109,16 +121,16 @@
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
-            position: relative; /* Ensure the dropdown can be positioned absolutely inside this container */
+            position: relative;
         }
     
         /* Dropdown container */
         #model-select-container {
-            position: absolute; /* Absolute positioning inside the chat container */
-            top: 10px; /* Position it at the top of the chat container */
-            left: 10px; /* Align it to the left of the chat container */
-            z-index: 2; /* Ensure it stays above the chat messages */
-            display: inline-block; /* Behave like a button */
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+            display: inline-block;
         }
     
         /* Dropdown styling */
@@ -131,14 +143,11 @@
             border-radius: 5px;
             outline: none;
             appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
             cursor: pointer;
-            padding-right: 30px; /* Space for the arrow */
+            padding-right: 30px;
             transition: background-color 0.3s, border-color 0.3s;
         }
-    
-        /* Custom dropdown arrow */
+
         #model-select-container::after {
             content: '▼';
             position: absolute;
@@ -148,32 +157,27 @@
             color: white;
             pointer-events: none;
         }
-    
-        /* Dropdown options styling */
+
         #model-select option {
             background-color: black;
             color: white;
         }
-    
-        /* Selected option styling */
+
         #model-select option:checked {
             background-color: #007bff;
             color: white;
         }
-    
-        /* Hover effect for select */
+
         #model-select:hover {
             background-color: #333;
             border-color: #007bff;
         }
-    
-        /* Focus effect */
+
         #model-select:focus {
             border-color: #007bff;
             outline: none;
         }
-    
-        /* Chat box styling */
+
         #chat-box {
             flex-grow: 1;
             width: calc(100% - 40px);
@@ -182,15 +186,13 @@
             gap: 15px;
             color: white;
             background-color: #000000;
-            padding: 60px 20px 20px 20px; /* Padding adjusted to leave space for the dropdown */
+            padding: 60px 20px 20px 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
             word-wrap: break-word;
             position: relative;
         }
-    
 
-        /* General Message Style */
         .message {
             padding: 0;
             background-color: transparent;
@@ -198,37 +200,34 @@
             margin-bottom: 0;
         }
 
-        /* User message */
         .message.user {
             align-self: flex-end;
             background-color: #e0e0e0;
             padding: 10px;
             border-radius: 15px;
             margin-bottom: 10px;
-            color: black; /* Change user message text color to black */
+            color: black;
         }
 
-        /* AI message should look like a code block in a text editor */
         .message.ai {
             align-self: stretch;
-            width: 100%; /* Full width */
-            background-color: transparent; /* No background color for the AI response */
+            width: 100%;
+            background-color: transparent;
             color: #ffffff;
             padding: 0;
-            margin: 0; /* Remove margins */
+            margin: 0;
             border: none;
         }
 
-        /* Highlight.js Code Block Styling */
         .message pre code {
-            background-color: #1e1e1e; /* Similar to Vim's default background */
+            background-color: #1e1e1e;
             color: #f8f8f2;
             width: 100%;
-            border-radius: 0; /* No border radius to make it look like an editor */
-            padding: 10px; /* Padding for the code */
+            border-radius: 0;
+            padding: 10px;
             white-space: pre-wrap;
             word-wrap: break-word;
-            font-family: 'Fira Code', monospace; /* Use a code-like font */
+            font-family: 'Fira Code', monospace;
         }
 
         #input-container {
@@ -365,7 +364,6 @@
             100% { opacity: 1; }
         }
 
-        /* New feedback button */
         #feedback-button {
             position: relative;
             margin: 15px 0;
@@ -396,11 +394,9 @@
     </div>
 
     <div id="chat-container">
-        <!-- Dropdown for selecting model -->
         <div id="model-select-container">
             <select id="model-select">
                 <option value="chat">LitChat Llama3.1 Model (general)</option>
-
                 <option value="basic">LitCode Basic Model (coding)</option>
                 <option value="advanced">LitCode Premium Model (coding)</option>
             </select>
@@ -467,7 +463,6 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
         
-            // Get the selected model
             const selectedModel = document.getElementById('model-select').value;
         
             if (sender === 'AI') {
@@ -482,7 +477,6 @@
                     messageElement.textContent = text;
                 }
 
-                // Show feedback button after the first AI message in the current tab
                 if (!feedbackButtonShown[currentPage]) {
                     const feedbackButton = createFeedbackButton();
                     chatBox.appendChild(feedbackButton);
@@ -500,7 +494,6 @@
             toggleWhiteEyeLogo();
         }
 
-        // Create Feedback Button Function
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
             feedbackButton.id = 'feedback-button';
@@ -532,7 +525,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://55ce-104-199-168-160.ngrok-free.app/chat', {
+                fetch('https://c2e2-104-199-168-160.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -568,18 +561,16 @@
             }
         });
 
-        const maxTabWidth = 150; // Maximum width for active and adjacent tabs
-        const minTabWidth = 80;  // Minimum width for dynamically resized tabs
+        const maxTabWidth = 150;
+        const minTabWidth = 49;
 
         function resizeTabs() {
-            const tabContainer = document.getElementById('tab-container');
             const tabs = document.querySelectorAll('.tab');
             const activeTabIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
             
-            // Calculate available width: chat container width - add button width - padding for flexibility
             const chatContainerWidth = document.getElementById('chat-container').offsetWidth;
             const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
-            const availableWidth = chatContainerWidth - addPageButtonWidth - (3 * maxTabWidth); // Subtract some padding
+            const availableWidth = chatContainerWidth - addPageButtonWidth - (3 * maxTabWidth);
 
             let totalTabWidth = 0;
             tabs.forEach(tab => {
@@ -587,7 +578,7 @@
             });
 
             if (totalTabWidth > availableWidth) {
-                const nonActiveTabCount = tabs.length - 3; // Tabs excluding active and its adjacent ones
+                const nonActiveTabCount = tabs.length - 3;
                 let dynamicTabWidth = Math.max(
                     Math.min(availableWidth / tabs.length, maxTabWidth),
                     minTabWidth
@@ -620,7 +611,7 @@
 
             addTabEditEventListener(newTab.querySelector('.tab-title'));
 
-            resizeTabs(); // Call resizeTabs to resize the tabs after a new one is added
+            resizeTabs();
         });
 
         function setActiveTab(tab, pageName) {
@@ -643,8 +634,8 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
-            toggleWhiteEyeLogo();
-            resizeTabs(); // Resize tabs after the active tab changes
+            
+            resizeTabs();
         }
 
         function loadChatHistory(pageName) {
@@ -657,7 +648,6 @@
             reapplySyntaxHighlighting();
             toggleWhiteEyeLogo();
 
-            // Re-append feedback button if it was already shown
             if (feedbackButtonShown[pageName]) {
                 const feedbackButton = createFeedbackButton();
                 chatBox.appendChild(feedbackButton);
