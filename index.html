@@ -882,16 +882,16 @@
 
         // Search functionality
         searchTabs.addEventListener('input', () => {
-            const query = searchTabs.value.toLowerCase();
+            const query = searchTabs.value.toLowerCase().trim();
             const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
             const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-            
+        
             // Loop through each page's chat history and tab titles
             Object.keys(chatHistories).forEach((pageName, index) => {
                 const chatHistory = chatHistories[pageName];
                 
                 // Get the title of the current tab
-                const tabTitle = allTabs[index].value.toLowerCase();
+                const tabTitle = allTabs[index].value.toLowerCase().trim();
                 
                 // Check if any message in the chat history matches the query
                 const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
@@ -899,14 +899,15 @@
                 // Find the corresponding sidebar tab for the current page
                 const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
                 
-                // Check if the query matches either the tab title or chat history
-                if (tabTitle.includes(query) || matchingChats.length > 0) {
-                    sidebarTab.style.display = 'block';
+                // Check if the query is found either in the tab title or in the chat history
+                if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                    sidebarTab.style.display = 'block'; // Show the tab if it matches
                 } else {
-                    sidebarTab.style.display = 'none';
+                    sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
                 }
             });
         });
+
         // Initial population of the sidebar
         populateSidebar();
 
