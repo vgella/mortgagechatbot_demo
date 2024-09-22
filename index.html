@@ -562,6 +562,47 @@
             display: flex;
             justify-content: space-between; /* Even space between the buttons */
         }
+/* Stylized Sign Up Button */
+        #signup-top-button {
+            position: absolute;
+            top: 10px;
+            right: 120px; /* Adjusted to not overlap with the Login button */
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            z-index: 3;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #signup-top-button:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Stylized Login Button */
+        #login-top-button {
+            position: absolute;
+            top: 10px;
+            right: 10px; /* Right-aligned */
+            background-color: #000; /* Black color */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            z-index: 3;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #login-top-button:hover {
+            background-color: #333;
+        }
 
     </style>
 </head>
