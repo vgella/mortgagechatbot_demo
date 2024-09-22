@@ -57,21 +57,47 @@
         }
 
         // Signup Functionality
+// Firebase configuration and initialization (same as before)
+
         function signUpUser() {
             const email = document.getElementById("signup-email").value;
             const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+        
+            // Validate if password and confirm password are the same
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+        
+            // Proceed with Firebase sign-up
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Successful signup
-                    const user = userCredential.user;
-                    alert("Signed up successfully: " + user.email);
+                    alert("Signed up successfully: " + userCredential.user.email);
                     document.getElementById("signup-popup").style.display = "none";
                 })
                 .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
+                    alert("Error: " + error.message);
                 });
         }
+        
+        function resetPassword() {
+            const email = document.getElementById("email").value;
+        
+            if (!email) {
+                alert("Please enter your email to reset the password.");
+                return;
+            }
+        
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert("Password reset email sent.");
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
+        }
+
     </script>
 
     <style>
@@ -175,7 +201,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 150px - 96px);
+            height: calc(100vh - 150px);
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -371,7 +397,7 @@
             position: relative;
             margin-top: 5px;
             width: auto;
-            height: 96px;
+            height: 49px;
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -457,7 +483,7 @@
             top: 0;
             right: -343px; /* Move the sidebar completely out of view */
             width: 300px;
-            height: calc(100vh - 150px - 96px);
+            height: calc(100vh - 150px);
             background-color: transparent;
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px 0 0 15px;
@@ -530,6 +556,11 @@
             background-color: #333; /* Dark background for input fields */
             color: white;
         }
+        .popup a {
+            color: #ffffff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
         
         /* Buttons inside Popups */
         .popup .button-container button {
@@ -540,8 +571,6 @@
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
         }
         
         .popup .button-container button:hover {
@@ -1087,34 +1116,39 @@
     <button id="login-top-button" onclick="document.getElementById('login-popup').style.display='block';">Login</button>
 
 
+    <!-- Signup Popup -->
     <div id="signup-popup" class="popup">
         <h3 style="color: white;">Sign Up</h3>
         <input type="email" id="signup-email" placeholder="Email">
         <input type="password" id="signup-password" placeholder="Password">
-
-        <!-- Buttons for Sign Up and Login -->
+        <input type="password" id="confirm-password" placeholder="Confirm Password"> <!-- New confirm password field -->
+        
         <div class="button-container">
             <button onclick="signUpUser()">Sign Up</button>
             <button onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">Login</button>
         </div>
-
+    
         <p id="login-link" onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">
             Already have an account? Log in
         </p>
     </div>
-
+    
     <!-- Login Popup -->
     <div id="login-popup" class="popup">
         <h3 style="color: white;">Login</h3>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-
-        <!-- Buttons for Login and Sign Up -->
+    
         <div class="button-container">
             <button onclick="loginUser()">Login</button>
             <button onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">Sign Up</button>
         </div>
-
+    
+        <!-- New Forgot Password link -->
+        <p style="color: white; text-align: center;">
+            <a href="javascript:void(0)" style="color: #ffffff; text-decoration: underline;" onclick="resetPassword()">Forgot your password?</a>
+        </p>
+    
         <p id="signup-link" onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">
             Don't have an account? Sign up
         </p>
