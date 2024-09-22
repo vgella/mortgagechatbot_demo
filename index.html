@@ -695,7 +695,10 @@
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
 
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-
+            newTab.addEventListener('click', function () {
+                const pageName = this.querySelector('input.tab-title').value;
+                setActiveTab(this, pageName);
+            });
             chatHistories[newPageName] = [];
             setActiveTab(newTab, newPageName);
 
