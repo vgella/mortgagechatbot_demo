@@ -19,147 +19,6 @@
     
     <!-- Load highlight.js library -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
-    <!-- The core Firebase JS SDK is always required -->
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js"></script>
-    
-
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-    
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBExTFUv9pwWxnIEGAFJtr00eu6gTT2wx0",
-            authDomain: "litcode-8c111.firebaseapp.com",
-            projectId: "litcode-8c111",
-            storageBucket: "litcode-8c111.appspot.com",
-            messagingSenderId: "463100690894",
-            appId: "1:463100690894:web:5703dd4cadb0d92b4e2b9f",
-            measurementId: "G-EM8B9CQH5X"
-        };
-    
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(); // Initialize Firebase Authentication
-    
-        // Utility function to validate email
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(String(email).toLowerCase());
-        }
-    
-        // Disable buttons while Firebase is processing
-        function toggleButtonState(button, disable = true) {
-            button.disabled = disable;
-            if (disable) {
-                button.style.backgroundColor = "#ccc"; // Change button appearance when disabled
-            } else {
-                button.style.backgroundColor = ""; // Restore original color
-            }
-        }
-    
-        // Sign-up functionality
-        function signUpUser() {
-            const email = document.getElementById("signup-email").value;
-            const password = document.getElementById("signup-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
-            const signUpButton = document.querySelector("#signup-popup button");
-    
-            // Validate inputs
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email.");
-                return;
-            }
-            if (password.length < 6) {
-                alert("Password should be at least 6 characters.");
-                return;
-            }
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-    
-            toggleButtonState(signUpButton, true);
-    
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed up successfully
-                    const user = userCredential.user;
-                    alert("Signed up successfully: " + user.email);
-                    document.getElementById("signup-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                })
-                .finally(() => {
-                    toggleButtonState(signUpButton, false); // Re-enable button after request
-                });
-        }
-    
-        // Login functionality
-        function loginUser() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const loginButton = document.querySelector("#login-popup button");
-    
-            // Validate inputs
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email.");
-                return;
-            }
-            if (password.length < 6) {
-                alert("Password should be at least 6 characters.");
-                return;
-            }
-    
-            toggleButtonState(loginButton, true);
-    
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Successful login
-                    const user = userCredential.user;
-                    alert("Logged in successfully: " + user.email);
-                    document.getElementById("login-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                })
-                .finally(() => {
-                    toggleButtonState(loginButton, false); // Re-enable button after request
-                });
-        }
-    
-        // Password reset functionality
-        function resetPassword() {
-            const email = document.getElementById("email").value;
-            const resetButton = document.querySelector("#login-popup a");
-    
-            if (!validateEmail(email)) {
-                alert("Please enter a valid email to reset the password.");
-                return;
-            }
-    
-            toggleButtonState(resetButton, true);
-    
-            sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    alert("Password reset email sent.");
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                })
-                .finally(() => {
-                    toggleButtonState(resetButton, false); // Re-enable button after request
-                });
-        }
-    </script>
-
-    
 
     <style>
         body {
@@ -180,9 +39,13 @@
         #tab-container {
             display: flex;
             width: 100%;
-            background-color: #ffffff;
+            background-color: transparent;
             padding: 0;
             box-sizing: border-box;
+            background-image: url('litcode_logo_slimthick.svg'); /* Set the background image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            background-position: center; /* Center the image */
+            background-size: contain; 
             overflow-x: auto; /* Enable horizontal scrolling */
             scroll-behavior: smooth;
         }
@@ -211,6 +74,7 @@
             border: none;
             margin-top: 10px;
             width: 150px; /* Default width for each tab */
+            overflow: hidden; /* Hide overflowing text */
         }
 
         .tab input {
@@ -221,21 +85,22 @@
             font-size: 16px;
             color: black;
             width: 100px;
+            display: block; /* Ensure input is block-level */
+        }
+
+        .tab.shrunk input {
+            display: none; /* Hide the tab title when shrunk */
         }
 
         .tab.active {
             background-color: #ffffff;
             color: #000;
             transform: translateY(-5px);
-            transform: scale(.9);
-
             z-index: 1;
         }
 
         .tab:hover {
             transform: translateY(-5px);
-            transform: scale(.9);
-
             z-index: 1;
         }
 
@@ -262,7 +127,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            height: calc(100vh - 150px);
+            height: calc(100vh - 30px);
             box-sizing: border-box;
             overflow-y: auto;
             flex-grow: 1;
@@ -450,16 +315,6 @@
             pointer-events: none; /* Prevents it from interfering with user interactions */
         }
 
-        #litcode-logo {
-            position: relative;
-            margin-top: 5px;
-            width: auto;
-            height: 49px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            z-index: 0;
-        }
 
         .footer-links {
             text-align: center;
@@ -586,118 +441,9 @@
         .sidebar-content .sidebar-tab:hover {
             background-color: #f0f0f0;
         }
-        /* Styling for Signup and Login Popups */
-     /* Popup Style */
-        #signup-popup, #login-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #007bff; /* Blue background */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            width: 350px;
-            max-width: 90%;
-        }
-        
-        /* Input Fields inside Popups */
-        .popup input {
-            width: calc(100% - 20px); /* Padding inside the input fields */
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid white;
-            border-radius: 5px;
-            background-color: #333; /* Dark background for input fields */
-            color: white;
-        }
-        .popup a {
-            color: #ffffff;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-        
-        /* Buttons inside Popups */
-        .popup .button-container button {
-            width: 48%; /* Buttons side by side */
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #000000; /* Black background for buttons */
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .popup .button-container button:hover {
-            background-color: #333; /* Darker hover effect */
-        }
-        
-        /* Sign-up/Login Links in the Popups */
-        #signup-link, #login-link {
-            margin-top: 10px;
-            text-align: center;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        /* Flex container for buttons to sit side by side */
-        #signup-popup .button-container, #login-popup .button-container {
-            display: flex;
-            justify-content: space-between; /* Even space between the buttons */
-        }
-/* Stylized Sign Up Button */
-        #signup-top-button {
-            position: absolute;
-            top: 10px;
-            right: 120px; /* Adjusted to not overlap with the Login button */
-            background-color: #007bff; /* Blue color */
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            z-index: 3;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: none
-
-        }
-        
-        #signup-top-button:hover {
-            background-color: #0056b3;
-        }
-        
-        /* Stylized Login Button */
-        #login-top-button {
-
-            position: absolute;
-            top: 10px;
-            right: 10px; /* Right-aligned */
-            background-color: #000; /* Black color */
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            z-index: 3;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: none
-        }
-        
-        #login-top-button:hover {
-            background-color: #333;
-        }
-
     </style>
 </head>
 <body>
-    <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
     <div id="tab-container">
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
@@ -747,7 +493,6 @@
         <a href="javascript:void(0);" onclick="openPopup('notice.txt', 'Notice')">Notice</a>
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
         <a href="https://thirdeyeai.org" target="_blank">thirdeye ai</a> <!-- New link to LitCode -->
-
     </div>
 
     <script>
@@ -766,8 +511,7 @@
         let pageCount = 1;
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
-        
-        
+
         const chatHistories = {
             'New Page 1': []
         };
@@ -919,21 +663,15 @@
                 totalTabWidth += maxTabWidth;
             });
 
-            if (totalTabWidth > availableWidth) {
-                const nonActiveTabCount = tabs.length - 3;
-                let dynamicTabWidth = Math.max(
-                    Math.min(availableWidth / tabs.length, maxTabWidth),
-                    minTabWidth
-                );
-                
-                tabs.forEach((tab, index) => {
-                    if (index === activeTabIndex || index === activeTabIndex - 1 || index === activeTabIndex + 1) {
-                        tab.style.width = `${maxTabWidth}px`;
-                    } else {
-                        tab.style.width = `${dynamicTabWidth}px`;
-                    }
-                });
-            }
+            tabs.forEach((tab, index) => {
+                if (totalTabWidth > availableWidth && (index !== activeTabIndex && index !== activeTabIndex - 1 && index !== activeTabIndex + 1)) {
+                    tab.style.width = `${minTabWidth}px`; // Shrink tabs
+                    tab.classList.add('shrunk'); // Add class to hide title
+                } else {
+                    tab.style.width = `${maxTabWidth}px`; // Restore full size
+                    tab.classList.remove('shrunk'); // Show title
+                }
+            });
         }
 
         addPageButton.addEventListener('click', () => {
@@ -1171,48 +909,5 @@
         populateSidebar();
 
     </script>
-    <!-- Login/Signup Buttons -->
-    <button id="signup-top-button" onclick="document.getElementById('signup-popup').style.display='block';">Sign Up</button>
-    <button id="login-top-button" onclick="document.getElementById('login-popup').style.display='block';">Login</button>
-
-
-    <!-- Signup Popup -->
-    <div id="signup-popup" class="popup">
-        <h3 style="color: white;">Sign Up</h3>
-        <input type="email" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <input type="password" id="confirm-password" placeholder="Confirm Password"> <!-- New confirm password field -->
-        
-        <div class="button-container">
-            <button onclick="signUpUser()">Sign Up</button>
-            <button onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">Login</button>
-        </div>
-    
-        <p id="login-link" onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">
-            Already have an account? Log in
-        </p>
-    </div>
-    
-    <!-- Login Popup -->
-    <div id="login-popup" class="popup">
-        <h3 style="color: white;">Login</h3>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-    
-        <div class="button-container">
-            <button onclick="loginUser()">Login</button>
-            <button onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">Sign Up</button>
-        </div>
-    
-        <!-- New Forgot Password link -->
-        <p style="color: white; text-align: center;">
-            <a href="javascript:void(0)" style="color: #ffffff; text-decoration: underline;" onclick="resetPassword()">Forgot your password?</a>
-        </p>
-    
-        <p id="signup-link" onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">
-            Don't have an account? Sign up
-        </p>
-    </div>
-
 </body>
 </html>
