@@ -529,13 +529,17 @@
         };
 
         function toggleWhiteEyeLogo() {
-            if (chatHistories[currentPage].length === 0) {
+            const currentHistory = chatHistories[currentPage]; // Get current page's chat history
+        
+            // Ensure currentHistory exists before checking its length
+            if (currentHistory && currentHistory.length === 0) {
                 whiteEyeLogo.classList.add('visible');
             } else {
                 whiteEyeLogo.classList.remove('visible');
                 whiteEyeLogo.style.pointerEvents = 'none';
             }
         }
+
 
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
