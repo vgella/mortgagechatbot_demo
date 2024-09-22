@@ -503,6 +503,7 @@
         .sidebar-content .sidebar-tab:hover {
             background-color: #f0f0f0;
         }
+        /* Styling for Signup and Login Popups */
         #signup-popup, #login-popup {
             display: none;
             position: fixed;
@@ -517,7 +518,8 @@
             width: 350px;
             max-width: 90%;
         }
-
+        
+        /* Input Fields inside Popups */
         .popup input {
             width: calc(100% - 20px); /* Added padding to the input fields */
             padding: 10px;
@@ -527,9 +529,10 @@
             background-color: #333;
             color: white;
         }
-
+        
+        /* Buttons inside Popups */
         .popup button {
-            width: 48%;
+            width: 48%; /* Ensures buttons are side by side */
             padding: 10px;
             border-radius: 5px;
             background-color: #000000; /* Changed button to black */
@@ -537,11 +540,12 @@
             border: none;
             cursor: pointer;
         }
-
+        
         .popup button:hover {
-            background-color: #333;
+            background-color: #333; /* Darker on hover */
         }
-
+        
+        /* Links inside Popups */
         #signup-link, #login-link {
             margin-top: 10px;
             text-align: center;
@@ -549,11 +553,13 @@
             cursor: pointer;
             font-size: 12px;
         }
-
+        
+        /* Button Container for Proper Layout */
         #signup-popup .button-container, #login-popup .button-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Ensures buttons are spaced equally */
         }
+
     </style>
 </head>
 <body>
@@ -1033,8 +1039,9 @@
 
     </script>
     <!-- Login/Signup Buttons -->
-    <button id="login-button" onclick="document.getElementById('login-popup').style.display='block'">Login</button>
-    <button id="signup-button" onclick="document.getElementById('signup-popup').style.display='block'">Sign Up</button>
+    <button id="signup-top-button" onclick="document.getElementById('signup-popup').style.display='block';">Sign Up</button>
+    <button id="login-top-button" onclick="document.getElementById('login-popup').style.display='block';">Login</button>
+
 
     <div id="signup-popup" class="popup">
         <h3 style="color: white;">Sign Up</h3>
