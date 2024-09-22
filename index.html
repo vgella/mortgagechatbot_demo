@@ -772,6 +772,8 @@
 
         function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
+                console.log('Tab title changed:', tabTitle.value);
+
                 // Update the corresponding sidebar tab title when the user edits the tab title
                 sidebarTab.textContent = tabTitle.value;
             });
