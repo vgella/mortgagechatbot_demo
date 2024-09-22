@@ -609,6 +609,7 @@
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
             const selectedModel = document.getElementById('model-select').value;
+            const currentTitle = activeTab.querySelector('input.tab-title').value;
 
             if (codingTask) {
                 appendMessage('User', codingTask);
@@ -616,7 +617,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://f13a-35-204-175-219.ngrok-free.app/chat', {
+                fetch('https://0802-35-204-175-219.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -625,7 +626,8 @@
                         ip_address: userIp,
                         message: codingTask,
                         page: currentPage,
-                        model: selectedModel
+                        model: selectedModel,
+                        tab_name: currentTitle
                     }),
                 })
                 .then(response => response.json())
