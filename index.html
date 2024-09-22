@@ -22,8 +22,10 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 
+        // Login Functionality
+    
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBExTFUv9pwWxnIEGAFJtr00eu6gTT2wx0",
@@ -38,65 +40,6 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
-
-        // Login Functionality
-        function loginUser() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Successful login
-                    const user = userCredential.user;
-                    alert("Logged in successfully: " + user.email);
-                    document.getElementById("login-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                });
-        }
-
-        // Signup Functionality
-// Firebase configuration and initialization (same as before)
-
-        function signUpUser() {
-            const email = document.getElementById("signup-email").value;
-            const password = document.getElementById("signup-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
-        
-            // Validate if password and confirm password are the same
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-        
-            // Proceed with Firebase sign-up
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    alert("Signed up successfully: " + userCredential.user.email);
-                    document.getElementById("signup-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
-        }
-        
-        function resetPassword() {
-            const email = document.getElementById("email").value;
-        
-            if (!email) {
-                alert("Please enter your email to reset the password.");
-                return;
-            }
-        
-            sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    alert("Password reset email sent.");
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
-        }
 
     </script>
 
@@ -705,6 +648,63 @@
         let pageCount = 1;
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
+    function loginUser() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    const user = userCredential.user;
+                    alert("Logged in successfully: " + user.email);
+                    document.getElementById("login-popup").style.display = "none";
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    alert("Error: " + errorMessage);
+                });
+        }
+
+        // Signup Functionality
+// Firebase configuration and initialization (same as before)
+
+        function signUpUser() {
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+        
+            // Validate if password and confirm password are the same
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+        
+            // Proceed with Firebase sign-up
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert("Signed up successfully: " + userCredential.user.email);
+                    document.getElementById("signup-popup").style.display = "none";
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
+        }
+        
+        function resetPassword() {
+            const email = document.getElementById("email").value;
+        
+            if (!email) {
+                alert("Please enter your email to reset the password.");
+                return;
+            }
+        
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert("Password reset email sent.");
+                })
+                .catch((error) => {
+                    alert("Error: " + error.message);
+                });
+        }
 
         const chatHistories = {
             'New Page 1': []
