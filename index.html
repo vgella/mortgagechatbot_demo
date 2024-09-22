@@ -797,6 +797,17 @@
         }
 
         const firstTab = document.getElementById('new-page-1');
+        const firstSidebarTab = document.createElement('div'); // Create a sidebar tab for the first tab
+        firstSidebarTab.classList.add('sidebar-tab');
+        firstSidebarTab.textContent = 'New Page 1'; // Initial title for the first tab
+        firstSidebarTab.addEventListener('click', () => {
+            setActiveTab(firstTab, 'New Page 1');
+            sidebar.classList.remove('open');
+            sidebarVisible = false;
+        });
+        
+        sidebarContent.appendChild(firstSidebarTab); // Add first tab to sidebar
+
         setActiveTab(firstTab, 'New Page 1');
 
         firstTab.addEventListener('click', () => {
@@ -804,7 +815,7 @@
         });
 
         const firstTabTitle = firstTab.querySelector('.tab-title');
-        addTabEditEventListener(firstTabTitle, null, 'New Page 1'); // Passing null for sidebar tab initially
+        addTabEditEventListener(firstTabTitle, firstSidebarTab, 'New Page 1'); // Passing null for sidebar tab initially
 
         function openPopup(file, title) {
             fetch(file)
