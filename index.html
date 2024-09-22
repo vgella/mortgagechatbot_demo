@@ -729,6 +729,9 @@
         });
 
         function setActiveTab(tab, pageName) {
+            console.log("Activating Tab:", pageName);  // Log the tab that is being activated
+        console.log("Tab element:", tab);  // Log the tab element itself
+
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
             }
@@ -746,6 +749,7 @@
             currentInput.focus();
 
             currentPage = pageName;
+            console.log("Current Page Set To:", currentPage);  // Log the current page name
 
             loadChatHistory(pageName);
             
@@ -754,9 +758,14 @@
 
         function loadChatHistory(pageName) {
             chatBox.innerHTML = '';
+            console.log("Loading chat history for:", pageName);  // Log which page's chat history is being loaded
+            console.log("Chat History Length:", history.length);  // Log how many messages are in the chat history
+
             const history = chatHistories[pageName] || [];
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
+                console.log("Appending message from:", msg.sender);  // Log each message appended
+
             });
 
             reapplySyntaxHighlighting();
