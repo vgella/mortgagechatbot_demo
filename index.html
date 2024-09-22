@@ -825,6 +825,17 @@
             sidebarVisible = !sidebarVisible;
             sidebar.classList.toggle('open', sidebarVisible);
         });
+// Add this to handle clicks inside the sidebar, but outside of tabs and search bar
+        sidebar.addEventListener('click', (event) => {
+            const isTab = event.target.classList.contains('sidebar-tab');
+            const isSearchBar = event.target.classList.contains('search-tabs');
+            
+            // If clicked outside the tabs or search bar, close the sidebar
+            if (!isTab && !isSearchBar) {
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            }
+        });
 
         // Close sidebar when clicking outside
         document.addEventListener('click', (event) => {
