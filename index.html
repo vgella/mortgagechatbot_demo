@@ -609,6 +609,7 @@
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
             const selectedModel = document.getElementById('model-select').value;
+            const activeTab = document.querySelector('.tab.active input.tab-title');
             const currentTitle = activeTab.querySelector('input.tab-title').value;
 
             if (codingTask) {
