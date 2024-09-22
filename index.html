@@ -648,7 +648,8 @@
         let pageCount = 1;
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
-    function loginUser() {
+        
+        function loginUser() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             signInWithEmailAndPassword(auth, email, password)
@@ -665,7 +666,7 @@
         }
 
         // Signup Functionality
-// Firebase configuration and initialization (same as before)
+        // Firebase configuration and initialization (same as before)
 
         function signUpUser() {
             const email = document.getElementById("signup-email").value;
