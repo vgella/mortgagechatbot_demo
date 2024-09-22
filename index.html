@@ -87,14 +87,12 @@
             color: #000;
             transform: translateY(-5px);
             transform: scale(.9);
-
             z-index: 1;
         }
 
         .tab:hover {
             transform: translateY(-5px);
             transform: scale(.9);
-
             z-index: 1;
         }
 
@@ -444,10 +442,21 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .sidebar-content .sidebar-tab:hover {
             background-color: #f0f0f0;
+        }
+
+        /* Red X button styling */
+        .delete-tab {
+            color: red;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 10px;
         }
     </style>
 </head>
@@ -508,6 +517,9 @@
     </div>
 
     <script>
+        const CHAT_HISTORY_KEY = 'chat_history';
+        const TAB_HISTORY_KEY = 'tab_history';
+        
         const chatBox = document.getElementById('chat-box');
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
@@ -524,9 +536,10 @@
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
 
-        const chatHistories = {
+        let chatHistories = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY)) || {
             'New Page 1': []
         };
+        let tabHistories = JSON.parse(localStorage.getItem(TAB_HISTORY_KEY)) || ['New Page 1'];
 
         function toggleWhiteEyeLogo() {
             if (chatHistories[currentPage].length === 0) {
@@ -579,6 +592,9 @@
                 behavior: 'smooth'
             });
             toggleWhiteEyeLogo();
+
+            // Save to localStorage
+            localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistories));
         }
 
         function createFeedbackButton() {
@@ -611,6 +627,7 @@
                 codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistories));
 
                 fetch('https://c2e2-104-199-168-160.ngrok-free.app/chat', {
                     method: 'POST',
@@ -628,6 +645,7 @@
                 .then(data => {
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistories));
 
                     const activeTab = document.querySelector('.tab.active input.tab-title');
                     if (activeTab) {
@@ -649,7 +667,7 @@
         });
 
         const maxTabWidth = 150;
-        const minTabWidth = 49;
+        const minTabWidth = 80;
 
         function resizeTabs() {
             const tabs = document.querySelectorAll('.tab');
@@ -681,6 +699,24 @@
             }
         }
 
+        function deleteTab(tab, pageName) {
+            // Ensure there is at least one other tab
+            if (Object.keys(chatHistories).length > 1) {
+                tab.remove();
+                delete chatHistories[pageName];
+                tabHistories = tabHistories.filter(title => title !== pageName);
+                localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistories));
+                localStorage.setItem(TAB_HISTORY_KEY, JSON.stringify(tabHistories));
+
+                // Set the first remaining tab as active
+                const remainingTabs = document.querySelectorAll('.tab');
+                if (remainingTabs.length > 0) {
+                    setActiveTab(remainingTabs[0], remainingTabs[0].querySelector('.tab-title').value);
+                }
+                populateSidebar();
+            }
+        }
+
         addPageButton.addEventListener('click', () => {
             pageCount++;
             const newTab = document.createElement('div');
@@ -691,14 +727,23 @@
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
 
             chatHistories[newPageName] = [];
+            tabHistories.push(newPageName);
+            localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistories));
+            localStorage.setItem(TAB_HISTORY_KEY, JSON.stringify(tabHistories));
+
             setActiveTab(newTab, newPageName);
 
             // Create corresponding sidebar tab
             const sidebarTab = document.createElement('div');
             sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = newPageName;
+            sidebarTab.innerHTML = `${newPageName} <span class="delete-tab">X</span>`;
 
             // Switch tabs when clicking on sidebar
+            sidebarTab.querySelector('.delete-tab').addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteTab(newTab, newPageName);
+            });
+
             sidebarTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
                 sidebar.classList.remove('open');
@@ -757,7 +802,11 @@
         function addTabEditEventListener(tabTitle, sidebarTab) {
             tabTitle.addEventListener('input', function () {
                 // Update the corresponding sidebar tab title when the user edits the tab title
-                sidebarTab.textContent = tabTitle.value;
+                sidebarTab.innerHTML = `${tabTitle.value} <span class="delete-tab">X</span>`;
+                sidebarTab.querySelector('.delete-tab').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteTab(tabTitle.parentElement, tabTitle.value);
+                });
             });
 
             tabTitle.addEventListener('click', function () {
@@ -836,9 +885,14 @@
                 const tabTitle = tab.value;
                 const sidebarTab = document.createElement('div');
                 sidebarTab.classList.add('sidebar-tab');
-                sidebarTab.textContent = tabTitle;
+                sidebarTab.innerHTML = `${tabTitle} <span class="delete-tab">X</span>`;
 
                 // Switch tabs on click
+                sidebarTab.querySelector('.delete-tab').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteTab(tab.parentElement, tabTitle);
+                });
+
                 sidebarTab.addEventListener('click', () => {
                     setActiveTab(tab.parentElement, tabTitle);
                     sidebar.classList.remove('open');
@@ -881,8 +935,44 @@
 
         // Initial population of the sidebar
         populateSidebar();
+
+        // Load the tabs and chat history from localStorage
+        function loadTabsFromLocalStorage() {
+            tabHistories.forEach(pageName => {
+                const newTab = document.createElement('div');
+                newTab.classList.add('tab');
+                newTab.innerHTML = `<input type="text" value="${pageName}" class="tab-title" />`;
+                document.getElementById('tab-container').insertBefore(newTab, addPageButton);
+
+                if (!chatHistories[pageName]) {
+                    chatHistories[pageName] = [];
+                }
+
+                const sidebarTab = document.createElement('div');
+                sidebarTab.classList.add('sidebar-tab');
+                sidebarTab.innerHTML = `${pageName} <span class="delete-tab">X</span>`;
+
+                sidebarTab.querySelector('.delete-tab').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteTab(newTab, pageName);
+                });
+
+                sidebarTab.addEventListener('click', () => {
+                    setActiveTab(newTab, pageName);
+                    sidebar.classList.remove('open');
+                    sidebarVisible = false;
+                });
+
+                const tabTitleInput = newTab.querySelector('.tab-title');
+                addTabEditEventListener(tabTitleInput, sidebarTab);
+
+                sidebarContent.appendChild(sidebarTab);
+            });
+        }
+
         window.onload = function() {
-            window.scrollBy(0, 108); // Scroll down 72px vertically
+            window.scrollBy(0, 108); // Scroll down 108px vertically
+            loadTabsFromLocalStorage();
         };
     </script>
 
