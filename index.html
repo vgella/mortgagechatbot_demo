@@ -773,6 +773,7 @@
         function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
                 console.log('Tab title changed:', tabTitle.value);
+                console.log('Sidebar tab element:', sidebarTab);  // This should log the sidebar tab
 
                 // Update the corresponding sidebar tab title when the user edits the tab title
                 sidebarTab.textContent = tabTitle.value;
@@ -817,6 +818,8 @@
         });
 
         const firstTabTitle = firstTab.querySelector('.tab-title');
+        console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
+
         addTabEditEventListener(firstTabTitle, firstSidebarTab, 'New Page 1'); // Passing null for sidebar tab initially
 
         function openPopup(file, title) {
