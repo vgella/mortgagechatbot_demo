@@ -759,9 +759,10 @@
         function loadChatHistory(pageName) {
             chatBox.innerHTML = '';
             console.log("Loading chat history for:", pageName);  // Log which page's chat history is being loaded
-            console.log("Chat History Length:", history.length);  // Log how many messages are in the chat history
 
             const history = chatHistories[pageName] || [];
+            console.log("Chat History Length:", history.length);  // Log how many messages are in the chat history
+
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
                 console.log("Appending message from:", msg.sender);  // Log each message appended
