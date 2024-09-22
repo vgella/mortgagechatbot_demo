@@ -23,8 +23,6 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-
-        // Login Functionality
     
         // Firebase configuration
         const firebaseConfig = {
@@ -36,12 +34,126 @@
             appId: "1:463100690894:web:5703dd4cadb0d92b4e2b9f",
             measurementId: "G-EM8B9CQH5X"
         };
-
+    
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-
+        const auth = getAuth(); // Initialize Firebase Authentication
+    
+        // Utility function to validate email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+    
+        // Disable buttons while Firebase is processing
+        function toggleButtonState(button, disable = true) {
+            button.disabled = disable;
+            if (disable) {
+                button.style.backgroundColor = "#ccc"; // Change button appearance when disabled
+            } else {
+                button.style.backgroundColor = ""; // Restore original color
+            }
+        }
+    
+        // Sign-up functionality
+        function signUpUser() {
+            const email = document.getElementById("signup-email").value;
+            const password = document.getElementById("signup-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            const signUpButton = document.querySelector("#signup-popup button");
+    
+            // Validate inputs
+            if (!validateEmail(email)) {
+                alert("Please enter a valid email.");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Password should be at least 6 characters.");
+                return;
+            }
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+    
+            toggleButtonState(signUpButton, true);
+    
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up successfully
+                    const user = userCredential.user;
+                    alert("Signed up successfully: " + user.email);
+                    document.getElementById("signup-popup").style.display = "none";
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    alert("Error: " + errorMessage);
+                })
+                .finally(() => {
+                    toggleButtonState(signUpButton, false); // Re-enable button after request
+                });
+        }
+    
+        // Login functionality
+        function loginUser() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const loginButton = document.querySelector("#login-popup button");
+    
+            // Validate inputs
+            if (!validateEmail(email)) {
+                alert("Please enter a valid email.");
+                return;
+            }
+            if (password.length < 6) {
+                alert("Password should be at least 6 characters.");
+                return;
+            }
+    
+            toggleButtonState(loginButton, true);
+    
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Successful login
+                    const user = userCredential.user;
+                    alert("Logged in successfully: " + user.email);
+                    document.getElementById("login-popup").style.display = "none";
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    alert("Error: " + errorMessage);
+                })
+                .finally(() => {
+                    toggleButtonState(loginButton, false); // Re-enable button after request
+                });
+        }
+    
+        // Password reset functionality
+        function resetPassword() {
+            const email = document.getElementById("email").value;
+            const resetButton = document.querySelector("#login-popup a");
+    
+            if (!validateEmail(email)) {
+                alert("Please enter a valid email to reset the password.");
+                return;
+            }
+    
+            toggleButtonState(resetButton, true);
+    
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert("Password reset email sent.");
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    alert("Error: " + errorMessage);
+                })
+                .finally(() => {
+                    toggleButtonState(resetButton, false); // Re-enable button after request
+                });
+        }
     </script>
+
 
     <style>
         body {
@@ -649,64 +761,7 @@
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
         
-        function loginUser() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Successful login
-                    const user = userCredential.user;
-                    alert("Logged in successfully: " + user.email);
-                    document.getElementById("login-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    const errorMessage = error.message;
-                    alert("Error: " + errorMessage);
-                });
-        }
-
-        // Signup Functionality
-        // Firebase configuration and initialization (same as before)
-
-        function signUpUser() {
-            const email = document.getElementById("signup-email").value;
-            const password = document.getElementById("signup-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
         
-            // Validate if password and confirm password are the same
-            if (password !== confirmPassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-        
-            // Proceed with Firebase sign-up
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    alert("Signed up successfully: " + userCredential.user.email);
-                    document.getElementById("signup-popup").style.display = "none";
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
-        }
-        
-        function resetPassword() {
-            const email = document.getElementById("email").value;
-        
-            if (!email) {
-                alert("Please enter your email to reset the password.");
-                return;
-            }
-        
-            sendPasswordResetEmail(auth, email)
-                .then(() => {
-                    alert("Password reset email sent.");
-                })
-                .catch((error) => {
-                    alert("Error: " + error.message);
-                });
-        }
-
         const chatHistories = {
             'New Page 1': []
         };
