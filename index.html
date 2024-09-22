@@ -558,8 +558,11 @@
                     const codeElement = document.createElement('code');
                     codeElement.textContent = text;
                     preElement.appendChild(codeElement);
+                    preElement.style.whiteSpace = 'pre-wrap';
+
                     messageElement.appendChild(preElement);
                     hljs.highlightElement(codeElement);
+
                 } else {
                     messageElement.textContent = text;
                 }
