@@ -636,7 +636,10 @@
                     if (activeTab) {
                         activeTab.value = data.tab_title;
                     }
-
+                    const sidebarTab = Array.from(sidebarContent.children).find(tab => tab.textContent === currentPage);
+                    if (sidebarTab) {
+                        sidebarTab.textContent = data.tab_title; // Update the sidebar with the new title
+                    }
                 })
                 .catch(error => {
                     appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
