@@ -503,21 +503,23 @@
         .sidebar-content .sidebar-tab:hover {
             background-color: #f0f0f0;
         }
-        #login-popup, #signup-popup {
+        #signup-popup, #login-popup {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #000;
-            padding: 20px;
-            border-radius: 8px;
+            background-color: #007bff; /* Background color changed to blue */
+            padding: 30px;
+            border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             z-index: 100;
+            width: 350px;
+            max-width: 90%;
         }
 
         .popup input {
-            width: 100%;
+            width: calc(100% - 20px); /* Added padding to the input fields */
             padding: 10px;
             margin: 10px 0;
             border: 1px solid white;
@@ -527,38 +529,30 @@
         }
 
         .popup button {
-            width: 100%;
+            width: 48%;
             padding: 10px;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #000000; /* Changed button to black */
             color: white;
             border: none;
             cursor: pointer;
         }
 
         .popup button:hover {
-            background-color: #0056b3;
+            background-color: #333;
         }
 
-        #login-button, #signup-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            z-index: 3;
-        }
-
-        #signup-link {
+        #signup-link, #login-link {
             margin-top: 10px;
             text-align: center;
             color: white;
             cursor: pointer;
             font-size: 12px;
+        }
+
+        #signup-popup .button-container, #login-popup .button-container {
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
@@ -1042,22 +1036,38 @@
     <button id="login-button" onclick="document.getElementById('login-popup').style.display='block'">Login</button>
     <button id="signup-button" onclick="document.getElementById('signup-popup').style.display='block'">Sign Up</button>
 
+    <div id="signup-popup" class="popup">
+        <h3 style="color: white;">Sign Up</h3>
+        <input type="email" id="signup-email" placeholder="Email">
+        <input type="password" id="signup-password" placeholder="Password">
+
+        <!-- Buttons for Sign Up and Login -->
+        <div class="button-container">
+            <button onclick="signUpUser()">Sign Up</button>
+            <button onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">Login</button>
+        </div>
+
+        <p id="login-link" onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">
+            Already have an account? Log in
+        </p>
+    </div>
+
     <!-- Login Popup -->
     <div id="login-popup" class="popup">
         <h3 style="color: white;">Login</h3>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-        <button onclick="loginUser()">Login</button>
-        <p id="signup-link" onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">Don't have an account? Sign up</p>
+
+        <!-- Buttons for Login and Sign Up -->
+        <div class="button-container">
+            <button onclick="loginUser()">Login</button>
+            <button onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">Sign Up</button>
+        </div>
+
+        <p id="signup-link" onclick="document.getElementById('signup-popup').style.display='block'; document.getElementById('login-popup').style.display='none';">
+            Don't have an account? Sign up
+        </p>
     </div>
 
-    <!-- Signup Popup -->
-    <div id="signup-popup" class="popup">
-        <h3 style="color: white;">Sign Up</h3>
-        <input type="email" id="signup-email" placeholder="Email">
-        <input type="password" id="signup-password" placeholder="Password">
-        <button onclick="signUpUser()">Sign Up</button>
-        <p id="signup-link" onclick="document.getElementById('login-popup').style.display='block'; document.getElementById('signup-popup').style.display='none';">Already have an account? Log in</p>
-    </div>
 </body>
 </html>
