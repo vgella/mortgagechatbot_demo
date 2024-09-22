@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -455,7 +454,7 @@
 <body>
     <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
     <div id="tab-container">
-        <div class="tab active" id="new-page-1">
+        <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
         <button id="add-page-button">+</button>
@@ -499,8 +498,6 @@
         </div>
     </div>
 
-
-
     <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('notice.txt', 'Notice')">Notice</a>
         <a href="javascript:void(0);" onclick="openPopup('terms_and_agreement.txt', 'Terms and Conditions')">Terms and Conditions</a>
@@ -540,7 +537,6 @@
                 whiteEyeLogo.style.pointerEvents = 'none';
             }
         }
-
 
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
@@ -697,16 +693,17 @@
             const newTab = document.createElement('div');
             newTab.classList.add('tab');
             const newPageName = `New Page ${pageCount}`;
+            newTab.setAttribute('data-page-name', newPageName); // Assign original page name
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
 
             document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-
+            newTab.addEventListener('click', function () {
+                const originalPageName = this.getAttribute('data-page-name');
+                setActiveTab(this, originalPageName);
+            });
             chatHistories[newPageName] = [];
             setActiveTab(newTab, newPageName);
-            newTab.addEventListener('click', function () {
-                const pageName = this.querySelector('input.tab-title').value;
-                setActiveTab(this, pageName);
-            });
+
             // Create corresponding sidebar tab
             const sidebarTab = document.createElement('div');
             sidebarTab.classList.add('sidebar-tab');
@@ -721,7 +718,7 @@
 
             // Attach the edit listener to both the tab title and the sidebar tab
             const tabTitleInput = newTab.querySelector('.tab-title');
-            addTabEditEventListener(tabTitleInput, sidebarTab);
+            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName); // Pass the original page name
 
             sidebarContent.appendChild(sidebarTab);
 
@@ -729,9 +726,6 @@
         });
 
         function setActiveTab(tab, pageName) {
-            console.log("Activating Tab:", pageName);  // Log the tab that is being activated
-        console.log("Tab element:", tab);  // Log the tab element itself
-
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
             }
@@ -749,7 +743,6 @@
             currentInput.focus();
 
             currentPage = pageName;
-            console.log("Current Page Set To:", currentPage);  // Log the current page name
 
             loadChatHistory(pageName);
             
@@ -757,16 +750,12 @@
         }
 
         function loadChatHistory(pageName) {
+            console.log('Loading chat history for:', pageName);
             chatBox.innerHTML = '';
-            console.log("Loading chat history for:", pageName);  // Log which page's chat history is being loaded
-
             const history = chatHistories[pageName] || [];
-            console.log("Chat History Length:", history.length);  // Log how many messages are in the chat history
-
+            console.log('Chat History Length:', history.length);
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
-                console.log("Appending message from:", msg.sender);  // Log each message appended
-
             });
 
             reapplySyntaxHighlighting();
@@ -778,7 +767,7 @@
             }
         }
 
-        function addTabEditEventListener(tabTitle, sidebarTab) {
+        function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
                 // Update the corresponding sidebar tab title when the user edits the tab title
                 sidebarTab.textContent = tabTitle.value;
@@ -800,7 +789,7 @@
             });
 
             tabTitle.parentElement.addEventListener('click', function () {
-                setActiveTab(this, tabTitle.value);
+                setActiveTab(this, originalPageName); // Pass the original page name
             });
         }
 
@@ -810,7 +799,7 @@
         });
 
         const firstTabTitle = firstTab.querySelector('.tab-title');
-        addTabEditEventListener(firstTabTitle);
+        addTabEditEventListener(firstTabTitle, null, 'New Page 1'); // Passing null for sidebar tab initially
 
         function openPopup(file, title) {
             fetch(file)
@@ -875,13 +864,12 @@
 
                 // Switch tabs on click
                 sidebarTab.addEventListener('click', () => {
-                    setActiveTab(tab.parentElement, tabTitle);
+                    const parentTab = tab.parentElement;
+                    const originalPageName = parentTab.getAttribute('data-page-name');
+                    setActiveTab(parentTab, originalPageName);
                     sidebar.classList.remove('open');
                     sidebarVisible = false;
                 });
-
-                // Attach the edit listener to both the tab title and the sidebar tab
-                addTabEditEventListener(tab, sidebarTab);
 
                 sidebarContent.appendChild(sidebarTab);
             });
