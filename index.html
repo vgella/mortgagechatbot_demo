@@ -313,10 +313,6 @@
         }
 
         #white-eye-logo {
-            position: relative;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             width: 200px;
             height: auto;
             display: block;
@@ -531,17 +527,7 @@
             'New Page 1': []
         };
 
-        function toggleWhiteEyeLogo() {
-            const currentHistory = chatHistories[currentPage]; // Get current page's chat history
-        
-            // Ensure currentHistory exists before checking its length
-            if (currentHistory && currentHistory.length === 0) {
-                whiteEyeLogo.classList.add('visible');
-            } else {
-                whiteEyeLogo.classList.remove('visible');
-                whiteEyeLogo.style.pointerEvents = 'none';
-            }
-        }
+
 
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
@@ -583,6 +569,8 @@
             }
         
             chatBox.appendChild(messageElement);
+            chatBox.appendChild(whiteEyeLogo);
+
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
                 behavior: 'smooth'
