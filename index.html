@@ -305,7 +305,14 @@
             pointer-events: none;
         }
 
-
+        .chat-empty #white-eye-logo {
+            display: block; /* Show the logo when there's no chat */
+        }
+        
+        #chat-container.messages-present {
+            justify-content: flex-start;
+        }
+        
         .footer-links {
             text-align: center;
             position: relative;
@@ -757,33 +764,29 @@
             console.log('Loading chat history for:', pageName);
             chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
-
-            console.log('Chat History Length:', history.length);
+            const chatContainer = document.getElementById('chat-container');
+            const whiteEyeLogo = document.getElementById('white-eye-logo');
+        
+            // Check if the chat history is empty
             if (history.length === 0) {
-                if (!whiteEyeLogo) {
-                    return;
-                }
-                else {
-                    chatBox.appendChild(whiteEyeLogo);
-                }
+                chatContainer.classList.add('chat-empty'); // Add the 'chat-empty' class to show the logo
+                chatContainer.classList.remove('messages-present'); // Remove any class that indicates messages
             } else {
+                chatContainer.classList.remove('chat-empty'); // Hide the logo
+                chatContainer.classList.add('messages-present'); // Indicate there are messages
                 history.forEach(msg => {
                     appendMessage(msg.sender, msg.text, msg.isCode);
                 });
-                if (!whiteEyeLogo) {
-                    return;
-                }
-                else {
-                    chatBox.appendChild(whiteEyeLogo);
-                }
             }
+        
             reapplySyntaxHighlighting();
-
+        
             if (feedbackButtonShown[pageName]) {
                 const feedbackButton = createFeedbackButton();
                 chatBox.appendChild(feedbackButton);
             }
         }
+
 
         function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
