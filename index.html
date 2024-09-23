@@ -42,11 +42,7 @@
             background-color: transparent;
             padding: 0;
             box-sizing: border-box;
-            height: 112x; /* Increase the height to make the logo more visible */
-            /*background-image: url('litcode_logo_slimthick.svg'); Set the background image */
-            /*background-repeat: no-repeat;  Prevent repeating */
-            /*background-position: center;  Center the image */
-            /*background-size: contain; */
+            height: 112px; 
             overflow-x: auto; /* Enable horizontal scrolling */
             scroll-behavior: smooth;
         }
@@ -60,6 +56,7 @@
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
         }
+
         #litcode-logo {
             width: auto;
             height: 49px;
@@ -71,7 +68,7 @@
         /* Tabs */
         .tab {
             padding: 7.5px 15px;
-            background-color: #1E90FF; /* Blue color matching the feedback button */
+            background-color: #1E90FF;
             border-radius: 15px 15px 0 0;
             cursor: pointer;
             display: flex;
@@ -82,7 +79,7 @@
             border: none;
             margin-top: 10px;
             width: 150px; /* Default width for each tab */
-            overflow: hidden; /* Hide overflowing text */
+            overflow: hidden;
         }
 
         .tab input {
@@ -93,7 +90,7 @@
             font-size: 16px;
             color: black;
             width: 100px;
-            display: block; /* Ensure input is block-level */
+            display: block;
         }
 
         .tab.shrunk input {
@@ -109,24 +106,7 @@
 
         .tab:hover {
             transform: scale(.8);
-
             transform: translateY(-5px);
-            z-index: 1;
-        }
-
-        #add-page-button {
-            border-radius: 15px 15px 0 0;
-            background-color: #000000;
-            padding: 5px;
-            cursor: pointer;
-            height: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: -1px;
-            margin-top: 30px;
-            border: none;
-            color: #ffffff;
             z-index: 1;
         }
 
@@ -149,6 +129,7 @@
         #chat-container::-webkit-scrollbar {
             display: none; /* Chrome, Safari, and Opera */
         }
+
         /* Dropdown container */
         #model-select-container {
             position: absolute;
@@ -157,7 +138,7 @@
             z-index: 2;
             display: inline-block;
         }
-    
+
         /* Dropdown styling */
         #model-select {
             padding: 10px;
@@ -312,15 +293,17 @@
             transform: scale(1.1);
         }
 
+        /* White eye logo centered below chat history */
         #white-eye-logo {
             width: 200px;
             height: auto;
             display: block;
             margin: 20px auto;
+            opacity: 0.5; 
             pointer-events: none;
         }
 
-
+        /* Footer Links */
         .footer-links {
             text-align: center;
             position: relative;
@@ -337,23 +320,27 @@
             font-size: 16px;
             cursor: pointer;
         }
-        
+
         .footer-links a:hover {
             text-decoration: underline;
         }
 
-        .popup-content {
-            padding: 20px;
-            max-width: 600px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: Arial, sans-serif;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+        /* Add Page Button at bottom right */
+        #new-add-page-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: #1E90FF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 36px;
+            line-height: 60px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 10;
         }
 
         #feedback-button {
@@ -391,31 +378,30 @@
         .hamburger-menu .line {
             width: 30px;
             height: 3px;
-            background-color: white; /* White hamburger button */
+            background-color: white;
         }
 
         /* Sidebar styles */
         .sidebar {
             position: absolute;
             top: 0;
-            right: -343px; /* Move the sidebar completely out of view */
+            right: -343px;
             width: 300px;
             height: calc(100vh - 170px);
             background-color: transparent;
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px 0 0 15px;
             transition: right 0.3s ease;
-            z-index: 5; /* High z-index to give priority when opened */
+            z-index: 5;
             display: flex;
             flex-direction: column;
-            padding: 20px; /* Added padding to not touch the top */
+            padding: 20px;
         }
 
         .sidebar.open {
-            right: 0; /* When open, it slides in */
+            right: 0;
         }
 
-        /* Sidebar Content Styling */
         .sidebar-header {
             margin-bottom: 20px;
         }
@@ -425,8 +411,7 @@
             padding: 10px;
             font-size: 16px;
             border: none;
-            margin-bottom: 10px; /* Same spacing as the sidebar tab */
-
+            margin-bottom: 10px;
             border-radius: 5px;
         }
 
@@ -456,9 +441,7 @@
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
-        <button id="add-page-button">+</button>
         <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
-
     </div>
 
     <div id="chat-container">
@@ -497,6 +480,9 @@
                 <div class="triangle"></div>
             </div>
         </div>
+
+        <!-- New Add Page Button at the bottom right -->
+        <button id="new-add-page-button">+</button>
     </div>
 
     <div class="footer-links">
@@ -510,7 +496,7 @@
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
-        const addPageButton = document.getElementById('add-page-button');
+        const newAddPageButton = document.getElementById('new-add-page-button');
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const sidebar = document.getElementById('sidebar');
         const sidebarContent = document.getElementById('sidebar-content');
@@ -526,8 +512,7 @@
             'New Page 1': []
         };
 
-
-
+        // Fetch user IP (dummy for example)
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -537,12 +522,13 @@
                 console.error('Error fetching IP address:', error);
             });
 
+        // Append a message to the chat box
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-        
+
             const selectedModel = document.getElementById('model-select').value;
-        
+
             if (sender === 'AI') {
                 if (isCode && selectedModel !== 'chat') { 
                     const preElement = document.createElement('pre');
@@ -553,7 +539,6 @@
 
                     messageElement.appendChild(preElement);
                     hljs.highlightElement(codeElement);
-
                 } else {
                     messageElement.textContent = text;
                 }
@@ -566,9 +551,9 @@
             } else {
                 messageElement.textContent = text;
             }
-        
+
             chatBox.appendChild(messageElement);
-            chatBox.appendChild(whiteEyeLogo);
+            chatBox.appendChild(whiteEyeLogo); // Ensure white-eye-logo is always at the end
 
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
@@ -576,6 +561,7 @@
             });
         }
 
+        // Create feedback button
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
             feedbackButton.id = 'feedback-button';
@@ -586,17 +572,7 @@
             return feedbackButton;
         }
 
-        function reapplySyntaxHighlighting() {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-            syntaxHighlightTimeout = setTimeout(() => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            }, 100);
-        }
-
+        // Submit coding task
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
             const selectedModel = document.getElementById('model-select').value;
@@ -609,7 +585,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://b377-35-203-145-148.ngrok-free.app/chat', {
+                fetch('https://example.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -633,11 +609,11 @@
                     }
                     const sidebarTab = Array.from(sidebarContent.children).find(tab => tab.textContent === currentPage);
                     if (sidebarTab) {
-                        sidebarTab.textContent = data.tab_title; // Update the sidebar with the new title
+                        sidebarTab.textContent = data.tab_title; 
                     }
                 })
                 .catch(error => {
-                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
+                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye.');
                 });
             }
         }
@@ -649,70 +625,33 @@
             }
         });
 
-        const maxTabWidth = 150;
-        const minTabWidth = 49;
-
-        function resizeTabs() {
-            const tabs = document.querySelectorAll('.tab');
-            const activeTabIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
-            
-            const chatContainerWidth = document.getElementById('chat-container').offsetWidth;
-            const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
-            const availableWidth = chatContainerWidth - addPageButtonWidth - (3 * maxTabWidth);
-
-            let totalTabWidth = 0;
-            tabs.forEach(tab => {
-                totalTabWidth += maxTabWidth;
-            });
-
-            tabs.forEach((tab, index) => {
-                if (totalTabWidth > availableWidth && (index !== activeTabIndex && index !== activeTabIndex - 1 && index !== activeTabIndex + 1)) {
-                    tab.style.width = `${minTabWidth}px`; // Shrink tabs
-                    tab.classList.add('shrunk'); // Add class to hide title
-                } else {
-                    tab.style.width = `${maxTabWidth}px`; // Restore full size
-                    tab.classList.remove('shrunk'); // Show title
-                }
-            });
-        }
-
-        addPageButton.addEventListener('click', () => {
+        // Add Page Button functionality
+        newAddPageButton.addEventListener('click', () => {
             pageCount++;
+            const newPageName = `New Page ${pageCount}`;
             const newTab = document.createElement('div');
             newTab.classList.add('tab');
-            const newPageName = `New Page ${pageCount}`;
-            newTab.setAttribute('data-page-name', newPageName); // Assign original page name
+            newTab.setAttribute('data-page-name', newPageName);
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
 
-            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-            newTab.addEventListener('click', function () {
-                const originalPageName = this.getAttribute('data-page-name');
-                setActiveTab(this, originalPageName);
-            });
+            document.getElementById('tab-container').appendChild(newTab);
             chatHistories[newPageName] = [];
             setActiveTab(newTab, newPageName);
 
-            // Create corresponding sidebar tab
             const sidebarTab = document.createElement('div');
             sidebarTab.classList.add('sidebar-tab');
             sidebarTab.textContent = newPageName;
 
-            // Switch tabs when clicking on sidebar
             sidebarTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
                 sidebar.classList.remove('open');
                 sidebarVisible = false;
             });
 
-            // Attach the edit listener to both the tab title and the sidebar tab
-            const tabTitleInput = newTab.querySelector('.tab-title');
-            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName); // Pass the original page name
-
             sidebarContent.appendChild(sidebarTab);
-
-            resizeTabs();
         });
 
+        // Set active tab
         function setActiveTab(tab, pageName) {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -733,184 +672,20 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
-            
-            resizeTabs();
         }
 
         function loadChatHistory(pageName) {
-            console.log('Loading chat history for:', pageName);
             chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
-            console.log('Chat History Length:', history.length);
             history.forEach(msg => {
                 appendMessage(msg.sender, msg.text, msg.isCode);
             });
-
-            reapplySyntaxHighlighting();
 
             if (feedbackButtonShown[pageName]) {
                 const feedbackButton = createFeedbackButton();
                 chatBox.appendChild(feedbackButton);
             }
         }
-
-        function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
-            tabTitle.addEventListener('input', function () {
-                console.log('Tab title changed:', tabTitle.value);
-                console.log('Sidebar tab element:', sidebarTab);  // This should log the sidebar tab
-
-                // Update the corresponding sidebar tab title when the user edits the tab title
-                sidebarTab.textContent = tabTitle.value;
-            });
-
-            tabTitle.addEventListener('click', function () {
-                this.removeAttribute('disabled');
-                this.focus();
-            });
-
-            tabTitle.addEventListener('blur', function () {
-                this.setAttribute('disabled', true);
-            });
-
-            tabTitle.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    this.setAttribute('disabled', true);
-                }
-            });
-
-            tabTitle.parentElement.addEventListener('click', function () {
-                setActiveTab(this, originalPageName); // Pass the original page name
-            });
-        }
-
-        const firstTab = document.getElementById('new-page-1');
-        const firstSidebarTab = document.createElement('div'); // Create a sidebar tab for the first tab
-        firstSidebarTab.classList.add('sidebar-tab');
-        firstSidebarTab.textContent = 'New Page 1'; // Initial title for the first tab
-        firstSidebarTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-            sidebar.classList.remove('open');
-            sidebarVisible = false;
-        });
-        
-        sidebarContent.appendChild(firstSidebarTab); // Add first tab to sidebar
-
-        setActiveTab(firstTab, 'New Page 1');
-
-        firstTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-        });
-
-        const firstTabTitle = firstTab.querySelector('.tab-title');
-        console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
-
-        addTabEditEventListener(firstTabTitle, firstSidebarTab, 'New Page 1'); // Passing null for sidebar tab initially
-
-        function openPopup(file, title) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
-                    popupWindow.document.write(`
-                        <html>
-                        <head><title>${title}</title></head>
-                        <body>
-                            <div class="popup-content">
-                                <h2>${title}</h2>
-                                <div>${data}</div>
-                                <button onclick="window.close()">Close</button>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    popupWindow.document.close();
-                })
-                .catch(error => {
-                    console.error('Error fetching the file:', error);
-                });
-        }
-
-        // Sidebar functionality
-
-        // Toggle the sidebar visibility
-        hamburgerMenu.addEventListener('click', () => {
-            sidebarVisible = !sidebarVisible;
-            sidebar.classList.toggle('open', sidebarVisible);
-        });
-// Add this to handle clicks inside the sidebar, but outside of tabs and search bar
-        sidebar.addEventListener('click', (event) => {
-            const isTab = event.target.classList.contains('sidebar-tab');
-            const isSearchBar = event.target.classList.contains('search-tabs');
-            
-            // If clicked outside the tabs or search bar, close the sidebar
-            if (!isTab && !isSearchBar) {
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            }
-        });
-
-        // Close sidebar when clicking outside
-        document.addEventListener('click', (event) => {
-            if (sidebarVisible && !sidebar.contains(event.target) && !hamburgerMenu.contains(event.target)) {
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            }
-        });
-
-        // Populate sidebar with tab titles
-        function populateSidebar() {
-            sidebarContent.innerHTML = '';
-            const tabs = document.querySelectorAll('.tab input.tab-title');
-            tabs.forEach(tab => {
-                const tabTitle = tab.value;
-                const sidebarTab = document.createElement('div');
-                sidebarTab.classList.add('sidebar-tab');
-                sidebarTab.textContent = tabTitle;
-
-                // Switch tabs on click
-                sidebarTab.addEventListener('click', () => {
-                    const parentTab = tab.parentElement;
-                    const originalPageName = parentTab.getAttribute('data-page-name');
-                    setActiveTab(parentTab, originalPageName);
-                    sidebar.classList.remove('open');
-                    sidebarVisible = false;
-                });
-
-                sidebarContent.appendChild(sidebarTab);
-            });
-        }
-
-        // Search functionality
-        searchTabs.addEventListener('input', () => {
-            const query = searchTabs.value.toLowerCase().trim();
-            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
-            const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-        
-            // Loop through each page's chat history and tab titles
-            Object.keys(chatHistories).forEach((pageName, index) => {
-                const chatHistory = chatHistories[pageName];
-                
-                // Get the title of the current tab
-                const tabTitle = allTabs[index].value.toLowerCase().trim();
-                
-                // Check if any message in the chat history matches the query
-                const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
-                
-                // Find the corresponding sidebar tab for the current page
-                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
-                
-                // Check if the query is found either in the tab title or in the chat history
-                if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                    sidebarTab.style.display = 'block'; // Show the tab if it matches
-                } else {
-                    sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                }
-            });
-        });
-
-        // Initial population of the sidebar
-        populateSidebar();
-
     </script>
 </body>
 </html>
