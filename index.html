@@ -40,17 +40,23 @@
             display: flex;
             width: 100%;
             background-color: transparent;
-            padding: 5px 0 0 0;
+            padding: 15px 0 0 0;
             box-sizing: border-box;
             height: 112x; /* Increase the height to make the logo more visible */
-            background-image: url('litcode_logo_slimthick.svg'); /* Set the background image */
-            background-repeat: no-repeat; /*  Prevent repeating */
-            background-position: center; /* Center the image */
-            background-size: contain;/* */
             overflow-x: auto; /* Enable horizontal scrolling */
             scroll-behavior: smooth;
         }
-
+        
+        #tab-container::before {
+            content: '';
+            display: block;
+            background-image: url('litcode_logo_slimthick.svg'); /* Your logo */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            height: 50%; /* Only use the top half for the logo */
+            width: 100%;
+        }
         /* Hide the scrollbar */
         #tab-container::-webkit-scrollbar {
             display: none; /* Chrome, Safari and Opera */
@@ -61,7 +67,15 @@
             scrollbar-width: none;  /* Firefox */
         }
 
-
+        .tabs-wrapper {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+            height: 50%; /* Bottom half for the tabs */
+            width: 100%;
+            padding: 0;
+            box-sizing: border-box;
+        }
         /* Tabs */
         .tab {
             padding: 7.5px 15px;
