@@ -741,11 +741,17 @@
             console.log('Loading chat history for:', pageName);
             chatBox.innerHTML = '';
             const history = chatHistories[pageName] || [];
-            console.log('Chat History Length:', history.length);
-            history.forEach(msg => {
-                appendMessage(msg.sender, msg.text, msg.isCode);
-            });
+            const whiteEyeLogo = document.getElementById('white-eye-logo');
 
+            console.log('Chat History Length:', history.length);
+            if (history.length === 0) {
+                chatBox.appendChild(whiteEyeLogo);
+            } else {
+                history.forEach(msg => {
+                    appendMessage(msg.sender, msg.text, msg.isCode);
+                });
+                chatBox.appendChild(whiteEyeLogo);
+            }
             reapplySyntaxHighlighting();
 
             if (feedbackButtonShown[pageName]) {
