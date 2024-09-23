@@ -40,13 +40,13 @@
             display: flex;
             width: 100%;
             background-color: transparent;
-            padding: 0;
+            padding: 5px 0 0 0;
             box-sizing: border-box;
             height: 112x; /* Increase the height to make the logo more visible */
-            /*background-image: url('litcode_logo_slimthick.svg'); Set the background image */
-            /*background-repeat: no-repeat;  Prevent repeating */
-            /*background-position: center;  Center the image */
-            /*background-size: contain; */
+            background-image: url('litcode_logo_slimthick.svg'); /* Set the background image */
+            background-repeat: no-repeat; /*  Prevent repeating */
+            background-position: center; /* Center the image */
+            background-size: contain;/* */
             overflow-x: auto; /* Enable horizontal scrolling */
             scroll-behavior: smooth;
         }
@@ -60,13 +60,7 @@
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
         }
-        #litcode-logo {
-            width: auto;
-            height: 49px;
-            display: block;
-            margin-left: 10px;
-            flex-shrink: 0;
-        }
+
 
         /* Tabs */
         .tab {
@@ -101,9 +95,8 @@
         }
 
         .tab.active {
-            background-color: #1E90FF;
+            background-color: #000000;
             color: white;
-            transform: scale(.88);
             z-index: 1;
         }
         /* Hide inactive tabs */
@@ -462,7 +455,6 @@
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
-        <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
     </div>
 
