@@ -928,9 +928,10 @@
         sidebar.addEventListener('click', (event) => {
             const isTab = event.target.classList.contains('sidebar-tab');
             const isSearchBar = event.target.classList.contains('search-tabs');
-            
+            const isSidebarButton = event.target.id === 'add-page-sidebar-button';
+
             // If clicked outside the tabs or search bar, close the sidebar
-            if (!isTab && !isSearchBar) {
+            if (!isTab && !isSearchBar && !isSidebarButton) {
                 sidebar.classList.remove('open');
                 sidebarVisible = false;
             }
