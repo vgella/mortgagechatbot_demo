@@ -106,6 +106,10 @@
             transform: scale(.88);
             z-index: 1;
         }
+        /* Hide inactive tabs */
+        .tab.hidden {
+            display: none;
+        }
 
 
         /* Chat container */
@@ -731,6 +735,17 @@
         });
         
         function setActiveTab(tab, pageName) {
+            // Hide all other tabs
+            const allTabs = document.querySelectorAll('.tab');
+            allTabs.forEach((otherTab) => {
+                if (otherTab !== tab) {
+                    otherTab.classList.add('hidden'); // Hide inactive tabs
+                }
+            });
+        
+            // Remove the 'hidden' class from the active tab to show it
+            tab.classList.remove('hidden');
+        
             // Remove the current active tab (if there is one)
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
@@ -747,10 +762,14 @@
         
             // Load the chat history for the newly active page
             loadChatHistory(pageName);
+        
+            // After loading the chat, reapply syntax highlighting
             reapplySyntaxHighlighting();
+        
             // Resize tabs again to make sure only the active one is full width
             resizeTabs();
         }
+
 
 
 
