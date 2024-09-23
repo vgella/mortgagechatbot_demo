@@ -915,11 +915,19 @@
                 const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
                 
                 // Check if the query is found either in the tab title or in the chat history
-                if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                    sidebarTab.style.display = 'block'; // Show the tab if it matches
-                } else {
-                    sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                }
+        const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
+
+        if (sidebarTab) { // Ensure sidebarTab is found before accessing its style
+            // Check if the query is found either in the tab title or in the chat history
+            if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                sidebarTab.style.display = 'block'; // Show the tab if it matches
+            } else {
+                sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
+            }
+        } else {
+            console.error('Sidebar tab not found for page name:', pageName);
+        }
+
             });
         });
 
