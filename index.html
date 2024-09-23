@@ -828,20 +828,27 @@
 
             firstSidebarTab.textContent = firstTabTitle.value; // Sync sidebar tab with edited title
             console.log('First Sidebar tab element after:', firstSidebarTab.textContent);  // This should log the sidebar tab
-
+            firstSidebarTab.style.display = 'none';
+            firstSidebarTab.offsetHeight; // Trigger a reflow
+            firstSidebarTab.style.display = 'block';
         });
     
         firstTabTitle.addEventListener('click', function () {
             this.focus(); // Focus the input field on click to allow editing
+            firstSidebarTab.style.display = 'none';
+            firstSidebarTab.offsetHeight; // Trigger a reflow
+            firstSidebarTab.style.display = 'block';
         });
     
         firstTabTitle.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 this.blur(); // Remove focus on pressing Enter
+                firstSidebarTab.style.display = 'none';
+                firstSidebarTab.offsetHeight; // Trigger a reflow
+                firstSidebarTab.style.display = 'block';
             }
         });
 
-        addTabEditEventListener(firstTabTitle, firstSidebarTab, 'New Page 1'); // Passing null for sidebar tab initially
 
         function openPopup(file, title) {
             fetch(file)
