@@ -60,6 +60,13 @@
             -ms-overflow-style: none;  /* Internet Explorer 10+ */
             scrollbar-width: none;  /* Firefox */
         }
+        #litcode-logo {
+            width: auto;
+            height: 49px;
+            display: block;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
 
         /* Tabs */
         .tab {
@@ -318,16 +325,6 @@
             pointer-events: none; /* Prevents it from interfering with user interactions */
         }
 
-        #litcode-logo {
-            position: relative;
-            margin-top: 5px;
-            width: auto;
-            height: 49px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            z-index: 0;
-        }
 
         .footer-links {
             text-align: center;
@@ -459,13 +456,14 @@
     </style>
 </head>
 <body>
-    <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
     <div id="tab-container">
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
         <button id="add-page-button">+</button>
+        <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
+
     </div>
 
     <div id="chat-container">
