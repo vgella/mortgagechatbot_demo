@@ -107,27 +107,6 @@
             z-index: 1;
         }
 
-        .tab:hover {
-            transform: scale(.8);
-
-            z-index: 1;
-        }
-
-        #add-page-button {
-            border-radius: 15px 15px 0 0;
-            background-color: #000000;
-            padding: 5px;
-            cursor: pointer;
-            height: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: -1px;
-            margin-top: 30px;
-            border: none;
-            color: #ffffff;
-            z-index: 1;
-        }
 
         /* Chat container */
         #chat-container {
@@ -479,7 +458,6 @@
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
-        <button id="add-page-button">+</button>
         <img id="litcode-logo" src="litcode_logo_slimthick.svg" alt="Litcode Logo">
 
     </div>
@@ -535,7 +513,6 @@
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
         const sendButton = document.getElementById('send-button');
-        const addPageButton = document.getElementById('add-page-button');
         const sidebarAddPageButton = document.getElementById('add-page-sidebar-button');
         const hamburgerMenu = document.getElementById('hamburger-menu');
         const sidebar = document.getElementById('sidebar');
@@ -711,41 +688,7 @@
             });
         }
 
-        addPageButton.addEventListener('click', () => {
-            pageCount++;
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            const newPageName = `New Page ${pageCount}`;
-            newTab.setAttribute('data-page-name', newPageName); // Assign original page name
-            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
 
-            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-            newTab.addEventListener('click', function () {
-                const originalPageName = this.getAttribute('data-page-name');
-                setActiveTab(this, originalPageName);
-            });
-            chatHistories[newPageName] = [];
-            setActiveTab(newTab, newPageName);
-
-            // Create corresponding sidebar tab
-            const sidebarTab = document.createElement('div');
-            sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = newPageName;
-
-            // Switch tabs when clicking on sidebar
-            sidebarTab.addEventListener('click', () => {
-                setActiveTab(newTab, newPageName);
-
-            });
-
-            // Attach the edit listener to both the tab title and the sidebar tab
-            const tabTitleInput = newTab.querySelector('.tab-title');
-            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName); // Pass the original page name
-
-            sidebarContent.appendChild(sidebarTab);
-
-            resizeTabs();
-        });
         sidebarAddPageButton.addEventListener('click', () => {
             pageCount++;
             const newTab = document.createElement('div');
@@ -779,35 +722,44 @@
             addTabEditEventListener(tabTitleInput, sidebarTab, newPageName); // Pass the original page name
         
             sidebarContent.appendChild(sidebarTab);
+            const currentActiveTab = document.querySelector('.tab.active');
+            if (currentActiveTab) {
+                currentActiveTab.remove();
+            }
         
+            // Add the new tab as the only tab
+            document.getElementById('tab-container').appendChild(newTab);
             resizeTabs();
         });
         
         function setActiveTab(tab, pageName) {
-            const sidebarTabs = document.querySelectorAll('.sidebar-tab');
-
+            // Clear any syntax highlighting timeout if it's set
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
             }
-
+        
+            // Remove the current active tab (if there is one)
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
-                const activeInput = activeTab.querySelector('input.tab-title');
-                activeTab.classList.remove('active');
-                activeInput.setAttribute('disabled', true);
+                activeTab.remove(); // Remove the old active tab from the DOM
             }
-
+        
+            // Set the new tab as active
             tab.classList.add('active');
-            const currentInput = tab.querySelector('input.tab-title');
-            currentInput.removeAttribute('disabled');
-            currentInput.focus();
-
+        
+            // Append the new active tab to the tab container
+            document.getElementById('tab-container').appendChild(tab);
+        
+            // Set the current page to the new page
             currentPage = pageName;
-
+        
+            // Load the chat history for the newly active page
             loadChatHistory(pageName);
-
-            resizeTabs();
+        
+            // Reapply syntax highlighting, if necessary
+            reapplySyntaxHighlighting();
         }
+
 
         function loadChatHistory(pageName) {
             console.log('Loading chat history for:', pageName);
