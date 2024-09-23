@@ -923,7 +923,7 @@
                 const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
                 
                 // Find the corresponding sidebar tab for the current page
-                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.value === pageName);
+                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
                 
                 // Check if the query is found either in the tab title or in the chat history
 
