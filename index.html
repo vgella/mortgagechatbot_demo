@@ -808,6 +808,20 @@
         const firstTabTitle = firstTab.querySelector('.tab-title');
         console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
 
+        firstTabTitle.addEventListener('input', function () {
+            firstSidebarTab.textContent = firstTabTitle.value; // Sync sidebar tab with edited title
+        });
+    
+        firstTabTitle.addEventListener('click', function () {
+            this.focus(); // Focus the input field on click to allow editing
+        });
+    
+        firstTabTitle.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                this.blur(); // Remove focus on pressing Enter
+            }
+        });
+
         addTabEditEventListener(firstTabTitle, firstSidebarTab, 'New Page 1'); // Passing null for sidebar tab initially
 
         function openPopup(file, title) {
