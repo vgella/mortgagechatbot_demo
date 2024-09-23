@@ -745,12 +745,22 @@
 
             console.log('Chat History Length:', history.length);
             if (history.length === 0) {
-                chatBox.appendChild(whiteEyeLogo);
+                if (!whiteEyeLogo) {
+                    return;
+                }
+                else {
+                    chatBox.appendChild(whiteEyeLogo);
+                }
             } else {
                 history.forEach(msg => {
                     appendMessage(msg.sender, msg.text, msg.isCode);
                 });
-                chatBox.appendChild(whiteEyeLogo);
+                if (!whiteEyeLogo) {
+                    return;
+                }
+                else {
+                    chatBox.appendChild(whiteEyeLogo);
+                }
             }
             reapplySyntaxHighlighting();
 
