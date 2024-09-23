@@ -744,14 +744,7 @@
             currentPage = pageName;
 
             loadChatHistory(pageName);
-            const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.trim().toLowerCase() === pageName.trim().toLowerCase());
 
-            if (sidebarTab) {
-                sidebarTab.textContent = pageName;  // Update the sidebar tab's text content to the new name
-            } else {
-                logSidebarTabNames()
-                console.error('Sidebar tab not found for page name:', pageName);
-            }
             resizeTabs();
         }
 
