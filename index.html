@@ -809,7 +809,12 @@
         console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
 
         firstTabTitle.addEventListener('input', function () {
+            console.log('First Sidebar tab element before:', firstSidebarTab.textContent);  // This should log the sidebar tab
+            console.log('Input tab title:', firstSidebarTab);  // This should log the sidebar tab
+
             firstSidebarTab.textContent = firstTabTitle.value; // Sync sidebar tab with edited title
+            console.log('First Sidebar tab element after:', firstSidebarTab.textContent);  // This should log the sidebar tab
+
         });
     
         firstTabTitle.addEventListener('click', function () {
