@@ -731,32 +731,27 @@
         });
         
         function setActiveTab(tab, pageName) {
-            // Clear any syntax highlighting timeout if it's set
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-        
             // Remove the current active tab (if there is one)
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
-                activeTab.remove(); // Remove the old active tab from the DOM
+                activeTab.classList.remove('active');
+                activeTab.style.width = `${maxTabWidth}px`; // Restore full size for non-active tabs
+                activeTab.classList.remove('shrunk');
             }
         
             // Set the new tab as active
             tab.classList.add('active');
-        
-            // Append the new active tab to the tab container
-            document.getElementById('tab-container').appendChild(tab);
         
             // Set the current page to the new page
             currentPage = pageName;
         
             // Load the chat history for the newly active page
             loadChatHistory(pageName);
-        
-            // Reapply syntax highlighting, if necessary
             reapplySyntaxHighlighting();
+            // Resize tabs again to make sure only the active one is full width
+            resizeTabs();
         }
+
 
 
         function loadChatHistory(pageName) {
@@ -797,17 +792,12 @@
             });
         
             tabTitle.addEventListener('click', function () {
-                this.removeAttribute('disabled');
-                this.focus();
-            });
-        
-            tabTitle.addEventListener('blur', function () {
-                this.setAttribute('disabled', true);
+                this.focus(); // Focus the input field on click to allow editing
             });
         
             tabTitle.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
-                    this.setAttribute('disabled', true);
+                    this.blur(); // Remove focus on pressing Enter
                 }
             });
         }
@@ -826,9 +816,6 @@
 
         setActiveTab(firstTab, 'New Page 1');
 
-        firstTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-        });
 
         const firstTabTitle = firstTab.querySelector('.tab-title');
         console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
