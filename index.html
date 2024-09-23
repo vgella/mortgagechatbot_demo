@@ -697,39 +697,37 @@
             newTab.setAttribute('data-page-name', newPageName); // Assign original page name
             newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
         
-            document.getElementById('tab-container').insertBefore(newTab, addPageButton);
-            newTab.addEventListener('click', function () {
-                const originalPageName = this.getAttribute('data-page-name');
-                setActiveTab(this, originalPageName);
-            });
-            chatHistories[newPageName] = [];
+            // Remove current active tab, if any
+            const currentActiveTab = document.querySelector('.tab.active');
+            if (currentActiveTab) {
+                currentActiveTab.classList.remove('active');
+            }
+        
+            // Set new tab as active
+            newTab.classList.add('active');
+            document.getElementById('tab-container').appendChild(newTab);  // Append to the container
             setActiveTab(newTab, newPageName);
         
-            // Create corresponding sidebar tab
+            // Add the new page to chatHistories
+            chatHistories[newPageName] = [];
+        
+            // Add corresponding sidebar tab
             const sidebarTab = document.createElement('div');
             sidebarTab.classList.add('sidebar-tab');
             sidebarTab.textContent = newPageName;
         
-            // Switch tabs when clicking on sidebar
+            // Switch to new tab on click in sidebar
             sidebarTab.addEventListener('click', () => {
                 setActiveTab(newTab, newPageName);
                 sidebar.classList.remove('open');
                 sidebarVisible = false;
             });
         
-            // Attach the edit listener to both the tab title and the sidebar tab
-            const tabTitleInput = newTab.querySelector('.tab-title');
-            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName); // Pass the original page name
-        
             sidebarContent.appendChild(sidebarTab);
-            const currentActiveTab = document.querySelector('.tab.active');
-            if (currentActiveTab) {
-                currentActiveTab.remove();
-            }
         
-            // Add the new tab as the only tab
-            document.getElementById('tab-container').appendChild(newTab);
-            resizeTabs();
+            // Add tab title editing functionality
+            const tabTitleInput = newTab.querySelector('.tab-title');
+            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName);
         });
         
         function setActiveTab(tab, pageName) {
@@ -795,30 +793,22 @@
 
         function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
-                console.log('Tab title changed:', tabTitle.value);
-                console.log('Sidebar tab element:', sidebarTab);  // This should log the sidebar tab
-
-                // Update the corresponding sidebar tab title when the user edits the tab title
-                sidebarTab.textContent = tabTitle.value;
+                sidebarTab.textContent = tabTitle.value; // Sync sidebar tab with edited title
             });
-
+        
             tabTitle.addEventListener('click', function () {
                 this.removeAttribute('disabled');
                 this.focus();
             });
-
+        
             tabTitle.addEventListener('blur', function () {
                 this.setAttribute('disabled', true);
             });
-
+        
             tabTitle.addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') {
                     this.setAttribute('disabled', true);
                 }
-            });
-
-            tabTitle.parentElement.addEventListener('click', function () {
-                setActiveTab(this, originalPageName); // Pass the original page name
             });
         }
 
