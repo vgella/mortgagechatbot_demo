@@ -585,7 +585,16 @@
             });
             return feedbackButton;
         }
-
+        
+        function logSidebarTabNames() {
+            const sidebarTabs = document.querySelectorAll('.sidebar-tab'); // Get all sidebar tabs
+            
+            console.log("Logging all sidebar tab names:");
+            sidebarTabs.forEach((tab, index) => {
+                console.log(`Tab ${index + 1}: ${tab.textContent.trim()}`); // Log the tab index and its name
+            });
+        }
+        
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -740,6 +749,7 @@
             if (sidebarTab) {
                 sidebarTab.textContent = pageName;  // Update the sidebar tab's text content to the new name
             } else {
+                logSidebarTabNames()
                 console.error('Sidebar tab not found for page name:', pageName);
             }
             resizeTabs();
