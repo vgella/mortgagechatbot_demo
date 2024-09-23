@@ -668,29 +668,7 @@
         const maxTabWidth = 150;
         const minTabWidth = 49;
 
-        function resizeTabs() {
-            const tabs = document.querySelectorAll('.tab');
-            const activeTabIndex = Array.from(tabs).findIndex(tab => tab.classList.contains('active'));
-            
-            const chatContainerWidth = document.getElementById('chat-container').offsetWidth;
-            const addPageButtonWidth = document.getElementById('add-page-button').offsetWidth;
-            const availableWidth = chatContainerWidth - addPageButtonWidth - (3 * maxTabWidth);
 
-            let totalTabWidth = 0;
-            tabs.forEach(tab => {
-                totalTabWidth += maxTabWidth;
-            });
-
-            tabs.forEach((tab, index) => {
-                if (totalTabWidth > availableWidth && (index !== activeTabIndex && index !== activeTabIndex - 1 && index !== activeTabIndex + 1)) {
-                    tab.style.width = `${minTabWidth}px`; // Shrink tabs
-                    tab.classList.add('shrunk'); // Add class to hide title
-                } else {
-                    tab.style.width = `${maxTabWidth}px`; // Restore full size
-                    tab.classList.remove('shrunk'); // Show title
-                }
-            });
-        }
 
 
         sidebarAddPageButton.addEventListener('click', () => {
@@ -767,7 +745,6 @@
             reapplySyntaxHighlighting();
         
             // Resize tabs again to make sure only the active one is full width
-            resizeTabs();
         }
 
 
