@@ -389,7 +389,6 @@
             width: 300px;
             height: calc(100vh - 170px);
             background-color: transparent;
-            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 15px 0 0 15px;
             transition: right 0.3s ease;
             z-index: 5; /* High z-index to give priority when opened */
@@ -633,7 +632,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://ef85-34-142-128-254.ngrok-free.app/chat', {
+                fetch('https://0346-34-142-128-254.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
