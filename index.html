@@ -780,25 +780,30 @@
             const tabContainer = document.getElementById('tab-container');
             tabContainer.innerHTML = ''; // Clear the tab container
         
-            // Re-add recent tabs to the tab container
             recentTabs.forEach(pageName => {
                 const tab = document.querySelector(`.tab[data-page-name="${pageName}"]`);
+        
                 if (tab) {
                     tab.classList.remove('hidden'); // Ensure the tab is not hidden
-                    tabContainer.appendChild(tab); // Append the tab to the container
+                    tabContainer.appendChild(tab);  // Append the tab to the container
+        
+                    // Ensure each tab has a click event to activate it
                     tab.addEventListener('click', () => {
                         setActiveTab(tab, pageName);
                     });
+                } else {
+                    console.error(`Tab with pageName "${pageName}" not found!`);
                 }
             });
         
-            // If there are fewer than 3 tabs, ensure remaining space is handled
+            // Ensure there are always up to 3 placeholders to maintain the tab structure
             while (tabContainer.children.length < 3) {
                 const placeholder = document.createElement('div');
                 placeholder.classList.add('tab', 'hidden');
-                tabContainer.appendChild(placeholder); // Append hidden placeholder tabs
+                tabContainer.appendChild(placeholder);
             }
         }
+
 
         function loadChatHistory(pageName) {
             console.log('Loading chat history for:', pageName);
