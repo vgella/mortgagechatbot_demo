@@ -584,11 +584,22 @@
         
             chatBox.appendChild(messageElement);
             chatBox.appendChild(whiteEyeLogo);
+            
+            saveChatHistory();
+        }
 
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
+        function saveChatHistory() {
+            // Save both the chat history and the current tab names
+            const tabNames = {};
+            document.querySelectorAll('.tab input.tab-title').forEach((tabTitle, index) => {
+                const tabName = tabTitle.closest('.tab').getAttribute('data-page-name');
+                tabNames[tabName] = tabTitle.value; // Store tab title for each tab (page)
             });
+        
+            localStorage.setItem('chatHistory', JSON.stringify({
+                chatHistories: chatHistories,
+                tabNames: tabNames
+            }));
         }
 
         function createFeedbackButton() {
@@ -964,6 +975,27 @@
 
         // Initial population of the sidebar
         populateSidebar();
+        window.addEventListener('load', function () {
+            loadChatHistoryFromStorage();
+        });
+        
+        function loadChatHistoryFromStorage() {
+            const storedData = localStorage.getItem('chatHistory');
+            if (storedData) {
+                const { chatHistories: loadedHistories, tabNames } = JSON.parse(storedData);
+                chatHistories = loadedHistories || {};
+        
+                // Re-create the tabs and load their titles
+                Object.keys(tabNames).forEach(tabName => {
+                    const tabTitle = tabNames[tabName];
+                    createTab(tabName, tabTitle); // Function to create tab dynamically
+                });
+        
+                // Set the first tab as active
+                setActiveTab(document.querySelector('.tab'), Object.keys(tabNames)[0]);
+                loadChatHistory(currentPage); // Load the chat history for the active tab
+            }
+        }
 
     </script>
 </body>
