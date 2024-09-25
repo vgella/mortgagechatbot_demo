@@ -553,10 +553,11 @@
             });
         
         function linkify(text) {
+            // Regex pattern to match URLs starting with http, https, www, or domains like example.com
             const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\b[-A-Z0-9+&@#\/%?=~_|]+\.[A-Z]{2,}\b)/ig;
             
             return text.replace(urlPattern, function (url) {
-                // Add 'http://' if the detected URL doesn't start with a protocol or 'www.'
+                // If the URL does not start with a protocol (http, https), add http:// to it
                 let hyperlink = url;
                 if (!hyperlink.startsWith('http') && !hyperlink.startsWith('ftp') && !hyperlink.startsWith('www')) {
                     hyperlink = 'http://' + hyperlink;
@@ -569,27 +570,25 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
         
-            const selectedModel = document.getElementById('model-select').value;
-        
             if (sender === 'AI') {
-                if (isCode && selectedModel !== 'chat') { 
+                if (isCode) {
+                    // Handle code blocks and detect URLs within the code block
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
-                    codeElement.textContent = linkify(text);
+        
+                    // Linkify the text inside code blocks
+                    const linkifiedText = linkify(text);
+                    codeElement.innerHTML = linkifiedText;
+        
                     preElement.appendChild(codeElement);
                     preElement.style.whiteSpace = 'pre-wrap';
-
+        
                     messageElement.appendChild(preElement);
                     hljs.highlightElement(codeElement);
-
                 } else {
-                    messageElement.textContent = linkify(text);
-                }
-
-                if (!feedbackButtonShown[currentPage]) {
-                    const feedbackButton = createFeedbackButton();
-                    chatBox.appendChild(feedbackButton);
-                    feedbackButtonShown[currentPage] = true;
+                    // Detect and convert URLs to clickable links for non-code AI messages
+                    const linkifiedText = linkify(text);
+                    messageElement.innerHTML = linkifiedText;
                 }
             } else {
                 messageElement.textContent = text;
@@ -597,12 +596,13 @@
         
             chatBox.appendChild(messageElement);
             chatBox.appendChild(whiteEyeLogo);
-
+        
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
                 behavior: 'smooth'
             });
         }
+
 
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
