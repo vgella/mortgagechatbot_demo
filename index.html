@@ -553,54 +553,49 @@
             });
         
         function linkify(text) {
-            // Regex pattern to match URLs starting with http, https, www, or domains like example.com
-            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\b[-A-Z0-9+&@#\/%?=~_|]+\.[A-Z]{2,}\b)/ig;
-            
-            return text.replace(urlPattern, function (url) {
-                // If the URL does not start with a protocol (http, https), add http:// to it
+            const urlPattern = /(\b(https?|ftp):\/\/[-\w+&@#/%?=~_|!:,.;]*[-\w+&@#/%=~_|])|(\bwww\.[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])|(\b[-A-Z0-9+&@#/%?=~_|]+\.[A-Z]{2,}\b)/ig;
+        
+            return text.replace(urlPattern, function(url) {
                 let hyperlink = url;
-                if (!hyperlink.startsWith('http') && !hyperlink.startsWith('ftp') && !hyperlink.startsWith('www')) {
-                    hyperlink = 'http://' + hyperlink;
+                // Add http:// if no protocol or 'www' is present
+                if (!hyperlink.match(/^(https?|ftp|www\.)/)) {
+                    hyperlink = 'http://' + url;
                 }
                 return `<a href="${hyperlink}" target="_blank">${url}</a>`;
             });
         }
+
 
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
         
             if (sender === 'AI') {
+                // Always linkify the text, whether it's code or regular text
+                const linkifiedText = linkify(text);  
+        
                 if (isCode) {
-                    // Handle code blocks and detect URLs within the code block
+                    // For code, ensure it's wrapped properly but still has clickable links
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
-        
-                    // Linkify the text inside code blocks
-                    const linkifiedText = linkify(text);
-                    codeElement.innerHTML = linkifiedText;
+                    codeElement.innerHTML = linkifiedText;  // Insert linkified code
         
                     preElement.appendChild(codeElement);
-                    preElement.style.whiteSpace = 'pre-wrap';
-        
+                    preElement.style.whiteSpace = 'pre-wrap';  // Preserve formatting
                     messageElement.appendChild(preElement);
-                    hljs.highlightElement(codeElement);
+        
+                    // Apply syntax highlighting
+                    hljs.highlightElement(codeElement); 
                 } else {
-                    // Detect and convert URLs to clickable links for non-code AI messages
-                    const linkifiedText = linkify(text);
+                    // For regular AI text, simply insert linkified content
                     messageElement.innerHTML = linkifiedText;
                 }
             } else {
+                // If it's a user message, no need to linkify, just plain text
                 messageElement.textContent = text;
             }
         
             chatBox.appendChild(messageElement);
-            chatBox.appendChild(whiteEyeLogo);
-        
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
         }
 
 
