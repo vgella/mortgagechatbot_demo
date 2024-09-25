@@ -584,50 +584,11 @@
         
             chatBox.appendChild(messageElement);
             chatBox.appendChild(whiteEyeLogo);
-            
-            saveChatHistory();
-        }
 
-        function saveChatHistory() {
-            // Save both the chat history and the current tab names
-            const tabNames = {};
-            document.querySelectorAll('.tab input.tab-title').forEach((tabTitle, index) => {
-                const tabName = tabTitle.closest('.tab').getAttribute('data-page-name');
-                tabNames[tabName] = tabTitle.value; // Store tab title for each tab (page)
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
             });
-        
-            localStorage.setItem('chatHistory', JSON.stringify({
-                chatHistories: chatHistories,
-                tabNames: tabNames
-            }));
-        }
-        
-        function createTab(pageName, tabTitle) {
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            newTab.setAttribute('data-page-name', pageName);
-        
-            const tabInput = document.createElement('input');
-            tabInput.type = 'text';
-            tabInput.value = tabTitle;
-            tabInput.classList.add('tab-title');
-            
-            newTab.appendChild(tabInput);
-            document.getElementById('tab-container').appendChild(newTab);
-        
-            // Add event listeners for editing the tab title
-            addTabEditEventListener(tabInput, newTab, pageName);
-        
-            // Create corresponding sidebar tab
-            const sidebarTab = document.createElement('div');
-            sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = tabTitle;
-        
-            sidebarTab.addEventListener('click', () => {
-                setActiveTab(newTab, pageName);
-            });
-        
-            sidebarContent.appendChild(sidebarTab);
         }
 
         function createFeedbackButton() {
@@ -832,8 +793,6 @@
         function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
             tabTitle.addEventListener('input', function () {
                 sidebarTab.textContent = tabTitle.value; // Sync sidebar tab with edited title
-                saveChatHistory();
-
             });
         
             tabTitle.addEventListener('click', function () {
@@ -1005,38 +964,6 @@
 
         // Initial population of the sidebar
         populateSidebar();
-        let chatHistories = {
-            'New Page 1': [] // Default initialization
-        };
-        
-        window.addEventListener('load', function () {
-            console.log('Page loaded, attempting to load chat history...');
-            loadChatHistoryFromStorage();
-        });
-        
-        function loadChatHistoryFromStorage() {
-            const storedData = localStorage.getItem('chatHistory');
-            if (storedData) {
-                const { chatHistories: loadedHistories, tabNames } = JSON.parse(storedData);
-                
-                console.log('Loaded from localStorage:', loadedHistories, tabNames); // Debugging line
-        
-                // Reassigning chatHistories here:
-                chatHistories = loadedHistories || {};
-        
-                // Re-create the tabs and load their titles
-                Object.keys(tabNames).forEach(tabName => {
-                    const tabTitle = tabNames[tabName];
-                    createTab(tabName, tabTitle);
-                });
-        
-                // Set the first tab as active
-                setActiveTab(document.querySelector('.tab'), Object.keys(tabNames)[0]);
-                loadChatHistory(currentPage);
-            } else {
-                console.log('No chat history found in localStorage'); // Debugging line
-            }
-        }
 
     </script>
 </body>
