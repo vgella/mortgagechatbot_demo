@@ -553,8 +553,16 @@
             });
         
         function linkify(text) {
-            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\bwww\.[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])|(\b[-A-Z0-9+&@#\/%?=~_|]+\.[A-Z]{2,}\b)/ig;
+            
+            return text.replace(urlPattern, function (url) {
+                // Add 'http://' if the detected URL doesn't start with a protocol or 'www.'
+                let hyperlink = url;
+                if (!hyperlink.startsWith('http') && !hyperlink.startsWith('ftp') && !hyperlink.startsWith('www')) {
+                    hyperlink = 'http://' + hyperlink;
+                }
+                return `<a href="${hyperlink}" target="_blank">${url}</a>`;
+            });
         }
 
         function appendMessage(sender, text, isCode = false) {
