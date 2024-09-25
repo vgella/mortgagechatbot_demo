@@ -551,6 +551,11 @@
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
+        
+        function linkify(text) {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+        }
 
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
@@ -562,7 +567,7 @@
                 if (isCode && selectedModel !== 'chat') { 
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
-                    codeElement.textContent = text;
+                    codeElement.textContent = linkify(text);
                     preElement.appendChild(codeElement);
                     preElement.style.whiteSpace = 'pre-wrap';
 
@@ -570,7 +575,7 @@
                     hljs.highlightElement(codeElement);
 
                 } else {
-                    messageElement.textContent = text;
+                    messageElement.textContent = linkify(text);
                 }
 
                 if (!feedbackButtonShown[currentPage]) {
