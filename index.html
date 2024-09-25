@@ -551,53 +551,45 @@
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
-        
-        function linkify(text) {
-            const urlPattern = /(\b(https?|ftp):\/\/[-\w+&@#/%?=~_|!:,.;]*[-\w+&@#/%=~_|])|(\bwww\.[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])|(\b[-A-Z0-9+&@#/%?=~_|]+\.[A-Z]{2,}\b)/ig;
-        
-            return text.replace(urlPattern, function(url) {
-                let hyperlink = url;
-                // Add http:// if no protocol or 'www' is present
-                if (!hyperlink.match(/^(https?|ftp|www\.)/)) {
-                    hyperlink = 'http://' + url;
-                }
-                return `<a href="${hyperlink}" target="_blank">${url}</a>`;
-            });
-        }
-
 
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
         
-            if (sender === 'AI') {
-                // Always linkify the text, whether it's code or regular text
-                const linkifiedText = linkify(text);  
+            const selectedModel = document.getElementById('model-select').value;
         
-                if (isCode) {
-                    // For code, ensure it's wrapped properly but still has clickable links
+            if (sender === 'AI') {
+                if (isCode && selectedModel !== 'chat') { 
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
-                    codeElement.innerHTML = linkifiedText;  // Insert linkified code
-        
+                    codeElement.textContent = text;
                     preElement.appendChild(codeElement);
-                    preElement.style.whiteSpace = 'pre-wrap';  // Preserve formatting
+                    preElement.style.whiteSpace = 'pre-wrap';
+
                     messageElement.appendChild(preElement);
-        
-                    // Apply syntax highlighting
-                    hljs.highlightElement(codeElement); 
+                    hljs.highlightElement(codeElement);
+
                 } else {
-                    // For regular AI text, simply insert linkified content
-                    messageElement.innerHTML = linkifiedText;
+                    messageElement.textContent = text;
+                }
+
+                if (!feedbackButtonShown[currentPage]) {
+                    const feedbackButton = createFeedbackButton();
+                    chatBox.appendChild(feedbackButton);
+                    feedbackButtonShown[currentPage] = true;
                 }
             } else {
-                // If it's a user message, no need to linkify, just plain text
                 messageElement.textContent = text;
             }
         
             chatBox.appendChild(messageElement);
-        }
+            chatBox.appendChild(whiteEyeLogo);
 
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
 
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
