@@ -531,6 +531,8 @@
         const sidebarContent = document.getElementById('sidebar-content');
         const searchTabs = document.getElementById('search-tabs');
         let feedbackButtonShown = {};
+        let recentTabs = [];
+
         let userIp = '';
         let currentPage = 'New Page 1';
         let pageCount = 1;
@@ -751,12 +753,52 @@
         
             // After loading the chat, reapply syntax highlighting
             reapplySyntaxHighlighting();
-        
+
+            updateRecentTabs(pageName);
+
             // Resize tabs again to make sure only the active one is full width
         }
 
 
+        function updateRecentTabs(pageName) {
+            // Remove the page if it's already in the recent tabs
+            recentTabs = recentTabs.filter(tab => tab !== pageName);
+        
+            // Add the page to the front of the array
+            recentTabs.unshift(pageName);
+        
+            // Limit to three recent tabs
+            if (recentTabs.length > 3) {
+                recentTabs.pop();
+            }
+        
+            // Update the tab container with only the recent tabs
+            renderRecentTabs();
+        }
 
+        function renderRecentTabs() {
+            const tabContainer = document.getElementById('tab-container');
+            tabContainer.innerHTML = ''; // Clear the tab container
+        
+            // Re-add recent tabs to the tab container
+            recentTabs.forEach(pageName => {
+                const tab = document.querySelector(`.tab[data-page-name="${pageName}"]`);
+                if (tab) {
+                    tab.classList.remove('hidden'); // Ensure the tab is not hidden
+                    tabContainer.appendChild(tab); // Append the tab to the container
+                    tab.addEventListener('click', () => {
+                        setActiveTab(tab, pageName);
+                    });
+                }
+            });
+        
+            // If there are fewer than 3 tabs, ensure remaining space is handled
+            while (tabContainer.children.length < 3) {
+                const placeholder = document.createElement('div');
+                placeholder.classList.add('tab', 'hidden');
+                tabContainer.appendChild(placeholder); // Append hidden placeholder tabs
+            }
+        }
 
         function loadChatHistory(pageName) {
             console.log('Loading chat history for:', pageName);
