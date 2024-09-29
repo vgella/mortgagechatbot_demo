@@ -507,7 +507,6 @@
         </div>
 
         <div id="input-container">
-            <button id="audio-input-button">🎤</button> <!-- New button for speech input -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
@@ -541,28 +540,6 @@
         const chatHistories = {
             'New Page 1': []
         };
-
-        const audioInputButton = document.getElementById('audio-input-button');
-        
-        audioInputButton.addEventListener('click', () => {
-            // Implement audio recording and speech-to-text API call
-            startRecording().then(audioBlob => {
-                const formData = new FormData();
-                formData.append('audio', audioBlob, 'speech_input.wav');
-                
-                fetch('https://2321-34-143-231-164.ngrok-free.app/speech_to_text', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('coding-task-input').value = data.transcription;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
-        });
 
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
@@ -615,13 +592,7 @@
         
         if (sender === 'AI') {
             // Create play button for AI response
-            const playButton = document.createElement('button');
-            playButton.textContent = '🔊';
-            playButton.addEventListener('click', () => {
-                playAudioFromText(text);
-            });
-            messageElement.appendChild(playButton); // Append the play button to the message element
-        
+
             // Check if the response includes code and the model isn't chat-related
             if (isCode && selectedModel !== 'chat') { 
                 const preElement = document.createElement('pre');
