@@ -613,45 +613,52 @@
         
             const selectedModel = document.getElementById('model-select').value;
         
-            if (sender === 'AI') {
-                const playButton = document.createElement('button');
-                    playButton.textContent = '🔊';
-                    playButton.addEventListener('click', () => {
-                        playAudioFromText(text);
-                    });
-                    messageElement.appendChild(playButton);
-                }
-                if (isCode && selectedModel !== 'chat') { 
-                    const preElement = document.createElement('pre');
-                    const codeElement = document.createElement('code');
-                    codeElement.textContent = text;
-                    preElement.appendChild(codeElement);
-                    preElement.style.whiteSpace = 'pre-wrap';
-
-                    messageElement.appendChild(preElement);
-                    hljs.highlightElement(codeElement);
-
-                } else {
-                    messageElement.textContent = text;
-                }
-
-                if (!feedbackButtonShown[currentPage]) {
-                    const feedbackButton = createFeedbackButton();
-                    chatBox.appendChild(feedbackButton);
-                    feedbackButtonShown[currentPage] = true;
-                }
+        if (sender === 'AI') {
+            // Create play button for AI response
+            const playButton = document.createElement('button');
+            playButton.textContent = '🔊';
+            playButton.addEventListener('click', () => {
+                playAudioFromText(text);
+            });
+            messageElement.appendChild(playButton); // Append the play button to the message element
+        
+            // Check if the response includes code and the model isn't chat-related
+            if (isCode && selectedModel !== 'chat') { 
+                const preElement = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.textContent = text;
+                preElement.appendChild(codeElement);
+                preElement.style.whiteSpace = 'pre-wrap';
+        
+                messageElement.appendChild(preElement);
+                hljs.highlightElement(codeElement);
+        
             } else {
+                // If it's not code or chat, append the plain text
                 messageElement.textContent = text;
             }
         
-            chatBox.appendChild(messageElement);
-            chatBox.appendChild(whiteEyeLogo);
-
-            chatBox.scrollTo({
-                top: chatBox.scrollHeight,
-                behavior: 'smooth'
-            });
+            // Check if the feedback button has already been shown for this page
+            if (!feedbackButtonShown[currentPage]) {
+                const feedbackButton = createFeedbackButton();
+                chatBox.appendChild(feedbackButton);
+                feedbackButtonShown[currentPage] = true;
+            }
+        
+        } else {
+            // If it's not from AI, append the plain user message
+            messageElement.textContent = text;
         }
+        
+        // Append the message and the logo to the chat box
+        chatBox.appendChild(messageElement);
+        chatBox.appendChild(whiteEyeLogo);
+        
+        // Scroll the chat box to the bottom
+        chatBox.scrollTo({
+            top: chatBox.scrollHeight,
+            behavior: 'smooth'
+        });
 
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
