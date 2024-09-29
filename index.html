@@ -550,7 +550,7 @@
                 const formData = new FormData();
                 formData.append('audio', audioBlob, 'speech_input.wav');
                 
-                fetch('https://9ef1-34-143-231-164.ngrok-free.app/speech_to_text', {
+                fetch('https://c163-34-143-231-164.ngrok-free.app/speech_to_text', {
                     method: 'POST',
                     body: formData
                 })
@@ -593,7 +593,7 @@
             });
         }
         function playAudioFromText(text) {
-            fetch('https://9ef1-34-143-231-164.ngrok-free.app/text_to_speech', {
+            fetch('https://c163-34-143-231-164.ngrok-free.app/text_to_speech', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -702,7 +702,7 @@
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
 
-                fetch('https://9ef1-34-143-231-164.ngrok-free.app/chat', {
+                fetch('https://c163-34-143-231-164.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
