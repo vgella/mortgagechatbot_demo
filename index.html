@@ -507,6 +507,7 @@
         </div>
 
         <div id="input-container">
+            <button id="audio-input-button">🎤</button> <!-- New button for speech input -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
@@ -541,7 +542,27 @@
             'New Page 1': []
         };
 
-
+        const audioInputButton = document.getElementById('audio-input-button');
+        
+        audioInputButton.addEventListener('click', () => {
+            // Implement audio recording and speech-to-text API call
+            startRecording().then(audioBlob => {
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'speech_input.wav');
+                
+                fetch('/speech_to_text', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('coding-task-input').value = data.transcription;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
 
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
@@ -551,7 +572,41 @@
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
-
+        function startRecording() {
+            return new Promise((resolve, reject) => {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const mediaRecorder = new MediaRecorder(stream);
+                    const audioChunks = [];
+    
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+    
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks);
+                        resolve(audioBlob);
+                    };
+    
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 3000);  // Stop recording after 3 seconds
+                }).catch(reject);
+            });
+        }
+        function playAudioFromText(text) {
+            fetch('/text_to_speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text })
+            })
+            .then(response => response.blob())
+            .then(audioBlob => {
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            });
+        }
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -559,6 +614,13 @@
             const selectedModel = document.getElementById('model-select').value;
         
             if (sender === 'AI') {
+                const playButton = document.createElement('button');
+                    playButton.textContent = '🔊';
+                    playButton.addEventListener('click', () => {
+                        playAudioFromText(text);
+                    });
+                    messageElement.appendChild(playButton);
+                }
                 if (isCode && selectedModel !== 'chat') { 
                     const preElement = document.createElement('pre');
                     const codeElement = document.createElement('code');
