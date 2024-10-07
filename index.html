@@ -510,9 +510,15 @@
                 <option value="litchat superbasic">llama3.2 (fastest general chat)</option>
                 <option value="litchat basic"> llama3.1 (general chat)</option>
                 <option value="basic"> mixtral (basic coding)</option>
+                <option value="qwen2-math"> Qwen2 Math (fast math)</option>
                 <option value="advanced"> deepseek-coderv2 (premium coding)</option>
                 <option value="litchat premium">LitChat Premium (general chat)</option>
                 <option value="nemotron-mini"> NVIDIA's nemotron-mini (fast)</option>
+                <option value="gemma"> Google's gemma (fast)</option>
+                <option value="phi3.5"> phi3.5 (fast coding)</option>
+                <option value="hermes3"> Hermes3 (general chat)</option>
+                <option value="solar-pro"> Advanced Solar-Pro (slowest)</option>
+                <option value="bespoke-mini"> bespoke-mini factchecker (fast)</option>
                 <option value="command-r"> command-r (executive, slowest)</option>
 
 
@@ -587,7 +593,7 @@
             });
         }
         function playAudioFromText(text) {
-            fetch('https://6fa2-34-75-160-46.ngrok-free.app/text_to_speech', {
+            fetch('https://63dd-34-75-160-46.ngrok-free.app/text_to_speech', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -694,7 +700,7 @@
 
                 whiteEyeLogo.classList.add('eye-fade');
 
-                fetch('https://6fa2-34-75-160-46.ngrok-free.app/chat', {
+                fetch('https://63dd-34-75-160-46.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
