@@ -20,6 +20,9 @@
     <!-- Load highlight.js library -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
 
+    <!-- Load marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         body {
             margin: 0;
@@ -581,7 +584,7 @@
             });
         }
         function playAudioFromText(text) {
-            fetch('https://2ca3-35-229-177-46.ngrok-free.app/text_to_speech', {
+            fetch('https://9cc3-34-75-160-46.ngrok-free.app/text_to_speech', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -598,51 +601,51 @@
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
-        
+            
             const selectedModel = document.getElementById('model-select').value;
         
-        if (sender === 'AI') {
-            // Create play button for AI response
-            whiteEyeLogo.classList.remove('eye-fade');
-
-            // Check if the response includes code and the model isn't chat-related
-            if (isCode && selectedModel !== 'chat') { 
-                const preElement = document.createElement('pre');
-                const codeElement = document.createElement('code');
-                codeElement.textContent = text;
-                preElement.appendChild(codeElement);
-                preElement.style.whiteSpace = 'pre-wrap';
+            if (sender === 'AI') {
+                whiteEyeLogo.classList.remove('eye-fade');
         
-                messageElement.appendChild(preElement);
-                hljs.highlightElement(codeElement);
+                // Check if the response should include syntax-highlighted code or is plain text
+                if (isCode && selectedModel !== 'chat') { 
+                    // Parse the AI response as Markdown using marked.js
+                    const markdownHtml = marked(text);
         
+                    // Set the inner HTML to the parsed Markdown
+                    messageElement.innerHTML = markdownHtml;
+        
+                    // Apply syntax highlighting to any code blocks after rendering
+                    messageElement.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                } else {
+                    // If it's not code or Markdown-based, just append plain text
+                    messageElement.textContent = text;
+                }
+        
+                // Check if the feedback button has already been shown for this page
+                if (!feedbackButtonShown[currentPage]) {
+                    const feedbackButton = createFeedbackButton();
+                    chatBox.appendChild(feedbackButton);
+                    feedbackButtonShown[currentPage] = true;
+                }
             } else {
-                // If it's not code or chat, append the plain text
+                // For user messages, just append the plain text
                 messageElement.textContent = text;
             }
         
-            // Check if the feedback button has already been shown for this page
-            if (!feedbackButtonShown[currentPage]) {
-                const feedbackButton = createFeedbackButton();
-                chatBox.appendChild(feedbackButton);
-                feedbackButtonShown[currentPage] = true;
-            }
+            // Append the message and the logo to the chat box
+            chatBox.appendChild(messageElement);
+            chatBox.appendChild(whiteEyeLogo);
         
-        } else {
-            // If it's not from AI, append the plain user message
-            messageElement.textContent = text;
+            // Scroll the chat box to the bottom
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
+            });
         }
-        
-        // Append the message and the logo to the chat box
-        chatBox.appendChild(messageElement);
-        chatBox.appendChild(whiteEyeLogo);
-        
-        // Scroll the chat box to the bottom
-        chatBox.scrollTo({
-            top: chatBox.scrollHeight,
-            behavior: 'smooth'
-        });
-        }
+
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
             feedbackButton.id = 'feedback-button';
@@ -686,7 +689,7 @@
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
                 whiteEyeLogo.classList.add('eye-fade');
 
-                fetch('https://2ca3-35-229-177-46.ngrok-free.app/chat', {
+                fetch('https://9cc3-34-75-160-46.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
