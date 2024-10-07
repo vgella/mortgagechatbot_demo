@@ -687,6 +687,8 @@
                 codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+                localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
+
                 whiteEyeLogo.classList.add('eye-fade');
 
                 fetch('https://9cc3-34-75-160-46.ngrok-free.app/chat', {
@@ -708,6 +710,7 @@
 
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
 
                     const activeTab = document.querySelector('.tab.active input.tab-title');
                     if (activeTab) {
@@ -816,7 +819,48 @@
         }
 
 
+        function loadStorageHistory() {
+            // Retrieve chat histories from localStorage
+            const savedHistory = localStorage.getItem('chatHistories');
+            
+            if (savedHistory) {
+                // Parse the saved chat histories from localStorage
+                chatHistories = JSON.parse(savedHistory);
+                
+                // Loop through each page in the chat history
+                Object.keys(chatHistories).forEach(pageName => {
+                    // Create a sidebar tab for each page
+                    createSidebarTab(pageName);
+                    
+                    // If this is the current page, load its chat history into the chat box
+                    if (pageName === currentPage) {
+                        loadChatHistory(pageName);
+                    }
+                });
+            } else {
+                console.log('No saved chat history found in localStorage.');
+            }
+        }
 
+        function createSidebarTab(pageName) {
+            const sidebarTab = document.createElement('div');
+            sidebarTab.classList.add('sidebar-tab');
+            sidebarTab.textContent = pageName;
+        
+            // Add an event listener to switch to this tab when clicked
+            sidebarTab.addEventListener('click', () => {
+                const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
+                if (tabElement) {
+                    setActiveTab(tabElement, pageName);
+                }
+        
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            });
+        
+            // Append the new tab to the sidebar content
+            sidebarContent.appendChild(sidebarTab);
+        }
 
         function loadChatHistory(pageName) {
             console.log('Loading chat history for:', pageName);
@@ -1036,6 +1080,10 @@ searchTabs.addEventListener('input', () => {
 
         // Initial population of the sidebar
         populateSidebar();
+        window.addEventListener('load', () => {
+            // Load chat histories from localStorage and populate the sidebar
+            loadStorageHistory();
+        });
 
     </script>
 </body>
