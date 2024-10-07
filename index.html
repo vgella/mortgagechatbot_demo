@@ -704,6 +704,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Received data:', data);  // Log the data received from the backend
+
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
 
@@ -717,6 +719,8 @@
                     }
                 })
                 .catch(error => {
+                    console.error('Error caught in .catch():', error);  // Log any errors caught
+
                     appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
                 });
             }
