@@ -299,7 +299,17 @@
         .triangle:hover {
             transform: scale(1.1);
         }
-
+        @keyframes fadeInOut {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
         #white-eye-logo {
             width: 200px;
             height: auto;
@@ -307,8 +317,9 @@
             margin: 20px auto;
             pointer-events: none;
         }
-
-
+        .eye-fade {
+            animation: fadeInOut 2s infinite; /* 2 seconds for the full cycle, infinitely repeated */
+        }
         .footer-links {
             text-align: center;
             position: relative;
@@ -592,6 +603,7 @@
         
         if (sender === 'AI') {
             // Create play button for AI response
+            whiteEyeLogo.classList.remove('eye-fade');
 
             // Check if the response includes code and the model isn't chat-related
             if (isCode && selectedModel !== 'chat') { 
@@ -672,6 +684,7 @@
                 codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+                whiteEyeLogo.classList.add('eye-fade');
 
                 fetch('https://2ca3-35-229-177-46.ngrok-free.app/chat', {
                     method: 'POST',
