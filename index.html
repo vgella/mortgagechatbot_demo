@@ -507,11 +507,14 @@
 
         <div id="model-select-container">
             <select id="model-select">
-                <option value="litchat superbasic">LitChat Superbasic (fastest general chat)</option>
-                <option value="litchat basic">LitChat Basic (general chat)</option>
-                <option value="basic">LitCode Basic (fastest coding)</option>
-                <option value="advanced">LitCode Premium (coding)</option>
+                <option value="litchat superbasic">llama3.2 (fastest general chat)</option>
+                <option value="litchat basic"> llama3.1 (general chat)</option>
+                <option value="basic"> mixtral (basic coding)</option>
+                <option value="advanced"> deepseek-coderv2 (premium coding)</option>
                 <option value="litchat premium">LitChat Premium (general chat)</option>
+                <option value="nemotron-mini"> NVIDIA's nemotron-mini (fast)</option>
+                <option value="command-r"> command-r (executive, slowest)</option>
+
 
             </select>
         </div> 
@@ -584,7 +587,7 @@
             });
         }
         function playAudioFromText(text) {
-            fetch('https://9cc3-34-75-160-46.ngrok-free.app/text_to_speech', {
+            fetch('https://6fa2-34-75-160-46.ngrok-free.app/text_to_speech', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -691,7 +694,7 @@
 
                 whiteEyeLogo.classList.add('eye-fade');
 
-                fetch('https://9cc3-34-75-160-46.ngrok-free.app/chat', {
+                fetch('https://6fa2-34-75-160-46.ngrok-free.app/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
