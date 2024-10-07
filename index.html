@@ -988,39 +988,51 @@
         }
 
         // Search functionality
-        searchTabs.addEventListener('input', () => {
-            const query = searchTabs.value.toLowerCase().trim();
-            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
-            const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-        
-            // Loop through each page's chat history and tab titles
-            Object.keys(chatHistories).forEach((pageName, index) => {
-                const chatHistory = chatHistories[pageName];
-                
-                // Get the title of the current tab
-                const tabTitle = allTabs[index].value.toLowerCase().trim();
-                
-                // Check if any message in the chat history matches the query
-                const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
-                
-                // Find the corresponding sidebar tab for the current page
-                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent === pageName);
-                
-                // Check if the query is found either in the tab title or in the chat history
+searchTabs.addEventListener('input', () => {
+    const query = searchTabs.value.toLowerCase().trim();
+    const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
+    const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
 
-                if (sidebarTab) { // Ensure sidebarTab is found before accessing its style
-                    // Check if the query is found either in the tab title or in the chat history
-                    if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                        sidebarTab.style.display = 'block'; // Show the tab if it matches
-                    } else {
-                        sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                    }
-                } else {
-                    console.error('Sidebar tab not found for page name:', pageName);
-                }
+    // Loop through each page's chat history and tab titles
+    Object.keys(chatHistories).forEach((pageName, index) => {
+        const chatHistory = chatHistories[pageName];
 
-            });
-        });
+        // Log to see if everything matches up
+        console.log(`Processing page: ${pageName}`);
+        console.log(`Query: ${query}`);
+
+        // Get the title of the current tab
+        const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
+
+        // Log tab titles for debugging
+        console.log(`Tab title: ${tabTitle}`);
+
+        // Check if any message in the chat history matches the query
+        const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
+
+        // Find the corresponding sidebar tab for the current page (improve matching logic)
+        const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
+
+        if (!sidebarTab) {
+            console.error(`Sidebar tab not found for page name: ${pageName}`);
+        } else {
+            console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
+        }
+
+        // Check if the query is found either in the tab title or in the chat history
+        if (sidebarTab) { 
+            if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                sidebarTab.style.display = 'block'; // Show the tab if it matches
+                console.log(`Showing tab: ${sidebarTab.textContent}`);
+            } else {
+                sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
+                console.log(`Hiding tab: ${sidebarTab.textContent}`);
+            }
+        }
+    });
+});
+
+
 
         // Initial population of the sidebar
         populateSidebar();
