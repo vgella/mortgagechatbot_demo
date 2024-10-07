@@ -610,7 +610,7 @@
                 // Check if the response should include syntax-highlighted code or is plain text
                 if (isCode && selectedModel !== 'chat') { 
                     // Parse the AI response as Markdown using marked.js
-                    const markdownHtml = marked(text);
+                    const markdownHtml = marked.parse(text);
         
                     // Set the inner HTML to the parsed Markdown
                     messageElement.innerHTML = markdownHtml;
