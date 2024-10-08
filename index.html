@@ -564,7 +564,8 @@
             'New Page 1': []
         };
         
-        // Function to save the state to localStorage
+        let pageCount = 1;  // Track page count globally
+        
         function saveStateToLocalStorage() {
             const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
             const storedData = {
@@ -575,8 +576,6 @@
             };
             localStorage.setItem('chatAppState', JSON.stringify(storedData));
         }
-
-        // Function to load the state from localStorage
         function loadStateFromLocalStorage() {
             const savedState = localStorage.getItem('chatAppState');
             if (savedState) {
@@ -599,141 +598,116 @@
                 saveStateToLocalStorage();
             }
         }
-
-        // Function to create a new tab in the main tab container
-        function createTabInContainer(pageName) {
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            newTab.setAttribute('data-page-name', pageName);
-            newTab.innerHTML = `<input type="text" value="${pageName}" class="tab-title" />`;
-
-            const currentActiveTab = document.querySelector('.tab.active');
-            if (currentActiveTab) {
-                currentActiveTab.classList.remove('active');
-            }
-
-            newTab.classList.add('active');
-            document.getElementById('tab-container').appendChild(newTab);
-
-            // Add event listener to handle renaming of the tab and sidebar sync
-            const tabTitleInput = newTab.querySelector('.tab-title');
-            const sidebarTab = sidebarContent.querySelector(`.sidebar-tab:contains("${pageName}")`);
-            addTabEditEventListener(tabTitleInput, sidebarTab, pageName);
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                userIp = data.ip;
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
+            });
+        function startRecording() {
+            return new Promise((resolve, reject) => {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const mediaRecorder = new MediaRecorder(stream);
+                    const audioChunks = [];
+    
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+    
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks);
+                        resolve(audioBlob);
+                    };
+    
+                    mediaRecorder.start();
+                    setTimeout(() => mediaRecorder.stop(), 3000);  // Stop recording after 3 seconds
+                }).catch(reject);
+            });
         }
-
-        // Function to create the default tab ("New Page 1")
-        function createDefaultTab() {
-            const defaultPage = 'New Page 1';
-            
-            chatHistories[defaultPage] = [];
-
-            // Create the sidebar tab and the tab container
-            createSidebarTab(defaultPage);
-            createTabInContainer(defaultPage);
-
-            // Set the current page and load its history
-            currentPage = defaultPage;
-            loadChatHistory(defaultPage);
+        function playAudioFromText(text) {
+            fetch('https://b746-35-229-239-10.ngrok-free.app/text_to_speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text })
+            })
+            .then(response => response.blob())
+            .then(audioBlob => {
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.play();
+            });
         }
-
-        // Update add-page-sidebar-button event to create new pages appropriately numbered
-        sidebarAddPageButton.addEventListener('click', () => {
-            pageCount++;
-            const newPageName = `New Page ${pageCount}`;
-
-            // Create the new tab in the main container and the sidebar
-            createSidebarTab(newPageName);
-            createTabInContainer(newPageName);
-
-            // Add the new page to chatHistories
-            chatHistories[newPageName] = [];
-            saveStateToLocalStorage();
-        });
-
-        // Create a sidebar tab for each page
-        function createSidebarTab(pageName) {
-            const sidebarTab = document.createElement('div');
-            sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = pageName;
+        function appendMessage(sender, text, isCode = false) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
             
-            // Add event listener to switch to the clicked tab
-            sidebarTab.addEventListener('click', () => {
-                const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
-                if (tabElement) {
-                    setActiveTab(tabElement, pageName);
+            const selectedModel = document.getElementById('model-select').value;
+        
+            if (sender === 'AI') {
+                whiteEyeLogo.classList.remove('eye-fade');
+        
+                // Check if the response should include syntax-highlighted code or is plain text
+                if (isCode && selectedModel !== 'chat') { 
+                    // Parse the AI response as Markdown using marked.js
+                    const markdownHtml = marked.parse(text);
+        
+                    // Set the inner HTML to the parsed Markdown
+                    messageElement.innerHTML = markdownHtml;
+        
+                    // Apply syntax highlighting to any code blocks after rendering
+                    messageElement.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                } else {
+                    // If it's not code or Markdown-based, just append plain text
+                    messageElement.textContent = text;
                 }
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            });
-
-            sidebarContent.appendChild(sidebarTab);
-            saveStateToLocalStorage();  // Save the updated state
-        }
-
-        // Set active tab and load the corresponding chat history
-        function setActiveTab(tab, pageName) {
-            // Hide all other tabs
-            const allTabs = document.querySelectorAll('.tab');
-            allTabs.forEach((otherTab) => {
-                otherTab.classList.add('hidden'); // Hide inactive tabs
-            });
-
-            // Remove the 'hidden' class from the active tab to show it
-            tab.classList.remove('hidden');
-
-            // Remove the current active tab
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) {
-                activeTab.classList.remove('active');
-            }
-
-            // Set the new tab as active
-            tab.classList.add('active');
-            currentPage = pageName;
-
-            // Load the chat history for the newly active page
-            loadChatHistory(pageName);
-
-            // Save the active tab to localStorage
-            saveStateToLocalStorage();
-        }
-
-        // Function to load chat history
-        function loadChatHistory(pageName) {
-            chatBox.innerHTML = '';
-            const history = chatHistories[pageName] || [];
-
-            if (history.length === 0) {
-                chatBox.appendChild(whiteEyeLogo);
+        
+                // Check if the feedback button has already been shown for this page
+                if (!feedbackButtonShown[currentPage]) {
+                    const feedbackButton = createFeedbackButton();
+                    chatBox.appendChild(feedbackButton);
+                    feedbackButtonShown[currentPage] = true;
+                }
             } else {
-                history.forEach(msg => {
-                    appendMessage(msg.sender, msg.text, msg.isCode);
-                });
-                chatBox.appendChild(whiteEyeLogo);
+                // For user messages, just append the plain text
+                messageElement.textContent = text;
             }
-            reapplySyntaxHighlighting();
-        }
-
-        // Function to update the active tab's appearance and title in localStorage
-        function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
-            tabTitle.addEventListener('input', function () {
-                sidebarTab.textContent = tabTitle.value; // Sync sidebar tab with edited title
-                saveStateToLocalStorage();  // Save the new title to localStorage
-            });
-
-            tabTitle.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    this.blur();  // Remove focus on pressing Enter
-                    saveStateToLocalStorage();  // Save changes
-                }
+        
+            // Append the message and the logo to the chat box
+            chatBox.appendChild(messageElement);
+            chatBox.appendChild(whiteEyeLogo);
+        
+            // Scroll the chat box to the bottom
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
             });
         }
 
-        // Populate the sidebar and chat history on load
-        window.addEventListener('load', () => {
-            loadStateFromLocalStorage();
-        });
-
+        function createFeedbackButton() {
+            const feedbackButton = document.createElement('button');
+            feedbackButton.id = 'feedback-button';
+            feedbackButton.textContent = 'Leave Feedback';
+            feedbackButton.addEventListener('click', () => {
+                window.open('feedback_survey.html', 'Litcode Feedback Survey', 'width=800,height=600');
+            });
+            return feedbackButton;
+        }
+        
+        function logSidebarTabNames() {
+            const sidebarTabs = document.querySelectorAll('.sidebar-tab'); // Get all sidebar tabs
+            
+            console.log("Logging all sidebar tab names:");
+            sidebarTabs.forEach((tab, index) => {
+                console.log(`Tab ${index + 1}: ${tab.textContent.trim()}`); // Log the tab index and its name
+            });
+        }
+        
         function reapplySyntaxHighlighting() {
             if (syntaxHighlightTimeout) {
                 clearTimeout(syntaxHighlightTimeout);
@@ -745,32 +719,413 @@
             }, 100);
         }
 
-        const firstTab = document.getElementById('new-page-1');
-        const firstSidebarTab = document.createElement('div');
-        firstSidebarTab.classList.add('sidebar-tab');
-        firstSidebarTab.textContent = 'New Page 1';
+        function submitCodingTask() {
+            const codingTask = codingTaskInput.value;
+            const selectedModel = document.getElementById('model-select').value;
+            const activeTab = document.querySelector('.tab.active input.tab-title');
+            const currentTitle = activeTab.value;
 
+            if (codingTask) {
+                appendMessage('User', codingTask);
+                codingTaskInput.value = '';
+
+                chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
+                localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
+
+                whiteEyeLogo.classList.add('eye-fade');
+
+                fetch('https://b746-35-229-239-10.ngrok-free.app/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ip_address: userIp,
+                        message: codingTask,
+                        page: currentPage,
+                        model: selectedModel,
+                        tab_name: currentTitle
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Received data:', data);  // Log the data received from the backend
+
+                    appendMessage('AI', data.response, true);
+                    chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
+                    localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
+
+                    const activeTab = document.querySelector('.tab.active input.tab-title');
+                    if (activeTab) {
+                        activeTab.value = data.tab_title;
+                    }
+                    const sidebarTab = Array.from(sidebarContent.children).find(tab => tab.textContent === currentPage);
+                    if (sidebarTab) {
+                        sidebarTab.textContent = data.tab_title; // Update the sidebar with the new title
+                    }
+                })
+                .catch(error => {
+                    console.error('Error caught in .catch():', error);  // Log any errors caught
+
+                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
+                });
+            }
+        }
+
+        sendButton.addEventListener('click', submitCodingTask);
+        codingTaskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodingTask();
+            }
+        });
+
+        const maxTabWidth = 150;
+        const minTabWidth = 49;
+
+
+
+
+        sidebarAddPageButton.addEventListener('click', () => {
+            pageCount++;
+            const newTab = document.createElement('div');
+            newTab.classList.add('tab');
+            const newPageName = `New Page ${pageCount}`;
+            newTab.setAttribute('data-page-name', newPageName); // Assign original page name
+            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
+        
+            // Remove current active tab, if any
+            const currentActiveTab = document.querySelector('.tab.active');
+            if (currentActiveTab) {
+                currentActiveTab.classList.remove('active');
+            }
+        
+            // Set new tab as active
+            newTab.classList.add('active');
+            document.getElementById('tab-container').appendChild(newTab);  // Append to the container
+            setActiveTab(newTab, newPageName);
+        
+            // Add the new page to chatHistories
+            chatHistories[newPageName] = [];
+        
+            // Add corresponding sidebar tab
+            const sidebarTab = document.createElement('div');
+            sidebarTab.classList.add('sidebar-tab');
+            sidebarTab.textContent = newPageName;
+        
+            // Switch to new tab on click in sidebar
+            sidebarTab.addEventListener('click', () => {
+                setActiveTab(newTab, newPageName);
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            });
+        
+            sidebarContent.appendChild(sidebarTab);
+        
+            // Add tab title editing functionality
+            const tabTitleInput = newTab.querySelector('.tab-title');
+            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName);
+        });
+        
+        function setActiveTab(tab, pageName) {
+            // Hide all other tabs
+            const allTabs = document.querySelectorAll('.tab');
+            allTabs.forEach((otherTab) => {
+                if (otherTab !== tab) {
+                    otherTab.classList.add('hidden'); // Hide inactive tabs
+                }
+            });
+        
+            // Remove the 'hidden' class from the active tab to show it
+            tab.classList.remove('hidden');
+        
+            // Remove the current active tab (if there is one)
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                activeTab.classList.remove('active');
+                activeTab.style.width = `${maxTabWidth}px`; // Restore full size for non-active tabs
+                activeTab.classList.remove('shrunk');
+            }
+        
+            // Set the new tab as active
+            tab.classList.add('active');
+        
+            // Set the current page to the new page
+            currentPage = pageName;
+        
+            // Load the chat history for the newly active page
+            loadChatHistory(pageName);
+        
+            // After loading the chat, reapply syntax highlighting
+            reapplySyntaxHighlighting();
+        
+            // Resize tabs again to make sure only the active one is full width
+        }
+
+
+        function loadStorageHistory() {
+            // Retrieve chat histories from localStorage
+            const savedHistory = localStorage.getItem('chatHistories');
+            
+            if (savedHistory) {
+                // Parse the saved chat histories from localStorage
+                chatHistories = JSON.parse(savedHistory);
+                
+                // Loop through each page in the chat history
+                Object.keys(chatHistories).forEach(pageName => {
+                    // Create a sidebar tab for each page
+                    createSidebarTab(pageName);
+                    
+                    // If this is the current page, load its chat history into the chat box
+                    if (pageName === currentPage) {
+                        loadChatHistory(pageName);
+                    }
+                });
+            } else {
+                console.log('No saved chat history found in localStorage.');
+            }
+        }
+
+        function createSidebarTab(pageName) {
+            const sidebarTab = document.createElement('div');
+            sidebarTab.classList.add('sidebar-tab');
+            sidebarTab.textContent = pageName;
+        
+            // Add an event listener to switch to this tab when clicked
+            sidebarTab.addEventListener('click', () => {
+                const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
+                if (tabElement) {
+                    setActiveTab(tabElement, pageName);
+                }
+        
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            });
+        
+            // Append the new tab to the sidebar content
+            sidebarContent.appendChild(sidebarTab);
+        }
+
+        function loadChatHistory(pageName) {
+            console.log('Loading chat history for:', pageName);
+            chatBox.innerHTML = '';
+            const history = chatHistories[pageName] || [];
+
+            console.log('Chat History Length:', history.length);
+            if (history.length === 0) {
+                if (!whiteEyeLogo) {
+                    return;
+                }
+                else {
+                    chatBox.appendChild(whiteEyeLogo);
+                }
+            } else {
+                history.forEach(msg => {
+                    appendMessage(msg.sender, msg.text, msg.isCode);
+                });
+                if (!whiteEyeLogo) {
+                    return;
+                }
+                else {
+                    chatBox.appendChild(whiteEyeLogo);
+                }
+            }
+            reapplySyntaxHighlighting();
+
+            if (feedbackButtonShown[pageName]) {
+                const feedbackButton = createFeedbackButton();
+                chatBox.appendChild(feedbackButton);
+            }
+        }
+
+        function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
+            tabTitle.addEventListener('input', function () {
+                sidebarTab.textContent = tabTitle.value; // Sync sidebar tab with edited title
+            });
+        
+            tabTitle.addEventListener('click', function () {
+                this.focus(); // Focus the input field on click to allow editing
+            });
+        
+            tabTitle.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.blur(); // Remove focus on pressing Enter
+                }
+            });
+        }
+
+        const firstTab = document.getElementById('new-page-1');
+        const firstSidebarTab = document.createElement('div'); // Create a sidebar tab for the first tab
+        firstSidebarTab.classList.add('sidebar-tab');
+        firstSidebarTab.textContent = 'New Page 1'; // Initial title for the first tab
         firstSidebarTab.addEventListener('click', () => {
             setActiveTab(firstTab, 'New Page 1');
             sidebar.classList.remove('open');
             sidebarVisible = false;
         });
+        
+        sidebarContent.appendChild(firstSidebarTab); // Add first tab to sidebar
 
-        sidebarContent.appendChild(firstSidebarTab);
+        setActiveTab(firstTab, 'New Page 1');
+
 
         const firstTabTitle = firstTab.querySelector('.tab-title');
+        console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
+
         firstTabTitle.addEventListener('input', function () {
-            firstSidebarTab.textContent = firstTabTitle.value;
-        });
+            console.log('First Sidebar tab element before:', firstSidebarTab.textContent);  // This should log the sidebar tab
+            console.log('Input tab title:', firstSidebarTab);  // This should log the sidebar tab
 
+            firstSidebarTab.textContent = firstTabTitle.value; // Sync sidebar tab with edited title
+            console.log('First Sidebar tab element after:', firstSidebarTab.textContent);  // This should log the sidebar tab
+            firstSidebarTab.style.display = 'none';
+            firstSidebarTab.offsetHeight; // Trigger a reflow
+            firstSidebarTab.style.display = 'block';
+        });
+    
         firstTabTitle.addEventListener('click', function () {
-            this.focus();
+            this.focus(); // Focus the input field on click to allow editing
+            firstSidebarTab.style.display = 'none';
+            firstSidebarTab.offsetHeight; // Trigger a reflow
+            firstSidebarTab.style.display = 'block';
         });
-
+    
         firstTabTitle.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                this.blur();
+                this.blur(); // Remove focus on pressing Enter
+                firstSidebarTab.style.display = 'none';
+                firstSidebarTab.offsetHeight; // Trigger a reflow
+                firstSidebarTab.style.display = 'block';
             }
+        });
+
+
+        function openPopup(file, title) {
+            fetch(file)
+                .then(response => response.text())
+                .then(data => {
+                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
+                    popupWindow.document.write(`
+                        <html>
+                        <head><title>${title}</title></head>
+                        <body>
+                            <div class="popup-content">
+                                <h2>${title}</h2>
+                                <div>${data}</div>
+                                <button onclick="window.close()">Close</button>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    popupWindow.document.close();
+                })
+                .catch(error => {
+                    console.error('Error fetching the file:', error);
+                });
+        }
+
+        // Sidebar functionality
+
+        // Toggle the sidebar visibility
+        hamburgerMenu.addEventListener('click', () => {
+            sidebarVisible = !sidebarVisible;
+            sidebar.classList.toggle('open', sidebarVisible);
+        });
+// Add this to handle clicks inside the sidebar, but outside of tabs and search bar
+        sidebar.addEventListener('click', (event) => {
+            const isTab = event.target.classList.contains('sidebar-tab');
+            const isSearchBar = event.target.classList.contains('search-tabs');
+            const isSidebarButton = event.target.id === 'add-page-sidebar-button';
+
+            // If clicked outside the tabs or search bar, close the sidebar
+            if (!isTab && !isSearchBar && !isSidebarButton) {
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            }
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (event) => {
+            if (sidebarVisible && !sidebar.contains(event.target) && !hamburgerMenu.contains(event.target)) {
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            }
+        });
+
+        // Populate sidebar with tab titles
+        function populateSidebar() {
+            sidebarContent.innerHTML = '';
+            const tabs = document.querySelectorAll('.tab input.tab-title');
+            tabs.forEach(tab => {
+                const tabTitle = tab.value;
+                const sidebarTab = document.createElement('div');
+                sidebarTab.classList.add('sidebar-tab');
+                sidebarTab.textContent = tabTitle;
+
+                // Switch tabs on click
+                sidebarTab.addEventListener('click', () => {
+                    const parentTab = tab.parentElement;
+                    const originalPageName = parentTab.getAttribute('data-page-name');
+                    setActiveTab(parentTab, originalPageName);
+                    sidebar.classList.remove('open');
+                    sidebarVisible = false;
+                });
+
+                sidebarContent.appendChild(sidebarTab);
+            });
+        }
+
+        // Search functionality
+        searchTabs.addEventListener('input', () => {
+            const query = searchTabs.value.toLowerCase().trim();
+            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
+            const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
+        
+            // Loop through each page's chat history and tab titles
+            Object.keys(chatHistories).forEach((pageName, index) => {
+                const chatHistory = chatHistories[pageName];
+        
+                // Log to see if everything matches up
+                console.log(`Processing page: ${pageName}`);
+                console.log(`Query: ${query}`);
+        
+                // Get the title of the current tab
+                const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
+        
+                // Log tab titles for debugging
+                console.log(`Tab title: ${tabTitle}`);
+        
+                // Check if any message in the chat history matches the query
+                const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
+        
+                // Find the corresponding sidebar tab for the current page (improve matching logic)
+                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
+        
+                if (!sidebarTab) {
+                    console.error(`Sidebar tab not found for page name: ${pageName}`);
+                } else {
+                    console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
+                }
+        
+                // Check if the query is found either in the tab title or in the chat history
+                if (sidebarTab) { 
+                    if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                        sidebarTab.style.display = 'block'; // Show the tab if it matches
+                        console.log(`Showing tab: ${sidebarTab.textContent}`);
+                    } else {
+                        sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
+                        console.log(`Hiding tab: ${sidebarTab.textContent}`);
+                    }
+                }
+            });
+        });
+
+
+
+        // Initial population of the sidebar
+        populateSidebar();
+        window.addEventListener('load', () => {
+            // Load chat histories from localStorage and populate the sidebar
+            loadStorageHistory();
         });
 
     </script>
