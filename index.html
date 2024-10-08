@@ -563,41 +563,7 @@
         let chatHistories = {
             'New Page 1': []
         };
-        
-        let pageCount = 1;  // Track page count globally
-        
-        function saveStateToLocalStorage() {
-            const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
-            const storedData = {
-                chatHistories,
-                pageCount,
-                sidebarTabs,
-                currentPage
-            };
-            localStorage.setItem('chatAppState', JSON.stringify(storedData));
-        }
-        function loadStateFromLocalStorage() {
-            const savedState = localStorage.getItem('chatAppState');
-            if (savedState) {
-                const { chatHistories: storedHistories, pageCount: storedPageCount, sidebarTabs: storedSidebarTabs, currentPage: storedPage } = JSON.parse(savedState);
-                
-                chatHistories = storedHistories || {};
-                pageCount = storedPageCount || 1;
-                currentPage = storedPage || 'New Page 1';
-        
-                // Recreate sidebar tabs from localStorage
-                storedSidebarTabs.forEach(pageName => createSidebarTab(pageName));
-                
-                // Load the chat history for the first page
-                loadChatHistory(currentPage);
-                updateActiveTab(currentPage);
-            } else {
-                // First-time load (or no saved state): initialize with one page
-                createSidebarTab('New Page 1');
-                chatHistories['New Page 1'] = [];
-                saveStateToLocalStorage();
-            }
-        }
+
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -1075,49 +1041,49 @@
         }
 
         // Search functionality
-        searchTabs.addEventListener('input', () => {
-            const query = searchTabs.value.toLowerCase().trim();
-            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
-            const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-        
-            // Loop through each page's chat history and tab titles
-            Object.keys(chatHistories).forEach((pageName, index) => {
-                const chatHistory = chatHistories[pageName];
-        
-                // Log to see if everything matches up
-                console.log(`Processing page: ${pageName}`);
-                console.log(`Query: ${query}`);
-        
-                // Get the title of the current tab
-                const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
-        
-                // Log tab titles for debugging
-                console.log(`Tab title: ${tabTitle}`);
-        
-                // Check if any message in the chat history matches the query
-                const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
-        
-                // Find the corresponding sidebar tab for the current page (improve matching logic)
-                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
-        
-                if (!sidebarTab) {
-                    console.error(`Sidebar tab not found for page name: ${pageName}`);
-                } else {
-                    console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
-                }
-        
-                // Check if the query is found either in the tab title or in the chat history
-                if (sidebarTab) { 
-                    if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                        sidebarTab.style.display = 'block'; // Show the tab if it matches
-                        console.log(`Showing tab: ${sidebarTab.textContent}`);
-                    } else {
-                        sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                        console.log(`Hiding tab: ${sidebarTab.textContent}`);
-                    }
-                }
-            });
-        });
+searchTabs.addEventListener('input', () => {
+    const query = searchTabs.value.toLowerCase().trim();
+    const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
+    const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
+
+    // Loop through each page's chat history and tab titles
+    Object.keys(chatHistories).forEach((pageName, index) => {
+        const chatHistory = chatHistories[pageName];
+
+        // Log to see if everything matches up
+        console.log(`Processing page: ${pageName}`);
+        console.log(`Query: ${query}`);
+
+        // Get the title of the current tab
+        const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
+
+        // Log tab titles for debugging
+        console.log(`Tab title: ${tabTitle}`);
+
+        // Check if any message in the chat history matches the query
+        const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
+
+        // Find the corresponding sidebar tab for the current page (improve matching logic)
+        const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
+
+        if (!sidebarTab) {
+            console.error(`Sidebar tab not found for page name: ${pageName}`);
+        } else {
+            console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
+        }
+
+        // Check if the query is found either in the tab title or in the chat history
+        if (sidebarTab) { 
+            if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                sidebarTab.style.display = 'block'; // Show the tab if it matches
+                console.log(`Showing tab: ${sidebarTab.textContent}`);
+            } else {
+                sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
+                console.log(`Hiding tab: ${sidebarTab.textContent}`);
+            }
+        }
+    });
+});
 
 
 
