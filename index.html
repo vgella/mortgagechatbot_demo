@@ -572,6 +572,42 @@
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
+        function saveStateToLocalStorage() {
+            const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
+            const storedData = {
+                chatHistories,
+                pageCount,
+                sidebarTabs,
+                currentPage
+            };
+            localStorage.setItem('chatAppState', JSON.stringify(storedData));
+        }
+        function loadStorageHistory() {
+            const savedState = localStorage.getItem('chatAppState');
+            
+            if (savedState) {
+                const { chatHistories: storedHistories, pageCount: storedPageCount, sidebarTabs: storedSidebarTabs, currentPage: storedPage } = JSON.parse(savedState);
+                
+                chatHistories = storedHistories || {};
+                pageCount = storedPageCount || 1;
+                currentPage = storedPage || 'New Page 1';
+        
+                // Create sidebar tabs from saved state
+                storedSidebarTabs.forEach(pageName => {
+                    createSidebarTab(pageName);
+                });
+        
+                // Load the chat history for the active page
+                loadChatHistory(currentPage);
+                updateActiveTab(currentPage);
+            } else {
+                // First-time load (or no saved state): initialize with one page
+                createSidebarTab('New Page 1');
+                chatHistories['New Page 1'] = [];
+                saveStateToLocalStorage();
+            }
+        }
+
         function startRecording() {
             return new Promise((resolve, reject) => {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
@@ -696,8 +732,7 @@
                 codingTaskInput.value = '';
 
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
-                localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
-
+                saveStateToLocalStorage();
                 whiteEyeLogo.classList.add('eye-fade');
 
                 fetch('https://b746-35-229-239-10.ngrok-free.app/chat', {
@@ -719,7 +754,7 @@
 
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    localStorage.setItem('chatHistories', JSON.stringify(chatHistories));
+                    saveStateToLocalStorage();
 
                     const activeTab = document.querySelector('.tab.active input.tab-title');
                     if (activeTab) {
@@ -772,7 +807,8 @@
         
             // Add the new page to chatHistories
             chatHistories[newPageName] = [];
-        
+            saveStateToLocalStorage();
+
             // Add corresponding sidebar tab
             const sidebarTab = document.createElement('div');
             sidebarTab.classList.add('sidebar-tab');
@@ -828,28 +864,7 @@
         }
 
 
-        function loadStorageHistory() {
-            // Retrieve chat histories from localStorage
-            const savedHistory = localStorage.getItem('chatHistories');
-            
-            if (savedHistory) {
-                // Parse the saved chat histories from localStorage
-                chatHistories = JSON.parse(savedHistory);
-                
-                // Loop through each page in the chat history
-                Object.keys(chatHistories).forEach(pageName => {
-                    // Create a sidebar tab for each page
-                    createSidebarTab(pageName);
-                    
-                    // If this is the current page, load its chat history into the chat box
-                    if (pageName === currentPage) {
-                        loadChatHistory(pageName);
-                    }
-                });
-            } else {
-                console.log('No saved chat history found in localStorage.');
-            }
-        }
+
 
         function createSidebarTab(pageName) {
             const sidebarTab = document.createElement('div');
