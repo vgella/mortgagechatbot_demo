@@ -44,7 +44,7 @@
             justify-content: space-between; /* This will place the logo on the left and tab on the right */
             align-items: flex-end;
             width: 100%;
-            background-color: #D3D3D3;
+            background-color: #2D2D2D;
             padding: 0; /* Add padding for spacing */
             margin: 0;
             box-sizing: border-box;
@@ -518,7 +518,7 @@
 <body>
 
     <div id="tab-container">
-        <img id="litcode-logo" src="litcode_logo_slick.svg" alt="Litcode Logo">
+        <img id="litcode-logo" src="litcode_slick_white.svg" alt="Litcode Logo">
         <div class="tab active" id="new-page-1" data-page-name="New Page 1">
             <input type="text" value="New Page 1" class="tab-title" />
         </div>
@@ -570,7 +570,20 @@
         </div>
 
         <div id="input-container">
+            <div class="attachment-button-container">
+                <label for="file-input" class="paperclip-button">
+                    <img src="paperclip_icon.png" alt="Attach" />
+                </label>
+                <input type="file" id="file-input" style="display: none;" multiple />
+            </div>
+            
+            <!-- Attachment preview container -->
+            <div id="attachments-preview"></div>
+            
+            <!-- Main input field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
+            
+            <!-- Send button -->
             <div class="send-button-container" id="send-button">
                 <div class="triangle"></div>
             </div>
