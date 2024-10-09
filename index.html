@@ -480,8 +480,8 @@
         
         .paperclip-button {
             cursor: pointer;
-            height: auto;
-            width: 5px;
+            height: 20px;
+            width: 20px;
         }
         
         #attachments-preview {
@@ -491,6 +491,7 @@
             overflow-y: auto;
             margin-bottom: 10px;
             width: calc(100% - 20px);
+            padding: 10px;
         }
         
         .attachment-item {
@@ -572,15 +573,13 @@
         </div>
 
         <div id="input-container">
+            <!-- Paperclip button on the left -->
             <div class="attachment-button-container">
                 <label for="file-input" class="paperclip-button">
                     <img src="paperclip.png" alt="Attach" />
                 </label>
                 <input type="file" id="file-input" style="display: none;" multiple />
             </div>
-            
-            <!-- Attachment preview container -->
-            <div id="attachments-preview"></div>
             
             <!-- Main input field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
@@ -590,7 +589,9 @@
                 <div class="triangle"></div>
             </div>
         </div>
-    </div>
+        
+        <!-- Attachment preview container (positioned underneath the input field) -->
+        <div id="attachments-preview"></div>
 
     <div class="footer-links">
         <a href="javascript:void(0);" onclick="openPopup('notice.txt', 'Notice')">Notice</a>
