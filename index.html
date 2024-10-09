@@ -255,7 +255,7 @@
             padding: 10px;
             background-color: transparent;
             box-sizing: border-box;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .main-input-field {
@@ -586,9 +586,6 @@
                 <input type="file" id="file-input" style="display: none;" multiple />
             </div>
             
-            <!-- Attachment preview container -->
-            <div id="attachments-preview"></div>
-            
             <!-- Main input field -->
             <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
             
@@ -597,6 +594,8 @@
                 <div class="triangle"></div>
             </div>
         </div>
+        <div id="attachments-preview"></div>
+
     </div>
 
     <div class="footer-links">
