@@ -483,7 +483,13 @@
             height: auto;
             width: 5px;
         }
-        
+        .paperclip-button img {
+            width: 40px; /* Match triangle size */
+            height: 40px;
+            cursor: pointer;
+            object-fit: contain; /* Ensure the image scales nicely */
+        }
+
         #attachments-preview {
             display: flex;
             flex-direction: column;
