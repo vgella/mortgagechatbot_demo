@@ -472,6 +472,46 @@
         .add-page-sidebar-button:hover {
             background-color: #f0f0f0;
         }
+        .attachment-button-container {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        .paperclip-button {
+            cursor: pointer;
+        }
+        
+        #attachments-preview {
+            display: flex;
+            flex-direction: column;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            width: calc(100% - 20px);
+        }
+        
+        .attachment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        
+        .attachment-item span {
+            max-width: 80%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .attachment-item .remove-attachment {
+            cursor: pointer;
+            color: red;
+        }
 
     </style>
 </head>
@@ -553,6 +593,9 @@
         const sidebar = document.getElementById('sidebar');
         const sidebarContent = document.getElementById('sidebar-content');
         const searchTabs = document.getElementById('search-tabs');
+        const fileInput = document.getElementById('file-input');
+        const attachmentsPreview = document.getElementById('attachments-preview');
+        let selectedFiles = [];
         let feedbackButtonShown = {};
         let userIp = '';
         let currentPage = 'New Page 1';
@@ -563,7 +606,32 @@
         let chatHistories = {
             'New Page 1': []
         };
-
+        fileInput.addEventListener('change', () => {
+            const files = Array.from(fileInput.files);
+        
+            // Display selected files
+            files.forEach((file) => {
+                const fileItem = document.createElement('div');
+                fileItem.classList.add('attachment-item');
+                
+                fileItem.innerHTML = `
+                    <span>${file.name}</span>
+                    <button class="remove-attachment">x</button>
+                `;
+                
+                // Remove attachment functionality
+                fileItem.querySelector('.remove-attachment').addEventListener('click', () => {
+                    selectedFiles = selectedFiles.filter(f => f !== file);
+                    fileItem.remove();
+                });
+                
+                attachmentsPreview.appendChild(fileItem);
+                selectedFiles.push(file);
+            });
+        
+            // Clear the file input so that the same file can be selected again if needed
+            fileInput.value = '';
+        });
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
@@ -726,49 +794,54 @@
             const selectedModel = document.getElementById('model-select').value;
             const activeTab = document.querySelector('.tab.active input.tab-title');
             const currentTitle = activeTab.value;
-
-            if (codingTask) {
+        
+            if (codingTask || selectedFiles.length > 0) {
                 appendMessage('User', codingTask);
                 codingTaskInput.value = '';
-
+        
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
                 saveStateToLocalStorage();
                 whiteEyeLogo.classList.add('eye-fade');
-
+        
+                // Create a FormData object to handle the message and file attachments
+                const formData = new FormData();
+                formData.append('ip_address', userIp);
+                formData.append('message', codingTask);
+                formData.append('page', currentPage);
+                formData.append('model', selectedModel);
+                formData.append('tab_name', currentTitle);
+        
+                // Append the selected files to the FormData object
+                selectedFiles.forEach((file, index) => {
+                    formData.append(`attachment-${index}`, file);
+                });
+        
                 fetch('https://b746-35-229-239-10.ngrok-free.app/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        ip_address: userIp,
-                        message: codingTask,
-                        page: currentPage,
-                        model: selectedModel,
-                        tab_name: currentTitle
-                    }),
+                    body: formData,  // Send the form data with the attachments
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Received data:', data);  // Log the data received from the backend
-
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                     saveStateToLocalStorage();
-
+        
                     const activeTab = document.querySelector('.tab.active input.tab-title');
                     if (activeTab) {
                         activeTab.value = data.tab_title;
                     }
                     const sidebarTab = Array.from(sidebarContent.children).find(tab => tab.textContent === currentPage);
                     if (sidebarTab) {
-                        sidebarTab.textContent = data.tab_title; // Update the sidebar with the new title
+                        sidebarTab.textContent = data.tab_title;
                     }
+        
+                    // Clear attachments after message is sent
+                    attachmentsPreview.innerHTML = '';
+                    selectedFiles = [];
                 })
                 .catch(error => {
-                    console.error('Error caught in .catch():', error);  // Log any errors caught
-
                     appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
+                    console.error('Error:', error);
                 });
             }
         }
