@@ -253,9 +253,10 @@
             gap: 10px;
             color: black;
             padding: 10px;
+            flex-wrap: wrap;
             background-color: transparent;
             box-sizing: border-box;
-            overflow-x: hidden;
+            overflow: visible;
         }
 
         .main-input-field {
@@ -264,6 +265,7 @@
             border: none;
             font-size: 16px;
             outline: none;
+            width: 100%;
             background-color: #ffffff;
             color: #000000;
             border-radius: 15px;
@@ -487,7 +489,7 @@
         #attachments-preview {
             display: flex;
             flex-direction: column;
-            max-height: 100px;
+            max-height: none;
             overflow-y: auto;
             margin-bottom: 10px;
             width: calc(100% - 20px);
