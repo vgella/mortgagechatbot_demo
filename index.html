@@ -712,7 +712,7 @@
             });
         }
         function playAudioFromText(text) {
-            fetch('https://f3c4-35-229-239-10.ngrok-free.app/text_to_speech', {
+            fetch('https://cd98-35-229-239-10.ngrok-free.app/text_to_speech', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -818,48 +818,48 @@
                 saveStateToLocalStorage();
                 whiteEyeLogo.classList.add('eye-fade');
         
-                // Create a FormData object to handle the message and file attachments
-                const formData = new FormData();
-                formData.append('ip_address', userIp);
-                formData.append('message', codingTask);
-                formData.append('page', currentPage);
-                formData.append('model', selectedModel);
-                formData.append('tab_name', currentTitle);
+                // Create the message payload with the other data
+                const messagePayload = {
+                    ip_address: userIp,
+                    message: codingTask,
+                    page: currentPage,
+                    model: selectedModel,
+                    tab_name: currentTitle,
+                    file_names: selectedFiles.map(file => file.name) // Optional: list of file names for reference
+                };
         
-                // Append the selected files to the FormData object
-                selectedFiles.forEach((file, index) => {
-                    formData.append(`attachment-${index}`, file);
+                // Create a FormData object to handle the JSON payload and file attachments
+                const formData = new FormData();
+                formData.append('payload', JSON.stringify(messagePayload)); // Attach the JSON stringified payload
+        
+                // Append the selected files directly as a list (files[])
+                selectedFiles.forEach((file) => {
+                    formData.append('files[]', file); // Use 'files[]' to represent the list of files
                 });
         
-                fetch('https://f3c4-35-229-239-10.ngrok-free.app/chat', {
+                // Send the FormData object with both JSON and files
+                fetch('https://cd98-35-229-239-10.ngrok-free.app/chat', {
                     method: 'POST',
-                    body: formData,  // Send the form data with the attachments
+                    body: formData,  // Send the form data with the JSON payload and file attachments
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Success:', data);
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
                     saveStateToLocalStorage();
-        
-                    const activeTab = document.querySelector('.tab.active input.tab-title');
-                    if (activeTab) {
-                        activeTab.value = data.tab_title;
-                    }
-                    const sidebarTab = Array.from(sidebarContent.children).find(tab => tab.textContent === currentPage);
-                    if (sidebarTab) {
-                        sidebarTab.textContent = data.tab_title;
-                    }
         
                     // Clear attachments after message is sent
                     attachmentsPreview.innerHTML = '';
                     selectedFiles = [];
                 })
                 .catch(error => {
-                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
                     console.error('Error:', error);
+                    appendMessage('AI', 'We are conducting routine site maintenance and updating features at LitCode by thirdeye. This service will be back online soon.');
                 });
             }
         }
+
 
         sendButton.addEventListener('click', submitCodingTask);
         codingTaskInput.addEventListener('keypress', (e) => {
