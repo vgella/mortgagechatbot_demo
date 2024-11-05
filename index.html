@@ -844,7 +844,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://c26f-35-234-44-8.ngrok-free.app/chat', {
+                fetch('https://5c4b-35-234-44-8.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
@@ -1198,10 +1198,11 @@ searchTabs.addEventListener('input', () => {
 
         // Initial population of the sidebar
         populateSidebar();
-        window.addEventListener('load', () => {
-            // Load chat histories from localStorage and populate the sidebar
-            loadStorageHistory();
-        });
+        
+        //window.addEventListener('load', () => {
+         //   // Load chat histories from localStorage and populate the sidebar
+          //  loadStorageHistory();
+        //});
 
     </script>
 </body>
