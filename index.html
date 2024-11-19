@@ -558,6 +558,9 @@
                 <option value="litchat superbasic">llama3.2 (fastest general chat)</option>
                 <option value="litchat basic"> llama3.1 (general chat)</option>
                 <option value="basic"> mixtral (basic coding)</option>
+                <option value="qwen2.5-coder"> qwen2.5-coder (advanced coding)</option>
+                <option value="qwen2.5-coder:3b"> qwen2.5-coder 3b (fast coding)</option>
+                <option value="smollm2"> smollm2 (fast chat)</option>
                 <option value="qwen2-math"> Qwen2 Math (fast math)</option>
                 <option value="advanced"> deepseek-coderv2 (premium coding)</option>
                 <option value="litchat premium">LitChat Premium (general chat)</option>
@@ -845,7 +848,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://329a-34-80-75-73.ngrok-free.app/chat', {
+                fetch('https://2871-34-80-108-25.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
