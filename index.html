@@ -81,7 +81,7 @@
         
         /* Make sure the tab is always aligned to the right */
         #tab-container .tab.active {
-            margin-left: auto; /* Pushes the tab to the far right */
+            margin-left: 0; /* Pushes the tab to the far right */
         }
         .tab input {
             border: none;
@@ -131,7 +131,10 @@
             text-align: center;
             color: inherit;
         }
-
+        .static-tab {
+            display: flex;
+            visibility: visible;
+        }
         /* Chat container */
         #chat-container {
             width: 100%;
@@ -911,7 +914,7 @@
             const allTabs = document.querySelectorAll('.tab');
             allTabs.forEach((otherTab) => {
                 if (otherTab !== tab) {
-                    otherTab.classList.add('hidden'); // Hide inactive tabs
+                    otherTab.classList.add('hidden');
                 }
             });
         
@@ -1110,8 +1113,11 @@
             }
         });
 // Add this near the beginning of your script
-        document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab');
+            const chatBox = document.getElementById('chat-box');
+            const inputContainer = document.getElementById('input-container');
+            const modelSelectContainer = document.getElementById('model-select-container');
             
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -1121,19 +1127,26 @@
                     // Add active class to clicked tab
                     tab.classList.add('active');
                     
-                    // Hide all content
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-                    
-                    // Show appropriate content
+                    // Handle content display
                     if (tab.id === 'prompt-tab') {
-                        document.getElementById('prompt-content').classList.add('active');
+                        chatBox.style.display = 'none';
+                        inputContainer.style.display = 'none';
+                        modelSelectContainer.style.display = 'none';
+                        document.getElementById('prompt-content').style.display = 'block';
+                        document.getElementById('synthetic-content').style.display = 'none';
                     } else if (tab.id === 'synthetic-tab') {
-                        document.getElementById('synthetic-content').classList.add('active');
+                        chatBox.style.display = 'none';
+                        inputContainer.style.display = 'none';
+                        modelSelectContainer.style.display = 'none';
+                        document.getElementById('prompt-content').style.display = 'none';
+                        document.getElementById('synthetic-content').style.display = 'block';
                     } else {
-                        // For chat tabs, ensure chat content is visible
-                        document.getElementById('chat-box').style.display = 'flex';
+                        // Chat tab
+                        chatBox.style.display = 'flex';
+                        inputContainer.style.display = 'flex';
+                        modelSelectContainer.style.display = 'block';
+                        document.getElementById('prompt-content').style.display = 'none';
+                        document.getElementById('synthetic-content').style.display = 'none';
                     }
                 });
             });
