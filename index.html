@@ -584,9 +584,8 @@
         <div id="prompt-content" class="tab-content">
             <div class="static-content">
                 <h2>Prompt</h2>
-                <div class="prompt-text" contenteditable="true" spellcheck="false">
-                    <!-- Default prompt content -->
-                    <p>Click here to edit the prompt content. Press Enter to save.</p>
+                <div id="prompt-editable" class="prompt-text" contenteditable="true" spellcheck="false">
+                    Loading prompt...
                 </div>
             </div>
         </div>
@@ -594,9 +593,8 @@
         <div id="synthetic-content" class="tab-content">
             <div class="static-content">
                 <h2>Synthetic Data</h2>
-                <div class="synthetic-data" contenteditable="true" spellcheck="false">
-                    <!-- Default synthetic data content -->
-                    <p>Click here to edit the synthetic data content. Press Enter to save.</p>
+                <div id="synthetic-editable" class="synthetic-data" contenteditable="true" spellcheck="false">
+                    Loading synthetic data...
                 </div>
             </div>
         </div>
@@ -828,7 +826,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://09ea-35-194-134-84.ngrok-free.app/chat', {
+                fetch('https://112a-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
@@ -1063,6 +1061,46 @@
             }
         });
 
+// Add this after your variable declarations
+        function fetchInitialValues() {
+            fetch('https://112a-35-194-134-84.ngrok-free.app/init_vals', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Get the editable elements
+                const promptElement = document.getElementById('prompt-editable');
+                const syntheticElement = document.getElementById('synthetic-editable');
+        
+                // Check if there's saved content in localStorage
+                const savedPromptContent = localStorage.getItem('promptContent');
+                const savedSyntheticContent = localStorage.getItem('syntheticContent');
+        
+                // Set content, preferring localStorage if it exists
+                if (savedPromptContent) {
+                    promptElement.innerHTML = savedPromptContent;
+                } else {
+                    promptElement.innerHTML = data[0]; // premise_car
+                }
+        
+                if (savedSyntheticContent) {
+                    syntheticElement.innerHTML = savedSyntheticContent;
+                } else {
+                    syntheticElement.innerHTML = data[1]; // data
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching initial values:', error);
+                // Set default values if fetch fails
+                document.getElementById('prompt-editable').innerHTML = 'Failed to load prompt. Please try again later.';
+                document.getElementById('synthetic-editable').innerHTML = 'Failed to load synthetic data. Please try again later.';
+            });
+        }
+        
+        // Call the function when the page loads
 
         function openPopup(file, title) {
             fetch(file)
@@ -1115,13 +1153,15 @@
                 sidebarVisible = false;
             }
         });
+        
 // Add this near the beginning of your script
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab');
             const chatBox = document.getElementById('chat-box');
             const inputContainer = document.getElementById('input-container');
             const modelSelectContainer = document.getElementById('model-select-container');
-            
+            fetchInitialValues();
+
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     // Remove active class from all tabs
