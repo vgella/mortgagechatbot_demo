@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ditra demo (thirdeye)</title>
@@ -17,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
+        /* Base styles */
         body {
             margin: 0;
             padding: 0;
@@ -31,85 +31,74 @@
             overflow-y: scroll;
         }
 
-        /* Tab container with hidden scrollbar */
+        /* Tab container styles */
         #tab-container {
-            display: flex;
-            justify-content: space-between; /* This will place the logo on the left and tab on the right */
-            align-items: flex-end;
-            width: 100%;
-            background-color: #2D2D2D;
-            padding: 0; /* Add padding for spacing */
-            margin: 0;
-            box-sizing: border-box;
-            height: auto; /* Adjust height to fit the content */
-            overflow-x: hidden; /* Prevent horizontal scroll */
-        }
-
-        /* Hide the scrollbar */
-        #tab-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
-        }
-
-        #tab-container {
-            -ms-overflow-style: none;  /* Internet Explorer 10+ */
-            scrollbar-width: none;  /* Firefox */
-        }
-
-        .tabs-wrapper {
             display: flex;
             justify-content: flex-start;
             align-items: flex-end;
-            height: 50%; /* Bottom half for the tabs */
             width: 100%;
+            background-color: #2D2D2D;
             padding: 0;
+            margin: 0;
             box-sizing: border-box;
+            height: auto;
+            overflow-x: hidden;
         }
-        /* Tabs */
-        /* Tabs on the right side */
+
+        /* Tab styles */
         .tab {
             background-color: #D3D3D3;
             border-radius: 15px 15px 0 0;
-            color: white;
+            color: black;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 7.5px 15px;
-            width: 150px; /* Adjust width as necessary */
-            margin-right: 5px; /* Add some space between the tab and the right edge */
-            margin-bottom: 0;
-        }
-        
-        /* Make sure the tab is always aligned to the right */
-        #tab-container .tab.active {
-            margin-left: auto; /* Pushes the tab to the far right */
-        }
-        .tab input {
-            border: none;
-            background-color: transparent;
-            outline: none;
-            text-align: center;
-            font-size: 16px;
-            color: white;
-            width: 100px;
-            display: block; /* Ensure input is block-level */
-        }
-
-        .tab.shrunk input {
-            display: none; /* Hide the tab title when shrunk */
+            width: 150px;
+            margin-right: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .tab.active {
             background-color: #000000;
             color: white;
-            z-index: 1;
         }
-        /* Hide inactive tabs */
-        .tab.hidden {
+
+        .tab .tab-title {
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .tab input.tab-title {
+            border: none;
+            background-color: transparent;
+            outline: none;
+            color: inherit;
+            width: 100px;
+        }
+
+        /* Content container styles */
+        .tab-content {
             display: none;
+            width: 100%;
+            height: calc(100vh - 112px);
+            background-color: #000000;
+            color: white;
         }
 
+        .tab-content.active {
+            display: block;
+        }
 
-        /* Chat container */
+        /* Static content styles */
+        .static-content {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Chat container styles */
         #chat-container {
             width: 100%;
             display: flex;
@@ -121,65 +110,12 @@
             overflow-y: auto;
             flex-grow: 1;
             position: relative;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* Internet Explorer and Edge */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
-        
+
         #chat-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, and Opera */
-        }
-        /* Dropdown container */
-        #model-select-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 2;
-            display: inline-block;
-        }
-    
-        /* Dropdown styling */
-        #model-select {
-            padding: 10px;
-            font-size: 16px;
-            color: white;
-            background-color: black;
-            border: 2px solid white;
-            border-radius: 5px;
-            outline: none;
-            appearance: none;
-            cursor: pointer;
-            padding-right: 30px;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-
-        #model-select-container::after {
-            content: '▼';
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            pointer-events: none;
-        }
-
-        #model-select option {
-            background-color: black;
-            color: white;
-        }
-
-        #model-select option:checked {
-            background-color: #007bff;
-            color: white;
-        }
-
-        #model-select:hover {
-            background-color: #333;
-            border-color: black;
-        }
-
-        #model-select:focus {
-            border-color: black;
-            outline: none;
+            display: none;
         }
 
         #chat-box {
@@ -195,9 +131,9 @@
             overflow-y: auto;
             word-wrap: break-word;
             position: relative;
-
         }
 
+        /* Message styles */
         .message {
             padding: 0;
             background-color: transparent;
@@ -224,17 +160,29 @@
             border: none;
         }
 
-        .message pre code {
-            background-color: #1e1e1e;
-            color: #f8f8f2;
-            width: 100%;
-            border-radius: 0;
-            padding: 10px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Fira Code', monospace;
+        /* Model select styles */
+        #model-select-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
         }
 
+        #model-select {
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: black;
+            border: 2px solid white;
+            border-radius: 5px;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+            padding-right: 30px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        /* Input container styles */
         #input-container {
             width: calc(100% - 20px);
             display: flex;
@@ -258,307 +206,135 @@
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
-            overflow:hidden;
-        }
-
-        .main-input-field:focus {
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .main-input-field::placeholder {
-            color: #000000;
-        }
-
-        .send-button-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            background: none;
-            border: none;
-        }
-
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 40px solid black;
-            cursor: pointer;
-            outline: none;
-            transition: transform 0.3s ease;
-        }
-
-        .triangle:hover {
-            transform: scale(1.1);
-        }
-        @keyframes fadeInOut {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        #white-eye-logo {
-            width: 343px;
-            height: auto;
-            display: block;
-            margin: 20px auto;
-            pointer-events: none;
-        }
-        .eye-fade {
-            animation: fadeInOut 2s infinite; /* 2 seconds for the full cycle, infinitely repeated */
-        }
-
-
-        .popup-content {
-            padding: 20px;
-            max-width: 600px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            font-family: Arial, sans-serif;
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        #feedback-button {
-            position: relative;
-            margin: 15px 0;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #feedback-button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Hamburger menu styles */
-        .hamburger-menu {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            z-index: 3;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            padding: 10px;
-            background-color: transparent;
-        }
-
-        .hamburger-menu .line {
-            width: 30px;
-            height: 3px;
-            background-color: white; /* White hamburger button */
+            overflow: hidden;
         }
 
         /* Sidebar styles */
         .sidebar {
             position: absolute;
             top: 0;
-            right: -343px; /* Move the sidebar completely out of view */
+            right: -343px;
             width: 300px;
             height: calc(100vh - 170px);
             background-color: transparent;
             border-radius: 15px 0 0 15px;
             transition: right 0.3s ease;
-            z-index: 5; /* High z-index to give priority when opened */
+            z-index: 5;
             display: flex;
             flex-direction: column;
-            padding: 20px; /* Added padding to not touch the top */
+            padding: 20px;
         }
 
         .sidebar.open {
-            right: 0; /* When open, it slides in */
+            right: 0;
         }
 
-        /* Sidebar Content Styling */
-        .sidebar-header {
-            margin-bottom: 20px;
+        /* Animation keyframes */
+        @keyframes fadeInOut {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
         }
 
-        .search-tabs {
-            width: calc(100% - 20px);
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            margin-bottom: 10px; /* Same spacing as the sidebar tab */
-
-            border-radius: 5px;
+        .eye-fade {
+            animation: fadeInOut 2s infinite;
         }
-
-        .sidebar-content {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-        }
-
-        .sidebar-content .sidebar-tab {
-            background-color: #000000;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .sidebar-content .sidebar-tab:hover {
-            background-color: #f0f0f0;
-        }
-        .add-page-sidebar-button {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: white;
-            color: black;
-            font-size: 30px;
-            font-weight: bold;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .add-page-sidebar-button:hover {
-            background-color: #f0f0f0;
-        }
-        .attachment-button-container {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
-        
-        .paperclip-button {
-            cursor: pointer;
-            height: auto;
-        }
-        .paperclip-button img {
-            width: 40px; /* Match triangle size */
-            height: 40px;
-            cursor: pointer;
-            object-fit: contain; /* Ensure the image scales nicely */
-        }
-
-        #attachments-preview {
-            display: flex;
-            flex-direction: column;
-            max-height: none;
-            overflow: visible;
-            margin-bottom: 10px;
-            width: calc(100% - 20px);
-        }
-        
-        .attachment-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f0f0f0;
-            padding: 5px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-        
-        .attachment-item span {
-            max-width: 80%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .attachment-item .remove-attachment {
-            cursor: pointer;
-            color: red;
-        }
-
     </style>
 </head>
+
 <body>
-
     <div id="tab-container">
-        <div class="tab active" id="new-page-1" data-page-name="New Page 1">
-            <input type="text" value="New Page 1" class="tab-title" />
+        <!-- Chat Tab -->
+        <div class="tab active" id="chat-tab" data-page-name="Chat">
+            <input type="text" value="Chat" class="tab-title" />
         </div>
-
+        
+        <!-- Prompt Tab -->
+        <div class="tab static-tab" id="prompt-tab">
+            <span class="tab-title">Prompt</span>
+        </div>
+        
+        <!-- Synthetic Data Tab -->
+        <div class="tab static-tab" id="synthetic-tab">
+            <span class="tab-title">Synthetic Data</span>
+        </div>
     </div>
 
     <div id="chat-container">
-        <!-- Hamburger menu inside the chat container -->
+        <!-- Hamburger Menu -->
         <div id="hamburger-menu" class="hamburger-menu">
             <div class="line"></div>
             <div class="line"></div>
             <div class="line"></div>
         </div>
 
-        <!-- Sidebar inside the chat container -->
+        <!-- Sidebar -->
         <div id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <input type="text" id="search-tabs" class="search-tabs" placeholder="Search tabs or chats..." />
             </div>
             <div id="sidebar-content" class="sidebar-content">
-                <!-- This will be populated with the tab titles dynamically -->
+                <!-- Populated dynamically -->
             </div>
-            <!-- Add this inside the sidebar div, at the end -->
             <button id="add-page-sidebar-button" class="add-page-sidebar-button">+</button>
         </div>
 
-        <div id="model-select-container">
-            <select id="model-select">
-                <option value=gpt4o-mini> openai's gpt4o-mini</option>
-                <option value=nemotron-mini> nvidia's nemotron-mini</option>                
-
-
-
-            </select>
-        </div> 
-
-        <div id="chat-box">
-            <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
-        </div>
-
-        <div id="input-container">
-            <div class="attachment-button-container">
-                <label for="file-input" class="paperclip-button">
-                    <img src="paperclip.svg" alt="Attach" />
-                </label>
-                <input type="file" id="file-input" style="display: none;" multiple />
+        <!-- Chat Content -->
+        <div id="chat-content" class="tab-content active">
+            <div id="model-select-container">
+                <select id="model-select">
+                    <option value=gpt4o-mini>openai's gpt4o-mini</option>
+                    <option value=nemotron-mini>nvidia's nemotron-mini</option>
+                </select>
             </div>
             
-            <!-- Main input field -->
-            <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
-            
-            <!-- Send button -->
-            <div class="send-button-container" id="send-button">
-                <div class="triangle"></div>
+            <div id="chat-box">
+                <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
+            </div>
+
+            <div id="input-container">
+                <div class="attachment-button-container">
+                    <label for="file-input" class="paperclip-button">
+                        <img src="paperclip.svg" alt="Attach" />
+                    </label>
+                    <input type="file" id="file-input" style="display: none;" multiple />
+                </div>
+                
+                <input type="text" id="coding-task-input" class="main-input-field" placeholder="Type your message here..." />
+                
+                <div class="send-button-container" id="send-button">
+                    <div class="triangle"></div>
+                </div>
+            </div>
+            <div id="attachments-preview"></div>
+        </div>
+
+        <!-- Prompt Content -->
+        <div id="prompt-content" class="tab-content">
+            <div class="static-content">
+                <h2>Prompt</h2>
+                <div class="prompt-text">
+                    <!-- Your static prompt content here -->
+                    <p>This is the static prompt content.</p>
+                </div>
             </div>
         </div>
-        <div id="attachments-preview"></div>
 
+        <!-- Synthetic Data Content -->
+        <div id="synthetic-content" class="tab-content">
+            <div class="static-content">
+                <h2>Synthetic Data</h2>
+                <div class="synthetic-data">
+                    <!-- Your static synthetic data content here -->
+                    <p>This is the static synthetic data content.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-
-
     <script>
+
+            // Initialize variables
         const chatBox = document.getElementById('chat-box');
         const whiteEyeLogo = document.getElementById('white-eye-logo');
         const codingTaskInput = document.getElementById('coding-task-input');
@@ -570,21 +346,62 @@
         const searchTabs = document.getElementById('search-tabs');
         const fileInput = document.getElementById('file-input');
         const attachmentsPreview = document.getElementById('attachments-preview');
+        
         let selectedFiles = [];
         let feedbackButtonShown = {};
         let userIp = '';
-        let currentPage = 'New Page 1';
+        let currentPage = 'Chat';
         let pageCount = 1;
         let syntaxHighlightTimeout;
         let sidebarVisible = false;
-
         let chatHistories = {
-            'New Page 1': []
+            'Chat': []
         };
+
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            function switchTab(tabId) {
+                // Remove active class from all tabs and contents
+                tabs.forEach(tab => tab.classList.remove('active'));
+                contents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to selected tab and content
+                const selectedTab = document.getElementById(tabId);
+                const selectedContent = document.getElementById(tabId.replace('-tab', '-content'));
+                
+                if (selectedTab && selectedContent) {
+                    selectedTab.classList.add('active');
+                    selectedContent.classList.add('active');
+                }
+
+                // Show/hide input container based on active tab
+                const inputContainer = document.getElementById('input-container');
+                const modelSelectContainer = document.getElementById('model-select-container');
+                
+                if (tabId === 'chat-tab') {
+                    inputContainer.style.display = 'flex';
+                    modelSelectContainer.style.display = 'block';
+                } else {
+                    inputContainer.style.display = 'none';
+                    modelSelectContainer.style.display = 'none';
+                }
+            }
+
+            // Add click handlers to all tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.id);
+                });
+            });
+        });
+
+        // File handling
         fileInput.addEventListener('change', () => {
             const files = Array.from(fileInput.files);
-        
-            // Display selected files
+            
             files.forEach((file) => {
                 const fileItem = document.createElement('div');
                 fileItem.classList.add('attachment-item');
@@ -594,7 +411,6 @@
                     <button class="remove-attachment">x</button>
                 `;
                 
-                // Remove attachment functionality
                 fileItem.querySelector('.remove-attachment').addEventListener('click', () => {
                     selectedFiles = selectedFiles.filter(f => f !== file);
                     fileItem.remove();
@@ -603,55 +419,11 @@
                 attachmentsPreview.appendChild(fileItem);
                 selectedFiles.push(file);
             });
-        
-            // Clear the file input so that the same file can be selected again if needed
+            
             fileInput.value = '';
         });
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                userIp = data.ip;
-            })
-            .catch(error => {
-                console.error('Error fetching IP address:', error);
-            });
-        function saveStateToLocalStorage() {
-            const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
-            const storedData = {
-                chatHistories,
-                pageCount,
-                sidebarTabs,
-                currentPage
-            };
-            localStorage.setItem('chatAppState', JSON.stringify(storedData));
-        }
-        function loadStorageHistory() {
-            const savedState = localStorage.getItem('chatAppState');
-            
-            if (savedState) {
-                const { chatHistories: storedHistories, pageCount: storedPageCount, sidebarTabs: storedSidebarTabs, currentPage: storedPage } = JSON.parse(savedState);
-                
-                chatHistories = storedHistories || {};
-                pageCount = storedPageCount || 1;
-                currentPage = storedPage || 'New Page 1';
-        
-                // Create sidebar tabs from saved state
-                storedSidebarTabs.forEach(pageName => {
-                    createSidebarTab(pageName);
-                });
-        
-                // Load the chat history for the active page
-                loadChatHistory(currentPage);
-                updateActiveTab(currentPage);
-            } else {
-                // First-time load (or no saved state): initialize with one page
-                createSidebarTab('New Page 1');
-                chatHistories['New Page 1'] = [];
-                saveStateToLocalStorage();
-            }
-        }
 
-
+        // Message handling
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -661,45 +433,36 @@
             if (sender === 'AI') {
                 whiteEyeLogo.classList.remove('eye-fade');
         
-                // Check if the response should include syntax-highlighted code or is plain text
                 if (isCode && selectedModel !== 'chat') { 
-                    // Parse the AI response as Markdown using marked.js
                     const markdownHtml = marked.parse(text);
-        
-                    // Set the inner HTML to the parsed Markdown
                     messageElement.innerHTML = markdownHtml;
-        
-                    // Apply syntax highlighting to any code blocks after rendering
                     messageElement.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightElement(block);
                     });
                 } else {
-                    // If it's not code or Markdown-based, just append plain text
                     messageElement.textContent = text;
                 }
         
-                // Check if the feedback button has already been shown for this page
                 if (!feedbackButtonShown[currentPage]) {
                     const feedbackButton = createFeedbackButton();
                     chatBox.appendChild(feedbackButton);
                     feedbackButtonShown[currentPage] = true;
                 }
             } else {
-                // For user messages, just append the plain text
                 messageElement.textContent = text;
             }
         
-            // Append the message and the logo to the chat box
             chatBox.appendChild(messageElement);
             chatBox.appendChild(whiteEyeLogo);
         
-            // Scroll the chat box to the bottom
             chatBox.scrollTo({
                 top: chatBox.scrollHeight,
                 behavior: 'smooth'
             });
         }
 
+        // Continue with the rest of the JavaScript...
+        // Feedback button creation
         function createFeedbackButton() {
             const feedbackButton = document.createElement('button');
             feedbackButton.id = 'feedback-button';
@@ -709,32 +472,13 @@
             });
             return feedbackButton;
         }
-        
-        function logSidebarTabNames() {
-            const sidebarTabs = document.querySelectorAll('.sidebar-tab'); // Get all sidebar tabs
-            
-            console.log("Logging all sidebar tab names:");
-            sidebarTabs.forEach((tab, index) => {
-                console.log(`Tab ${index + 1}: ${tab.textContent.trim()}`); // Log the tab index and its name
-            });
-        }
-        
-        function reapplySyntaxHighlighting() {
-            if (syntaxHighlightTimeout) {
-                clearTimeout(syntaxHighlightTimeout);
-            }
-            syntaxHighlightTimeout = setTimeout(() => {
-                document.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
-            }, 100);
-        }
 
+        // Message submission
         function submitCodingTask() {
             const codingTask = codingTaskInput.value;
             const selectedModel = document.getElementById('model-select').value;
             const activeTab = document.querySelector('.tab.active input.tab-title');
-            const currentTitle = activeTab.value;
+            const currentTitle = activeTab ? activeTab.value : 'Chat';
         
             if (codingTask || selectedFiles.length > 0) {
                 appendMessage('User', codingTask);
@@ -744,29 +488,25 @@
                 saveStateToLocalStorage();
                 whiteEyeLogo.classList.add('eye-fade');
         
-                // Create the message payload with the other data
                 const messagePayload = {
                     ip_address: userIp,
                     message: codingTask,
                     page: currentPage,
                     model: selectedModel,
                     tab_name: currentTitle,
-                    file_names: selectedFiles.map(file => file.name) // Optional: list of file names for reference
+                    file_names: selectedFiles.map(file => file.name)
                 };
         
-                // Create a FormData object to handle the JSON payload and file attachments
                 const formData = new FormData();
-                formData.append('payload', JSON.stringify(messagePayload)); // Attach the JSON stringified payload
+                formData.append('payload', JSON.stringify(messagePayload));
         
-                // Append the selected files directly as a list (files[])
                 selectedFiles.forEach((file) => {
-                    formData.append('files[]', file); // Use 'files[]' to represent the list of files
+                    formData.append('files[]', file);
                 });
         
-                // Send the FormData object with both JSON and files
                 fetch('https://09ea-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
-                    body: formData,  // Send the form data with the JSON payload and file attachments
+                    body: formData,
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -777,7 +517,6 @@
                     if (data.tab_title) {
                         updateTabTitle(data.tab_title);
                     }
-                    // Clear attachments after message is sent
                     attachmentsPreview.innerHTML = '';
                     selectedFiles = [];
                 })
@@ -787,274 +526,56 @@
                 });
             }
         }
-        
-        function updateTabTitle(newTitle) {
-            const activeTab = document.querySelector('.tab.active input.tab-title');
-            const currentTitle = activeTab.value;
-            const sidebarTab = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).find(tab => tab.textContent === currentTitle);
-        
-            if (activeTab) activeTab.value = newTitle; // Update the active tab title
-            if (sidebarTab) sidebarTab.textContent = newTitle; // Update the sidebar title
-        
-            // Update the current page reference in chat histories
-            chatHistories[newTitle] = chatHistories[currentPage];
-            delete chatHistories[currentPage];
-            currentPage = newTitle;
-            saveStateToLocalStorage();
+
+        // Local storage handling
+        function saveStateToLocalStorage() {
+            const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
+            const storedData = {
+                chatHistories,
+                pageCount,
+                sidebarTabs,
+                currentPage
+            };
+            localStorage.setItem('chatAppState', JSON.stringify(storedData));
         }
 
+        function loadStorageHistory() {
+            const savedState = localStorage.getItem('chatAppState');
+            
+            if (savedState) {
+                const { chatHistories: storedHistories, pageCount: storedPageCount, sidebarTabs: storedSidebarTabs, currentPage: storedPage } = JSON.parse(savedState);
+                
+                chatHistories = storedHistories || {};
+                pageCount = storedPageCount || 1;
+                currentPage = storedPage || 'Chat';
+        
+                storedSidebarTabs.forEach(pageName => {
+                    createSidebarTab(pageName);
+                });
+        
+                loadChatHistory(currentPage);
+                updateActiveTab(currentPage);
+            } else {
+                createSidebarTab('Chat');
+                chatHistories['Chat'] = [];
+                saveStateToLocalStorage();
+            }
+        }
+
+        // Event listeners
         sendButton.addEventListener('click', submitCodingTask);
+        
         codingTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 submitCodingTask();
             }
         });
 
-        const maxTabWidth = 150;
-        const minTabWidth = 49;
-
-
-
-
-        sidebarAddPageButton.addEventListener('click', () => {
-            pageCount++;
-            const newTab = document.createElement('div');
-            newTab.classList.add('tab');
-            const newPageName = `New Page ${pageCount}`;
-            newTab.setAttribute('data-page-name', newPageName); // Assign original page name
-            newTab.innerHTML = `<input type="text" value="${newPageName}" class="tab-title" />`;
-        
-            // Remove current active tab, if any
-            const currentActiveTab = document.querySelector('.tab.active');
-            if (currentActiveTab) {
-                currentActiveTab.classList.remove('active');
-            }
-        
-            // Set new tab as active
-            newTab.classList.add('active');
-            document.getElementById('tab-container').appendChild(newTab);  // Append to the container
-            setActiveTab(newTab, newPageName);
-        
-            // Add the new page to chatHistories
-            chatHistories[newPageName] = [];
-            saveStateToLocalStorage();
-
-            // Add corresponding sidebar tab
-            const sidebarTab = document.createElement('div');
-            sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = newPageName;
-        
-            // Switch to new tab on click in sidebar
-            sidebarTab.addEventListener('click', () => {
-                setActiveTab(newTab, newPageName);
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            });
-        
-            sidebarContent.appendChild(sidebarTab);
-        
-            // Add tab title editing functionality
-            const tabTitleInput = newTab.querySelector('.tab-title');
-            addTabEditEventListener(tabTitleInput, sidebarTab, newPageName);
-        });
-        
-        function setActiveTab(tab, pageName) {
-            // Hide all other tabs
-            const allTabs = document.querySelectorAll('.tab');
-            allTabs.forEach((otherTab) => {
-                if (otherTab !== tab) {
-                    otherTab.classList.add('hidden'); // Hide inactive tabs
-                }
-            });
-        
-            // Remove the 'hidden' class from the active tab to show it
-            tab.classList.remove('hidden');
-        
-            // Remove the current active tab (if there is one)
-            const activeTab = document.querySelector('.tab.active');
-            if (activeTab) {
-                activeTab.classList.remove('active');
-                activeTab.style.width = `${maxTabWidth}px`; // Restore full size for non-active tabs
-                activeTab.classList.remove('shrunk');
-            }
-        
-            // Set the new tab as active
-            tab.classList.add('active');
-        
-            // Set the current page to the new page
-            currentPage = pageName;
-        
-            // Load the chat history for the newly active page
-            loadChatHistory(pageName);
-        
-            // After loading the chat, reapply syntax highlighting
-            reapplySyntaxHighlighting();
-        
-            // Resize tabs again to make sure only the active one is full width
-        }
-
-
-
-
-        function createSidebarTab(pageName) {
-            const sidebarTab = document.createElement('div');
-            sidebarTab.classList.add('sidebar-tab');
-            sidebarTab.textContent = pageName;
-        
-            // Add an event listener to switch to this tab when clicked
-            sidebarTab.addEventListener('click', () => {
-                const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
-                if (tabElement) {
-                    setActiveTab(tabElement, pageName);
-                }
-        
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            });
-        
-            // Append the new tab to the sidebar content
-            sidebarContent.appendChild(sidebarTab);
-        }
-
-        function loadChatHistory(pageName) {
-            console.log('Loading chat history for:', pageName);
-            chatBox.innerHTML = '';
-            const history = chatHistories[pageName] || [];
-
-            console.log('Chat History Length:', history.length);
-            if (history.length === 0) {
-                if (!whiteEyeLogo) {
-                    return;
-                }
-                else {
-                    chatBox.appendChild(whiteEyeLogo);
-                }
-            } else {
-                history.forEach(msg => {
-                    appendMessage(msg.sender, msg.text, msg.isCode);
-                });
-                if (!whiteEyeLogo) {
-                    return;
-                }
-                else {
-                    chatBox.appendChild(whiteEyeLogo);
-                }
-            }
-            reapplySyntaxHighlighting();
-
-            if (feedbackButtonShown[pageName]) {
-                const feedbackButton = createFeedbackButton();
-                chatBox.appendChild(feedbackButton);
-            }
-        }
-
-        function addTabEditEventListener(tabTitle, sidebarTab, originalPageName) {
-            tabTitle.addEventListener('input', function () {
-                sidebarTab.textContent = tabTitle.value; // Sync sidebar tab with edited title
-            });
-        
-            tabTitle.addEventListener('click', function () {
-                this.focus(); // Focus the input field on click to allow editing
-            });
-        
-            tabTitle.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    this.blur(); // Remove focus on pressing Enter
-                }
-            });
-        }
-
-        const firstTab = document.getElementById('new-page-1');
-        const firstSidebarTab = document.createElement('div'); // Create a sidebar tab for the first tab
-        firstSidebarTab.classList.add('sidebar-tab');
-        firstSidebarTab.textContent = 'New Page 1'; // Initial title for the first tab
-        firstSidebarTab.addEventListener('click', () => {
-            setActiveTab(firstTab, 'New Page 1');
-            sidebar.classList.remove('open');
-            sidebarVisible = false;
-        });
-        
-        sidebarContent.appendChild(firstSidebarTab); // Add first tab to sidebar
-
-        setActiveTab(firstTab, 'New Page 1');
-
-
-        const firstTabTitle = firstTab.querySelector('.tab-title');
-        console.log('First Sidebar tab element:', firstSidebarTab);  // This should log the sidebar tab
-
-        firstTabTitle.addEventListener('input', function () {
-            console.log('First Sidebar tab element before:', firstSidebarTab.textContent);  // This should log the sidebar tab
-            console.log('Input tab title:', firstSidebarTab);  // This should log the sidebar tab
-
-            firstSidebarTab.textContent = firstTabTitle.value; // Sync sidebar tab with edited title
-            console.log('First Sidebar tab element after:', firstSidebarTab.textContent);  // This should log the sidebar tab
-            firstSidebarTab.style.display = 'none';
-            firstSidebarTab.offsetHeight; // Trigger a reflow
-            firstSidebarTab.style.display = 'block';
-        });
-    
-        firstTabTitle.addEventListener('click', function () {
-            this.focus(); // Focus the input field on click to allow editing
-            firstSidebarTab.style.display = 'none';
-            firstSidebarTab.offsetHeight; // Trigger a reflow
-            firstSidebarTab.style.display = 'block';
-        });
-    
-        firstTabTitle.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                this.blur(); // Remove focus on pressing Enter
-                firstSidebarTab.style.display = 'none';
-                firstSidebarTab.offsetHeight; // Trigger a reflow
-                firstSidebarTab.style.display = 'block';
-            }
-        });
-
-
-        function openPopup(file, title) {
-            fetch(file)
-                .then(response => response.text())
-                .then(data => {
-                    const popupWindow = window.open('', title, 'width=600,height=400,resizable,scrollbars');
-                    popupWindow.document.write(`
-                        <html>
-                        <head><title>${title}</title></head>
-                        <body>
-                            <div class="popup-content">
-                                <h2>${title}</h2>
-                                <div>${data}</div>
-                                <button onclick="window.close()">Close</button>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    popupWindow.document.close();
-                })
-                .catch(error => {
-                    console.error('Error fetching the file:', error);
-                });
-        }
-
-        // Sidebar functionality
-
-        // Toggle the sidebar visibility
         hamburgerMenu.addEventListener('click', () => {
             sidebarVisible = !sidebarVisible;
             sidebar.classList.toggle('open', sidebarVisible);
         });
-// Add this to handle clicks inside the sidebar, but outside of tabs and search bar
-        sidebar.addEventListener('click', (event) => {
-            const isTab = event.target.classList.contains('sidebar-tab');
-            const isSearchBar = event.target.classList.contains('search-tabs');
-            const isSidebarButton = event.target.id === 'add-page-sidebar-button';
 
-            // If clicked outside the tabs or search bar, close the sidebar
-            if (!isTab && !isSearchBar && !isSidebarButton) {
-                sidebar.classList.remove('open');
-                sidebarVisible = false;
-            }
-        });
-
-        // Close sidebar when clicking outside
         document.addEventListener('click', (event) => {
             if (sidebarVisible && !sidebar.contains(event.target) && !hamburgerMenu.contains(event.target)) {
                 sidebar.classList.remove('open');
@@ -1062,84 +583,19 @@
             }
         });
 
-        // Populate sidebar with tab titles
-        function populateSidebar() {
-            sidebarContent.innerHTML = '';
-            const tabs = document.querySelectorAll('.tab input.tab-title');
-            tabs.forEach(tab => {
-                const tabTitle = tab.value;
-                const sidebarTab = document.createElement('div');
-                sidebarTab.classList.add('sidebar-tab');
-                sidebarTab.textContent = tabTitle;
-
-                // Switch tabs on click
-                sidebarTab.addEventListener('click', () => {
-                    const parentTab = tab.parentElement;
-                    const originalPageName = parentTab.getAttribute('data-page-name');
-                    setActiveTab(parentTab, originalPageName);
-                    sidebar.classList.remove('open');
-                    sidebarVisible = false;
-                });
-
-                sidebarContent.appendChild(sidebarTab);
+        // Initialize IP address
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                userIp = data.ip;
+            })
+            .catch(error => {
+                console.error('Error fetching IP address:', error);
             });
-        }
 
-        // Search functionality
-searchTabs.addEventListener('input', () => {
-    const query = searchTabs.value.toLowerCase().trim();
-    const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
-    const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-
-    // Loop through each page's chat history and tab titles
-    Object.keys(chatHistories).forEach((pageName, index) => {
-        const chatHistory = chatHistories[pageName];
-
-        // Log to see if everything matches up
-        console.log(`Processing page: ${pageName}`);
-        console.log(`Query: ${query}`);
-
-        // Get the title of the current tab
-        const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
-
-        // Log tab titles for debugging
-        console.log(`Tab title: ${tabTitle}`);
-
-        // Check if any message in the chat history matches the query
-        const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
-
-        // Find the corresponding sidebar tab for the current page (improve matching logic)
-        const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
-
-        if (!sidebarTab) {
-            console.error(`Sidebar tab not found for page name: ${pageName}`);
-        } else {
-            console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
-        }
-
-        // Check if the query is found either in the tab title or in the chat history
-        if (sidebarTab) { 
-            if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                sidebarTab.style.display = 'block'; // Show the tab if it matches
-                console.log(`Showing tab: ${sidebarTab.textContent}`);
-            } else {
-                sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                console.log(`Hiding tab: ${sidebarTab.textContent}`);
-            }
-        }
-    });
-});
-
-
-
-        // Initial population of the sidebar
-        populateSidebar();
-        
-        //window.addEventListener('load', () => {
-         //   // Load chat histories from localStorage and populate the sidebar
-          //  loadStorageHistory();
-        //});
-
+        // Load initial state
+        loadStorageHistory();
     </script>
 </body>
 </html>
+        
