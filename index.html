@@ -1061,36 +1061,51 @@
             }
         });
         function fetchInitialValues() {
+            console.log('Starting fetch request to /init_vals'); // Debug log 1
+            
             fetch('https://880c-35-194-134-84.ngrok-free.app/init_vals', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response received:', response.status); // Debug log 2
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Parsed data:', data); // Debug log 3
+                
                 const promptElement = document.getElementById('prompt-editable');
                 const syntheticElement = document.getElementById('synthetic-editable');
         
-                const savedPromptContent = localStorage.getItem('promptContent');
-                const savedSyntheticContent = localStorage.getItem('syntheticContent');
-        
-                if (savedPromptContent) {
-                    promptElement.innerHTML = savedPromptContent;
-                } else {
-                    promptElement.innerHTML = data.premise; // Changed from data[0]
+                if (promptElement) {
+                    promptElement.innerHTML = data.premise || 'No prompt data received';
+                    console.log('Updated prompt element'); // Debug log 4
                 }
-        
-                if (savedSyntheticContent) {
-                    syntheticElement.innerHTML = savedSyntheticContent;
-                } else {
-                    syntheticElement.innerHTML = data.data; // Changed from data[1]
+                if (syntheticElement) {
+                    syntheticElement.innerHTML = data.data || 'No synthetic data received';
+                    console.log('Updated synthetic element'); // Debug log 5
                 }
             })
             .catch(error => {
-                console.error('Error fetching initial values:', error);
-                document.getElementById('prompt-editable').innerHTML = 'Failed to load prompt. Please try again later.';
-                document.getElementById('synthetic-editable').innerHTML = 'Failed to load synthetic data. Please try again later.';
+                console.error('Detailed error:', error); // More detailed error logging
+                console.error('Error name:', error.name);
+                console.error('Error message:', error.message);
+                
+                const promptElement = document.getElementById('prompt-editable');
+                const syntheticElement = document.getElementById('synthetic-editable');
+                
+                if (promptElement) {
+                    promptElement.innerHTML = 'Failed to load prompt. Please try again later.';
+                }
+                if (syntheticElement) {
+                    syntheticElement.innerHTML = 'Failed to load synthetic data. Please try again later.';
+                }
             });
         }
 
