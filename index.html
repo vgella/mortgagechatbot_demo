@@ -595,6 +595,107 @@
 
         // Load initial state
         loadStorageHistory();
+            // Sidebar functionality
+        function createSidebarTab(pageName) {
+            const sidebarTab = document.createElement('div');
+            sidebarTab.classList.add('sidebar-tab');
+            sidebarTab.textContent = pageName;
+            
+            sidebarTab.addEventListener('click', () => {
+                setActiveTab(pageName);
+                sidebar.classList.remove('open');
+                sidebarVisible = false;
+            });
+            
+            sidebarContent.appendChild(sidebarTab);
+        }
+
+        function setActiveTab(pageName) {
+            currentPage = pageName;
+            
+            // Update chat histories if it doesn't exist
+            if (!chatHistories[pageName]) {
+                chatHistories[pageName] = [];
+            }
+            
+            // Load the chat history for this page
+            loadChatHistory(pageName);
+            
+            // Update the tab title
+            const activeTab = document.querySelector('.tab.active input.tab-title');
+            if (activeTab) {
+                activeTab.value = pageName;
+            }
+            
+            saveStateToLocalStorage();
+        }
+
+        function loadChatHistory(pageName) {
+            chatBox.innerHTML = '';
+            const history = chatHistories[pageName] || [];
+            
+            if (history.length === 0) {
+                chatBox.appendChild(whiteEyeLogo);
+            } else {
+                history.forEach(msg => {
+                    appendMessage(msg.sender, msg.text, msg.isCode);
+                });
+                chatBox.appendChild(whiteEyeLogo);
+            }
+            
+            if (feedbackButtonShown[pageName]) {
+                const feedbackButton = createFeedbackButton();
+                chatBox.appendChild(feedbackButton);
+            }
+        }
+
+        // Search functionality
+        searchTabs.addEventListener('input', () => {
+            const query = searchTabs.value.toLowerCase().trim();
+            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
+            
+            Object.keys(chatHistories).forEach(pageName => {
+                const chatHistory = chatHistories[pageName];
+                const matchingChats = chatHistory.filter(msg => 
+                    msg.text.toLowerCase().includes(query)
+                );
+                
+                const sidebarTab = Array.from(sidebarTabs)
+                    .find(tab => tab.textContent.toLowerCase() === pageName.toLowerCase());
+                
+                if (sidebarTab) {
+                    if (query === "" || pageName.toLowerCase().includes(query) || matchingChats.length > 0) {
+                        sidebarTab.style.display = 'block';
+                    } else {
+                        sidebarTab.style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Add new page from sidebar
+        sidebarAddPageButton.addEventListener('click', () => {
+            pageCount++;
+            const newPageName = `New Page ${pageCount}`;
+            
+            // Create new chat history
+            chatHistories[newPageName] = [];
+            
+            // Create sidebar tab
+            createSidebarTab(newPageName);
+            
+            // Set as active
+            setActiveTab(newPageName);
+            
+            saveStateToLocalStorage();
+        });
+
+        // Initialize first page in sidebar if needed
+        if (Object.keys(chatHistories).length === 0) {
+            chatHistories['Chat'] = [];
+            createSidebarTab('Chat');
+            setActiveTab('Chat');
+        }
     </script>
 </body>
 </html>
