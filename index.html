@@ -4,7 +4,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LitCode by thirdeye</title>
+    <title>ditra demo (thirdeye)</title>
     <link rel="icon" href="flavicon_thirdeye.png" type="image/png">
     
     <!-- Load Monokai Sublime theme for syntax highlighting -->
@@ -672,21 +672,7 @@
                 }).catch(reject);
             });
         }
-        function playAudioFromText(text) {
-            fetch('https://8d94-35-247-133-48.ngrok-free.app/text_to_speech', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ text })
-            })
-            .then(response => response.blob())
-            .then(audioBlob => {
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new Audio(audioUrl);
-                audio.play();
-            });
-        }
+
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', sender === 'User' ? 'user' : 'ai');
@@ -799,7 +785,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://8d94-35-247-133-48.ngrok-free.app/chat', {
+                fetch('https://4dcd-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
