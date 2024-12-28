@@ -516,7 +516,21 @@
             cursor: pointer;
             color: red;
         }
-
+        /* Add to your existing CSS */
+        [contenteditable="true"] {
+            outline: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        [contenteditable="true"]:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        [contenteditable="true"]:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
     </style>
 </head>
 <body>
@@ -567,13 +581,12 @@
         <div id="chat-box">
             <img id="white-eye-logo" src="white_eye_logo.svg" alt="White Eye Logo" />
         </div>
-
         <div id="prompt-content" class="tab-content">
             <div class="static-content">
                 <h2>Prompt</h2>
-                <div class="prompt-text">
-                    <!-- Your static prompt content here -->
-                    <p>This is the static prompt content.</p>
+                <div class="prompt-text" contenteditable="true" spellcheck="false">
+                    <!-- Default prompt content -->
+                    <p>Click here to edit the prompt content. Press Enter to save.</p>
                 </div>
             </div>
         </div>
@@ -581,9 +594,9 @@
         <div id="synthetic-content" class="tab-content">
             <div class="static-content">
                 <h2>Synthetic Data</h2>
-                <div class="synthetic-data">
-                    <!-- Your static synthetic data content here -->
-                    <p>This is the static synthetic data content.</p>
+                <div class="synthetic-data" contenteditable="true" spellcheck="false">
+                    <!-- Default synthetic data content -->
+                    <p>Click here to edit the synthetic data content. Press Enter to save.</p>
                 </div>
             </div>
         </div>
@@ -1103,7 +1116,7 @@
             }
         });
 // Add this near the beginning of your script
-document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab');
             const chatBox = document.getElementById('chat-box');
             const inputContainer = document.getElementById('input-container');
@@ -1141,6 +1154,57 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
         });
+        // Add this to your existing JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the editable elements
+            const promptContent = document.querySelector('.prompt-text');
+            const syntheticContent = document.querySelector('.synthetic-data');
+        
+            // Load saved content from localStorage if it exists
+            const savedPromptContent = localStorage.getItem('promptContent');
+            const savedSyntheticContent = localStorage.getItem('syntheticContent');
+        
+            if (savedPromptContent) {
+                promptContent.innerHTML = savedPromptContent;
+            }
+            if (savedSyntheticContent) {
+                syntheticContent.innerHTML = savedSyntheticContent;
+            }
+        
+            // Function to handle content saving
+            function handleContentSave(element, storageKey) {
+                element.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault(); // Prevent default enter behavior
+                        element.blur(); // Remove focus
+                        localStorage.setItem(storageKey, element.innerHTML); // Save content
+                    }
+                });
+        
+                // Save on blur (when clicking away)
+                element.addEventListener('blur', () => {
+                    localStorage.setItem(storageKey, element.innerHTML);
+                });
+        
+                // Prevent accidental drag and drop
+                element.addEventListener('dragstart', (e) => e.preventDefault());
+            }
+        
+            // Apply handlers to both editable elements
+            handleContentSave(promptContent, 'promptContent');
+            handleContentSave(syntheticContent, 'syntheticContent');
+        
+            // Optional: Add visual feedback when editing
+            [promptContent, syntheticContent].forEach(element => {
+                element.addEventListener('focus', () => {
+                    element.style.cursor = 'text';
+                });
+        
+                element.addEventListener('blur', () => {
+                    element.style.cursor = 'default';
+                });
+            });
+        });
         // Populate sidebar with tab titles
         function populateSidebar() {
             sidebarContent.innerHTML = '';
@@ -1165,49 +1229,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Search functionality
-searchTabs.addEventListener('input', () => {
-    const query = searchTabs.value.toLowerCase().trim();
-    const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
-    const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
-
-    // Loop through each page's chat history and tab titles
-    Object.keys(chatHistories).forEach((pageName, index) => {
-        const chatHistory = chatHistories[pageName];
-
-        // Log to see if everything matches up
-        console.log(`Processing page: ${pageName}`);
-        console.log(`Query: ${query}`);
-
-        // Get the title of the current tab
-        const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
-
-        // Log tab titles for debugging
-        console.log(`Tab title: ${tabTitle}`);
-
-        // Check if any message in the chat history matches the query
-        const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
-
-        // Find the corresponding sidebar tab for the current page (improve matching logic)
-        const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
-
-        if (!sidebarTab) {
-            console.error(`Sidebar tab not found for page name: ${pageName}`);
-        } else {
-            console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
-        }
-
-        // Check if the query is found either in the tab title or in the chat history
-        if (sidebarTab) { 
-            if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
-                sidebarTab.style.display = 'block'; // Show the tab if it matches
-                console.log(`Showing tab: ${sidebarTab.textContent}`);
-            } else {
-                sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
-                console.log(`Hiding tab: ${sidebarTab.textContent}`);
-            }
-        }
-    });
-});
+        searchTabs.addEventListener('input', () => {
+            const query = searchTabs.value.toLowerCase().trim();
+            const sidebarTabs = sidebarContent.querySelectorAll('.sidebar-tab');
+            const allTabs = document.querySelectorAll('.tab input.tab-title'); // Get all tab titles
+        
+            // Loop through each page's chat history and tab titles
+            Object.keys(chatHistories).forEach((pageName, index) => {
+                const chatHistory = chatHistories[pageName];
+        
+                // Log to see if everything matches up
+                console.log(`Processing page: ${pageName}`);
+                console.log(`Query: ${query}`);
+        
+                // Get the title of the current tab
+                const tabTitle = allTabs[index] ? allTabs[index].value.toLowerCase().trim() : '';
+        
+                // Log tab titles for debugging
+                console.log(`Tab title: ${tabTitle}`);
+        
+                // Check if any message in the chat history matches the query
+                const matchingChats = chatHistory.filter(msg => msg.text.toLowerCase().includes(query));
+        
+                // Find the corresponding sidebar tab for the current page (improve matching logic)
+                const sidebarTab = Array.from(sidebarTabs).find(tab => tab.textContent.toLowerCase().trim() === pageName.toLowerCase().trim());
+        
+                if (!sidebarTab) {
+                    console.error(`Sidebar tab not found for page name: ${pageName}`);
+                } else {
+                    console.log(`Found sidebar tab: ${sidebarTab.textContent}`);
+                }
+        
+                // Check if the query is found either in the tab title or in the chat history
+                if (sidebarTab) { 
+                    if (query === "" || tabTitle.includes(query) || matchingChats.length > 0) {
+                        sidebarTab.style.display = 'block'; // Show the tab if it matches
+                        console.log(`Showing tab: ${sidebarTab.textContent}`);
+                    } else {
+                        sidebarTab.style.display = 'none'; // Hide the tab if it doesn't match
+                        console.log(`Hiding tab: ${sidebarTab.textContent}`);
+                    }
+                }
+            });
+        });
 
 
 
