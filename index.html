@@ -524,7 +524,6 @@
 
         <div id="model-select-container">
             <select id="model-select">
-                <option value=gpt3.5> openai's gpt3.5</option>
                 <option value=gpt4o-mini> openai's gpt4o-mini</option>
                 <option value=nemotron-mini> nvidia's nemotron-mini</option>                
 
@@ -652,26 +651,6 @@
             }
         }
 
-        function startRecording() {
-            return new Promise((resolve, reject) => {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    const mediaRecorder = new MediaRecorder(stream);
-                    const audioChunks = [];
-    
-                    mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
-                    };
-    
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks);
-                        resolve(audioBlob);
-                    };
-    
-                    mediaRecorder.start();
-                    setTimeout(() => mediaRecorder.stop(), 3000);  // Stop recording after 3 seconds
-                }).catch(reject);
-            });
-        }
 
         function appendMessage(sender, text, isCode = false) {
             const messageElement = document.createElement('div');
@@ -785,7 +764,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://9a82-35-194-134-84.ngrok-free.app/chat', {
+                fetch('https://09ea-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
