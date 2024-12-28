@@ -826,7 +826,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://112a-35-194-134-84.ngrok-free.app/chat', {
+                fetch('https://c8ab-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
@@ -1060,10 +1060,8 @@
                 firstSidebarTab.style.display = 'block';
             }
         });
-
-// Add this after your variable declarations
         function fetchInitialValues() {
-            fetch('https://112a-35-194-134-84.ngrok-free.app/init_vals', {
+            fetch('https://c8ab-35-194-134-84.ngrok-free.app/init_vals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1071,35 +1069,31 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Get the editable elements
                 const promptElement = document.getElementById('prompt-editable');
                 const syntheticElement = document.getElementById('synthetic-editable');
         
-                // Check if there's saved content in localStorage
                 const savedPromptContent = localStorage.getItem('promptContent');
                 const savedSyntheticContent = localStorage.getItem('syntheticContent');
         
-                // Set content, preferring localStorage if it exists
                 if (savedPromptContent) {
                     promptElement.innerHTML = savedPromptContent;
                 } else {
-                    promptElement.innerHTML = data[0]; // premise_car
+                    promptElement.innerHTML = data.premise; // Changed from data[0]
                 }
         
                 if (savedSyntheticContent) {
                     syntheticElement.innerHTML = savedSyntheticContent;
                 } else {
-                    syntheticElement.innerHTML = data[1]; // data
+                    syntheticElement.innerHTML = data.data; // Changed from data[1]
                 }
             })
             .catch(error => {
                 console.error('Error fetching initial values:', error);
-                // Set default values if fetch fails
                 document.getElementById('prompt-editable').innerHTML = 'Failed to load prompt. Please try again later.';
                 document.getElementById('synthetic-editable').innerHTML = 'Failed to load synthetic data. Please try again later.';
             });
         }
-        
+
         // Call the function when the page loads
 
         function openPopup(file, title) {
