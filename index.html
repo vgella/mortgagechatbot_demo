@@ -34,7 +34,7 @@
         /* Tab container with hidden scrollbar */
         #tab-container {
             display: flex;
-            justify-content: space-between; /* This will place the logo on the left and tab on the right */
+            justify-content: flex-start; /* This will place the logo on the left and tab on the right */
             align-items: flex-end;
             width: 100%;
             background-color: #2D2D2D;
@@ -910,38 +910,28 @@
         });
         
         function setActiveTab(tab, pageName) {
-            // Hide all other tabs
-            const allTabs = document.querySelectorAll('.tab');
+            // Hide only chat tabs, not static tabs
+            const allTabs = document.querySelectorAll('.tab:not(.static-tab)');
             allTabs.forEach((otherTab) => {
                 if (otherTab !== tab) {
                     otherTab.classList.add('hidden');
                 }
             });
         
-            // Remove the 'hidden' class from the active tab to show it
+            // Rest of your existing setActiveTab function...
             tab.classList.remove('hidden');
-        
-            // Remove the current active tab (if there is one)
+            
             const activeTab = document.querySelector('.tab.active');
             if (activeTab) {
                 activeTab.classList.remove('active');
-                activeTab.style.width = `${maxTabWidth}px`; // Restore full size for non-active tabs
+                activeTab.style.width = `${maxTabWidth}px`;
                 activeTab.classList.remove('shrunk');
             }
-        
-            // Set the new tab as active
+            
             tab.classList.add('active');
-        
-            // Set the current page to the new page
             currentPage = pageName;
-        
-            // Load the chat history for the newly active page
             loadChatHistory(pageName);
-        
-            // After loading the chat, reapply syntax highlighting
             reapplySyntaxHighlighting();
-        
-            // Resize tabs again to make sure only the active one is full width
         }
 
 
