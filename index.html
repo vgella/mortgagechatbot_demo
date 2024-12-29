@@ -687,31 +687,6 @@
             };
             localStorage.setItem('chatAppState', JSON.stringify(storedData));
         }
-        function loadStorageHistory() {
-            const savedState = localStorage.getItem('chatAppState');
-            
-            if (savedState) {
-                const { chatHistories: storedHistories, pageCount: storedPageCount, sidebarTabs: storedSidebarTabs, currentPage: storedPage } = JSON.parse(savedState);
-                
-                chatHistories = storedHistories || {};
-                pageCount = storedPageCount || 1;
-                currentPage = storedPage || 'New Page 1';
-        
-                // Create sidebar tabs from saved state
-                storedSidebarTabs.forEach(pageName => {
-                    createSidebarTab(pageName);
-                });
-        
-                // Load the chat history for the active page
-                loadChatHistory(currentPage);
-                updateActiveTab(currentPage);
-            } else {
-                // First-time load (or no saved state): initialize with one page
-                createSidebarTab('New Page 1');
-                chatHistories['New Page 1'] = [];
-                saveStateToLocalStorage();
-            }
-        }
 
 
         function appendMessage(sender, text, isCode = false) {
@@ -1409,10 +1384,7 @@
         // Initial population of the sidebar
         populateSidebar();
         
-        //window.addEventListener('load', () => {
-         //   // Load chat histories from localStorage and populate the sidebar
-          //  loadStorageHistory();
-        //});
+
 
     </script>
 </body>
