@@ -939,6 +939,8 @@
             
             tab.classList.add('active');
             currentPage = pageName;
+            document.getElementById('prompt-content').style.display = 'none';
+            document.getElementById('synthetic-content').style.display = 'none';
             loadChatHistory(pageName);
             reapplySyntaxHighlighting();
         }
