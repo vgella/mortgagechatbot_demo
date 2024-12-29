@@ -771,7 +771,35 @@
             });
             return feedbackButton;
         }
+        function updateBackendValues(type, content) {
+            console.log(`Updating ${type} with content:`, content);
+            
+            const payload = {};
+            if (type === 'prompt') {
+                payload.premise = content;
+            } else if (type === 'synthetic') {
+                payload.data = content;
+            }
         
+            fetch('https://2cc8-35-194-134-84.ngrok-free.app/update_vals', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Update response:', data);
+                if (data.error) {
+                    console.error('Error updating values:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating values:', error);
+            });
+        }
         function logSidebarTabNames() {
             const sidebarTabs = document.querySelectorAll('.sidebar-tab'); // Get all sidebar tabs
             
@@ -826,7 +854,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://9bfa-35-194-134-84.ngrok-free.app/chat', {
+                fetch('https://2cc8-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
@@ -1063,7 +1091,7 @@
         function fetchInitialValues() {
             console.log('Starting fetch request to /init_vals'); // Debug log 1
             
-            fetch('https://9bfa-35-194-134-84.ngrok-free.app/init_vals', {
+            fetch('https://2cc8-35-194-134-84.ngrok-free.app/init_vals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1169,6 +1197,58 @@
             const chatBox = document.getElementById('chat-box');
             const inputContainer = document.getElementById('input-container');
             const modelSelectContainer = document.getElementById('model-select-container');
+            const promptElement = document.getElementById('prompt-editable');
+            const syntheticElement = document.getElementById('synthetic-editable');
+        
+            // Handle prompt content updates
+            if (promptElement) {
+                let promptTimeout;
+                promptElement.addEventListener('input', (e) => {
+                    // Clear any existing timeout
+                    if (promptTimeout) {
+                        clearTimeout(promptTimeout);
+                    }
+                    
+                    // Set a new timeout to update after user stops typing
+                    promptTimeout = setTimeout(() => {
+                        const content = e.target.innerHTML;
+                        updateBackendValues('prompt', content);
+                        localStorage.setItem('promptContent', content);
+                    }, 1000); // Wait 1 second after last input before sending update
+                });
+        
+                // Also update when user clicks away
+                promptElement.addEventListener('blur', (e) => {
+                    const content = e.target.innerHTML;
+                    updateBackendValues('prompt', content);
+                    localStorage.setItem('promptContent', content);
+                });
+            }
+        
+            // Handle synthetic data content updates
+            if (syntheticElement) {
+                let syntheticTimeout;
+                syntheticElement.addEventListener('input', (e) => {
+                    // Clear any existing timeout
+                    if (syntheticTimeout) {
+                        clearTimeout(syntheticTimeout);
+                    }
+                    
+                    // Set a new timeout to update after user stops typing
+                    syntheticTimeout = setTimeout(() => {
+                        const content = e.target.innerHTML;
+                        updateBackendValues('synthetic', content);
+                        localStorage.setItem('syntheticContent', content);
+                    }, 1000); // Wait 1 second after last input before sending update
+                });
+        
+                // Also update when user clicks away
+                syntheticElement.addEventListener('blur', (e) => {
+                    const content = e.target.innerHTML;
+                    updateBackendValues('synthetic', content);
+                    localStorage.setItem('syntheticContent', content);
+                });
+            }
             fetchInitialValues();
 
             tabs.forEach(tab => {
