@@ -954,8 +954,16 @@
             // Add an event listener to switch to this tab when clicked
             sidebarTab.addEventListener('click', () => {
                 const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
-                setActiveTab(tabElement, pageName);
+                if (tabElement) {
+                    // Hide static content and show chat content
+                    document.getElementById('prompt-content').style.display = 'none';
+                    document.getElementById('synthetic-content').style.display = 'none';
+                    document.getElementById('chat-box').style.display = 'flex';
+                    document.getElementById('input-container').style.display = 'flex';
+                    document.getElementById('model-select-container').style.display = 'block';
         
+                    setActiveTab(tabElement, pageName);
+                }
                 sidebar.classList.remove('open');
                 sidebarVisible = false;
             });
