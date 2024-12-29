@@ -748,7 +748,8 @@
         }
         function updateBackendValues(type, content) {
             console.log(`Updating ${type} with content:`, content);
-            
+            console.log('Chat histories:', chatHistories);  // Debug log
+
             const payload = {};
             if (type === 'prompt') {
                 payload.premise = content;
@@ -774,6 +775,8 @@
             .catch(error => {
                 console.error('Error updating values:', error);
             });
+            console.log('Chat histories after update:', chatHistories);  // Debug log
+
         }
         function logSidebarTabNames() {
             const sidebarTabs = document.querySelectorAll('.sidebar-tab'); // Get all sidebar tabs
@@ -782,6 +785,7 @@
             sidebarTabs.forEach((tab, index) => {
                 console.log(`Tab ${index + 1}: ${tab.textContent.trim()}`); // Log the tab index and its name
             });
+            
         }
         
         function reapplySyntaxHighlighting() {
