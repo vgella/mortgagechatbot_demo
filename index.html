@@ -572,6 +572,12 @@
             <select id="model-select">
                 <option value=gpt4o-mini> openai's gpt4o-mini</option>
                 <option value=nemotron-mini> nvidia's nemotron-mini</option>                
+                <option value=phi> microsoft's phi3:3.8b</option>                
+                <option value=qwen> alibaba's qwen2.5:3b</option>                
+                <option value=smollm2> huggingface's smollm2</option>                
+                <option value=llama> meta's llama-3.2:3b</option>                
+                <option value=gemma2> google's gemma2:2b</option>                
+                <option value=qwenu> thirdeye's uncensored qwen2.5:1.5b</option>                
 
 
 
@@ -747,7 +753,7 @@
                 payload.data = content;
             }
         
-            fetch('https://10c2-35-194-134-84.ngrok-free.app/update_vals', {
+            fetch('https://afd3-35-194-134-84.ngrok-free.app/update_vals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -824,7 +830,7 @@
                 });
         
                 // Send the FormData object with both JSON and files
-                fetch('https://10c2-35-194-134-84.ngrok-free.app/chat', {
+                fetch('https://afd3-35-194-134-84.ngrok-free.app/chat', {
                     method: 'POST',
                     body: formData,  // Send the form data with the JSON payload and file attachments
                 })
@@ -1056,7 +1062,7 @@
         function fetchInitialValues() {
             console.log('Starting fetch request to /init_vals'); // Debug log 1
             
-            fetch('https://10c2-35-194-134-84.ngrok-free.app/init_vals', {
+            fetch('https://afd3-35-194-134-84.ngrok-free.app/init_vals', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
