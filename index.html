@@ -677,16 +677,6 @@
             .catch(error => {
                 console.error('Error fetching IP address:', error);
             });
-        function saveStateToLocalStorage() {
-            const sidebarTabs = Array.from(sidebarContent.querySelectorAll('.sidebar-tab')).map(tab => tab.textContent);
-            const storedData = {
-                chatHistories,
-                pageCount,
-                sidebarTabs,
-                currentPage
-            };
-            localStorage.setItem('chatAppState', JSON.stringify(storedData));
-        }
 
 
         function appendMessage(sender, text, isCode = false) {
@@ -812,7 +802,6 @@
                 codingTaskInput.value = '';
         
                 chatHistories[currentPage].push({ sender: 'User', text: codingTask, isCode: false });
-                saveStateToLocalStorage();
                 whiteEyeLogo.classList.add('eye-fade');
         
                 // Create the message payload with the other data
@@ -844,10 +833,7 @@
                     console.log('Success:', data);
                     appendMessage('AI', data.response, true);
                     chatHistories[currentPage].push({ sender: 'AI', text: data.response, isCode: true });
-                    saveStateToLocalStorage();
-                    if (data.tab_title) {
-                        updateTabTitle(data.tab_title);
-                    }
+
                     // Clear attachments after message is sent
                     attachmentsPreview.innerHTML = '';
                     selectedFiles = [];
@@ -871,7 +857,6 @@
             chatHistories[newTitle] = chatHistories[currentPage];
             delete chatHistories[currentPage];
             currentPage = newTitle;
-            saveStateToLocalStorage();
         }
 
         sendButton.addEventListener('click', submitCodingTask);
@@ -908,7 +893,6 @@
         
             // Add the new page to chatHistories
             chatHistories[newPageName] = [];
-            saveStateToLocalStorage();
 
             // Add corresponding sidebar tab
             const sidebarTab = document.createElement('div');
@@ -1172,33 +1156,77 @@
             }
         });
         
-// Add this near the beginning of your script
+
+        // Add this to your existing JavaScript
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all elements
             const tabs = document.querySelectorAll('.tab');
             const chatBox = document.getElementById('chat-box');
             const inputContainer = document.getElementById('input-container');
             const modelSelectContainer = document.getElementById('model-select-container');
             const promptElement = document.getElementById('prompt-editable');
             const syntheticElement = document.getElementById('synthetic-editable');
+            const promptContent = document.querySelector('.prompt-text');
+            const syntheticContent = document.querySelector('.synthetic-data');
+        
+            // Load saved content from localStorage if it exists
+            const savedPromptContent = localStorage.getItem('promptContent');
+            const savedSyntheticContent = localStorage.getItem('syntheticContent');
+        
+            if (savedPromptContent) {
+                promptContent.innerHTML = savedPromptContent;
+            }
+            if (savedSyntheticContent) {
+                syntheticContent.innerHTML = savedSyntheticContent;
+            }
+        
+            // Function to handle content saving
+            function handleContentSave(element, storageKey) {
+                element.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        element.blur();
+                        localStorage.setItem(storageKey, element.innerHTML);
+                    }
+                });
+        
+                element.addEventListener('blur', () => {
+                    localStorage.setItem(storageKey, element.innerHTML);
+                });
+        
+                element.addEventListener('dragstart', (e) => e.preventDefault());
+            }
+        
+            // Apply handlers to both editable elements
+            handleContentSave(promptContent, 'promptContent');
+            handleContentSave(syntheticContent, 'syntheticContent');
+        
+            // Add visual feedback when editing
+            [promptContent, syntheticContent].forEach(element => {
+                element.addEventListener('focus', () => {
+                    element.style.cursor = 'text';
+                });
+        
+                element.addEventListener('blur', () => {
+                    element.style.cursor = 'default';
+                });
+            });
         
             // Handle prompt content updates
             if (promptElement) {
                 let promptTimeout;
                 promptElement.addEventListener('input', (e) => {
-                    // Clear any existing timeout
                     if (promptTimeout) {
                         clearTimeout(promptTimeout);
                     }
                     
-                    // Set a new timeout to update after user stops typing
                     promptTimeout = setTimeout(() => {
                         const content = e.target.innerHTML;
                         updateBackendValues('prompt', content);
                         localStorage.setItem('promptContent', content);
-                    }, 1000); // Wait 1 second after last input before sending update
+                    }, 1000);
                 });
         
-                // Also update when user clicks away
                 promptElement.addEventListener('blur', (e) => {
                     const content = e.target.innerHTML;
                     updateBackendValues('prompt', content);
@@ -1210,28 +1238,25 @@
             if (syntheticElement) {
                 let syntheticTimeout;
                 syntheticElement.addEventListener('input', (e) => {
-                    // Clear any existing timeout
                     if (syntheticTimeout) {
                         clearTimeout(syntheticTimeout);
                     }
                     
-                    // Set a new timeout to update after user stops typing
                     syntheticTimeout = setTimeout(() => {
                         const content = e.target.innerHTML;
                         updateBackendValues('synthetic', content);
                         localStorage.setItem('syntheticContent', content);
-                    }, 1000); // Wait 1 second after last input before sending update
+                    }, 1000);
                 });
         
-                // Also update when user clicks away
                 syntheticElement.addEventListener('blur', (e) => {
                     const content = e.target.innerHTML;
                     updateBackendValues('synthetic', content);
                     localStorage.setItem('syntheticContent', content);
                 });
             }
-            fetchInitialValues();
-
+        
+            // Tab switching functionality
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     // Remove active class from all tabs
@@ -1255,65 +1280,24 @@
                         document.getElementById('synthetic-content').style.display = 'block';
                     } else {
                         // Chat tab
+                        if (!chatHistories['New Page 1']) {
+                            chatHistories['New Page 1'] = [];
+                        }
+                        currentPage = 'New Page 1';
+                        
                         chatBox.style.display = 'flex';
                         inputContainer.style.display = 'flex';
                         modelSelectContainer.style.display = 'block';
                         document.getElementById('prompt-content').style.display = 'none';
                         document.getElementById('synthetic-content').style.display = 'none';
+                        
+                        loadChatHistory('New Page 1');
                     }
                 });
             });
-        });
-        // Add this to your existing JavaScript
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get the editable elements
-            const promptContent = document.querySelector('.prompt-text');
-            const syntheticContent = document.querySelector('.synthetic-data');
         
-            // Load saved content from localStorage if it exists
-            const savedPromptContent = localStorage.getItem('promptContent');
-            const savedSyntheticContent = localStorage.getItem('syntheticContent');
-        
-            if (savedPromptContent) {
-                promptContent.innerHTML = savedPromptContent;
-            }
-            if (savedSyntheticContent) {
-                syntheticContent.innerHTML = savedSyntheticContent;
-            }
-        
-            // Function to handle content saving
-            function handleContentSave(element, storageKey) {
-                element.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault(); // Prevent default enter behavior
-                        element.blur(); // Remove focus
-                        localStorage.setItem(storageKey, element.innerHTML); // Save content
-                    }
-                });
-        
-                // Save on blur (when clicking away)
-                element.addEventListener('blur', () => {
-                    localStorage.setItem(storageKey, element.innerHTML);
-                });
-        
-                // Prevent accidental drag and drop
-                element.addEventListener('dragstart', (e) => e.preventDefault());
-            }
-        
-            // Apply handlers to both editable elements
-            handleContentSave(promptContent, 'promptContent');
-            handleContentSave(syntheticContent, 'syntheticContent');
-        
-            // Optional: Add visual feedback when editing
-            [promptContent, syntheticContent].forEach(element => {
-                element.addEventListener('focus', () => {
-                    element.style.cursor = 'text';
-                });
-        
-                element.addEventListener('blur', () => {
-                    element.style.cursor = 'default';
-                });
-            });
+            // Fetch initial values
+            fetchInitialValues();
         });
         // Populate sidebar with tab titles
         function populateSidebar() {
