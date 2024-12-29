@@ -954,9 +954,7 @@
             // Add an event listener to switch to this tab when clicked
             sidebarTab.addEventListener('click', () => {
                 const tabElement = document.querySelector(`.tab[data-page-name="${pageName}"]`);
-                if (tabElement) {
-                    setActiveTab(tabElement, pageName);
-                }
+                setActiveTab(tabElement, pageName);
         
                 sidebar.classList.remove('open');
                 sidebarVisible = false;
