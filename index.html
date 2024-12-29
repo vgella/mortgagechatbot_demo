@@ -939,9 +939,6 @@
             
             tab.classList.add('active');
             currentPage = pageName;
-            chatBox.style.display = 'flex';
-            inputContainer.style.display = 'flex';
-            modelSelectContainer.style.display = 'block';
             document.getElementById('prompt-content').style.display = 'none';
             document.getElementById('synthetic-content').style.display = 'none';
             loadChatHistory(pageName);
@@ -964,6 +961,7 @@
                     document.getElementById('prompt-content').style.display = 'none';
                     document.getElementById('synthetic-content').style.display = 'none';
                     document.getElementById('chat-box').style.display = 'flex';
+                    document.getElementById('input-container').style.display = 'flex';
                     document.getElementById('model-select-container').style.display = 'block';
         
                     setActiveTab(tabElement, pageName);
