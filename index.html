@@ -939,6 +939,9 @@
             
             tab.classList.add('active');
             currentPage = pageName;
+            chatBox.style.display = 'flex';
+            inputContainer.style.display = 'flex';
+            modelSelectContainer.style.display = 'block';
             document.getElementById('prompt-content').style.display = 'none';
             document.getElementById('synthetic-content').style.display = 'none';
             loadChatHistory(pageName);
