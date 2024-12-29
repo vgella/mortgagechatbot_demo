@@ -825,7 +825,9 @@
             const selectedModel = document.getElementById('model-select').value;
             const activeTab = document.querySelector('.tab.active input.tab-title');
             const currentTitle = activeTab.value;
-        
+            console.log('Current page:', currentPage);  // Debug log
+            console.log('Chat histories:', chatHistories);  // Debug log
+                    
             if (codingTask || selectedFiles.length > 0) {
                 appendMessage('User', codingTask);
                 codingTaskInput.value = '';
